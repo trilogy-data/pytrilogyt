@@ -6,6 +6,8 @@ Executes via DBT CLI.
 
 ## How to run
 
+Copy example_file contents into models\example for the "jaffle_project" DBT starter
+
 ```console
 python preqlt/scripts/main.py C:\Users\ethan\coding_projects\pypreql-etl\jaffle_shop\models\example\customer.preql C:\Users\ethan\coding_projects\pypreql-etl\jaffle_shop bigquery
 ```
