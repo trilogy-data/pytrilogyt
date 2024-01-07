@@ -1,0 +1,3 @@
+*.pyc
+dbt.log
+jaffle_shop
