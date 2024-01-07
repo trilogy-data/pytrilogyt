@@ -6,11 +6,11 @@ Executes via DBT CLI.
 
 ## How to run
 
-```bash
+```console
 python preqlt/scripts/main.py C:\Users\ethan\coding_projects\pypreql-etl\jaffle_shop\models\example\customer.preql C:\Users\ethan\coding_projects\pypreql-etl\jaffle_shop bigquery
 ```
 
-```bash
+```console
 17:12:37  Running with dbt=1.7.4
 17:12:38  Registered adapter: bigquery=1.7.2
 17:12:38  Found 4 models, 4 tests, 0 sources, 0 exposures, 0 metrics, 447 macros, 0 groups, 0 semantic models
