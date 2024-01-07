@@ -53,5 +53,7 @@ def generate_model(root:Path, preql_path:Path, base_namespace:str, dialect:Diale
         output_path = root / f'{key}_preqlt_gen_model.sql'
         output_path.parent.mkdir(parents=True, exist_ok=True)
         with open(output_path, "w") as f:
+            f.write(f"-- Generated from preql source: {preql_path}; do not edit manually")
+            f.write("{{ config(materialized='table') }}\n")
             f.write(value)
     
