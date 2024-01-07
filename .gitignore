@@ -1,3 +1,4 @@
 *.pyc
 dbt.log
 jaffle_shop
+.vscode
