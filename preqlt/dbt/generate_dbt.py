@@ -11,7 +11,7 @@ from preql.core.models import ProcessedQueryPersist, ProcessedQuery, Persist
 from preqlt.enums import PreqltMetrics
 from preqlt.core import enrich_environment
 from preql.parser import parse_text
-
+from preql.core.processing.nodes import GroupNode
 
 def generate_model_text(model_name, model_type, model_sql):
     template = Template(
