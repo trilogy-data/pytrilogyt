@@ -13,6 +13,7 @@ from preqlt.core import enrich_environment
 from preql.parser import parse_text
 from preql.core.processing.nodes import GroupNode
 from preqlt.dbt.config import DBTConfig
+from yaml import safe_load, dump
 
 
 def generate_model_text(model_name, model_type, model_sql):
@@ -42,6 +43,7 @@ def generate_model(preql_path: Path, dialect: Dialects, config: DBTConfig):
     )
     exec.environment = enrich_environment(exec.environment)
     outputs = {}
+    output_data = {}
     with open(preql_path, "r") as f:
         script = f.read()
     _, statements = parse_text(script, exec.environment)
@@ -70,9 +72,14 @@ def generate_model(preql_path: Path, dialect: Dialects, config: DBTConfig):
             outputs[
                 query.output_to.address.location.split(".")[-1]
             ] = exec.generator.compile_statement(base)
+            output_data[
+                query.output_to.address.location.split(".")[-1]
+            ] = query.datasource
 
     for key, value in outputs.items():
-        output_path = config.root / config.model_path/ config.namespace/ f"{key}_gen_model.sql"
+        output_path = (
+            config.root / config.model_path / config.namespace / f"{key}_gen_model.sql"
+        )
         output_path.parent.mkdir(parents=True, exist_ok=True)
         with open(output_path, "w") as f:
             f.write(
@@ -82,3 +89,30 @@ def generate_model(preql_path: Path, dialect: Dialects, config: DBTConfig):
             # TODO: make configurable
             f.write("{{ config(materialized='table') }}\n")
             f.write(value)
+
+        config_path = config.root / config.model_path / config.namespace / f"schema.yml"
+        # set config file
+        with open(config_path, "r") as f:
+            loaded = safe_load(f.read())
+        loaded["version"] = 2
+        loaded["models"] = loaded.get("models", [])
+        ds = output_data[key]
+        columns = [
+            {
+                "name": c.alias,
+                "description": c.concept.metadata.description or 'No description provided',
+                "tests": ["unique"] if [c] == ds.grain.components else [],
+            }
+            for c in ds.columns
+        ]
+        nobject = {
+            "name": f"{key}_gen_model",
+            "description": "Automatically generated model from preql",
+            "columns": columns,
+        }
+        loaded["models"] = [
+            x for x in loaded["models"] if x["name"] != nobject["name"]
+        ]
+        loaded["models"].append(nobject)
+        with open(config_path, "w") as f:
+            f.write(dump(loaded))

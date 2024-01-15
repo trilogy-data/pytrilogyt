@@ -1,5 +1,5 @@
 *.pyc
 dbt.log
 .vscode
-jaffle_shop/
 .venv
+jaffle_shop/
