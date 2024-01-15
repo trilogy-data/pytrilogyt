@@ -12,6 +12,8 @@ from preqlt.enums import PreqltMetrics
 from preqlt.core import enrich_environment
 from preql.parser import parse_text
 from preql.core.processing.nodes import GroupNode
+from preqlt.dbt.config import DBTConfig
+
 
 def generate_model_text(model_name, model_type, model_sql):
     template = Template(
@@ -26,17 +28,15 @@ def generate_model_text(model_name, model_type, model_sql):
     )
 
 
-def generate_model(
-    root: Path, preql_path: Path, base_namespace: str, dialect: Dialects
-):
+def generate_model(preql_path: Path, dialect: Dialects, config: DBTConfig):
     logger.info(
-        f"Parsing file {preql_path} with dialect {dialect} and base namespace {base_namespace}"
+        f"Parsing file {preql_path} with dialect {dialect} and base namespace {config.namespace}"
     )
     exec = Executor(
         dialect=dialect,
         engine=dialect.default_engine(),
         environment=Environment(
-            working_path=preql_path.parent, namespace=base_namespace
+            working_path=preql_path.parent, namespace=config.namespace
         ),
         # hooks=[DebuggingHook()] if debug else [],
     )
@@ -45,7 +45,7 @@ def generate_model(
     with open(preql_path, "r") as f:
         script = f.read()
     _, statements = parse_text(script, exec.environment)
-    parsed = [z for z in statements  if isinstance(z, Persist)]
+    parsed = [z for z in statements if isinstance(z, Persist)]
     for x in parsed:
         x.select.selection.append(
             exec.environment.concepts[
@@ -72,7 +72,7 @@ def generate_model(
             ] = exec.generator.compile_statement(base)
 
     for key, value in outputs.items():
-        output_path = root / f"{key}_gen_model.sql"
+        output_path = config.root / config.model_path/ config.namespace/ f"{key}_gen_model.sql"
         output_path.parent.mkdir(parents=True, exist_ok=True)
         with open(output_path, "w") as f:
             f.write(

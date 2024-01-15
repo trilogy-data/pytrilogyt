@@ -15,6 +15,7 @@ from pathlib import Path as PathlibPath  # noqa
 from preql.hooks.query_debugger import DebuggingHook  # noqa
 from preqlt.dbt.generate_dbt import generate_model
 from preqlt.dbt.run_dbt import run_path
+from preqlt.dbt.config import DBTConfig
 
 def print_tabulate(q, tabulate):
     result = q.fetchall()
@@ -30,7 +31,8 @@ def print_tabulate(q, tabulate):
 def main(preql_path, dbt_path,  dialect: str, debug: bool):
     edialect = Dialects(dialect)
     inputp = PathlibPath(preql_path)
-    generate_model(inputp.parent, inputp, inputp.stem, edialect)
+    config = DBTConfig(root=PathlibPath(dbt_path), namespace=inputp.stem)
+    generate_model(inputp,dialect=edialect, config = config)
     run_path(dbt_path)
 
 if __name__ == "__main__":
