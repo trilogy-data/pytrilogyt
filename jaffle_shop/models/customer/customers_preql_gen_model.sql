@@ -3,12 +3,12 @@
 {{ config(materialized='table') }}
 
 WITH 
-exuberant as (
+quick as (
 SELECT
     current_datetime() as `_preqlt__created_at`
 
 ),
-level as (
+vivacious as (
 SELECT
     orders_orders_raw.`id` as `orders_id`,
     orders_orders_raw.`order_date` as `orders_date`,
@@ -17,7 +17,7 @@ SELECT
 FROM
     dbt-tutorial.jaffle_shop.orders as orders_orders_raw
 ),
-darter as (
+dove as (
 SELECT
     customer_customers_raw.`id` as `customer_id`,
     customer_customers_raw.`first_name` as `customer_first_name`,
@@ -25,60 +25,60 @@ SELECT
 FROM
     dbt-tutorial.jaffle_shop.customers as customer_customers_raw
 ),
-loon as (
+uneven as (
 SELECT
-    level.`orders_id` as `orders_id`,
-    darter.`customer_id` as `customer_id`,
-    level.`orders_date` as `orders_date`
+    vivacious.`orders_id` as `orders_id`,
+    dove.`customer_id` as `customer_id`,
+    vivacious.`orders_date` as `orders_date`
 FROM
-    darter as darter
+    dove as dove
 
-LEFT OUTER JOIN level on darter.`customer_id` = level.`customer_id`
+LEFT OUTER JOIN vivacious on dove.`customer_id` = vivacious.`customer_id`
 
 ),
-quick as (
+imported as (
 SELECT
-    count(loon.`orders_id`) as `customer_raw_number_of_orders`,
-    loon.`customer_id` as `customer_id`,
-    min(loon.`orders_date`) as `customer_first_order_date`,
-    max(loon.`orders_date`) as `customer_most_recent_order_date`
+    count(uneven.`orders_id`) as `customer_raw_number_of_orders`,
+    uneven.`customer_id` as `customer_id`,
+    min(uneven.`orders_date`) as `customer_first_order_date`,
+    max(uneven.`orders_date`) as `customer_most_recent_order_date`
 FROM
-    loon as loon
+    uneven as uneven
 GROUP BY 
-    loon.`customer_id`),
-nondescript as (
+    uneven.`customer_id`),
+turkey as (
 SELECT
-    coalesce(quick.`customer_raw_number_of_orders`,0) as `customer_number_of_orders`,
-    quick.`customer_id` as `customer_id`
+    coalesce(imported.`customer_raw_number_of_orders`,0) as `customer_number_of_orders`,
+    imported.`customer_id` as `customer_id`
 FROM
-    quick as quick
+    imported as imported
 ),
-mamba as (
+macho as (
 SELECT
-    quick.`customer_id` as `customer_id`,
-    darter.`customer_first_name` as `customer_first_name`,
-    darter.`customer_last_name` as `customer_last_name`,
-    quick.`customer_first_order_date` as `customer_first_order_date`,
-    quick.`customer_most_recent_order_date` as `customer_most_recent_order_date`,
-    nondescript.`customer_number_of_orders` as `customer_number_of_orders`,
-    exuberant.`_preqlt__created_at` as `_preqlt__created_at`
+    imported.`customer_id` as `customer_id`,
+    dove.`customer_first_name` as `customer_first_name`,
+    dove.`customer_last_name` as `customer_last_name`,
+    imported.`customer_first_order_date` as `customer_first_order_date`,
+    imported.`customer_most_recent_order_date` as `customer_most_recent_order_date`,
+    turkey.`customer_number_of_orders` as `customer_number_of_orders`,
+    quick.`_preqlt__created_at` as `_preqlt__created_at`
 FROM
-    quick as quick
+    imported as imported
 
-LEFT OUTER JOIN darter on quick.`customer_id` = darter.`customer_id`
+LEFT OUTER JOIN dove on imported.`customer_id` = dove.`customer_id`
 
-LEFT OUTER JOIN nondescript on quick.`customer_id` = nondescript.`customer_id`
+LEFT OUTER JOIN turkey on imported.`customer_id` = turkey.`customer_id`
 
-FULL JOIN exuberant on 1=1
+FULL JOIN quick on 1=1
 
 )
 SELECT
-    mamba.`customer_id`,
-    mamba.`customer_first_name`,
-    mamba.`customer_last_name`,
-    mamba.`customer_first_order_date`,
-    mamba.`customer_most_recent_order_date`,
-    mamba.`customer_number_of_orders`,
-    mamba.`_preqlt__created_at`
+    macho.`customer_id`,
+    macho.`customer_first_name`,
+    macho.`customer_last_name`,
+    macho.`customer_first_order_date`,
+    macho.`customer_most_recent_order_date`,
+    macho.`customer_number_of_orders`,
+    macho.`_preqlt__created_at`
 FROM
-    mamba
+    macho

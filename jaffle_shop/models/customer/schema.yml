@@ -2,7 +2,7 @@ models:
 - columns:
   - description: No description provided
     name: customer_id
-    tests: [``]
+    tests: []
   - description: No description provided
     name: customer_first_name
     tests: []
