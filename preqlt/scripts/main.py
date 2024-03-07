@@ -24,7 +24,7 @@ def print_tabulate(q, tabulate):
 
 
 @command("gen-dbt")
-@argument("preql_path", type=Path(exists=True))
+@argument("preql_file", type=Path(exists=True))
 @argument("dbt_path", type=Path(exists=True))
 # @argument("write_path", type=Path(exists=True))
 @argument("dialect", type=str)
