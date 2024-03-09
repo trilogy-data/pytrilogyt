@@ -14,6 +14,7 @@ from preql.parser import parse_text
 from preql.core.processing.nodes import GroupNode
 from preqlt.dbt.config import DBTConfig
 from yaml import safe_load, dump
+from click import File
 
 
 def generate_model_text(model_name, model_type, model_sql):
@@ -29,24 +30,26 @@ def generate_model_text(model_name, model_type, model_sql):
     )
 
 
-def generate_model(preql_path: Path, dialect: Dialects, config: DBTConfig):
+def generate_model(
+    preql_body: str,
+    preql_path: Path | None,
+    dialect: Dialects,
+    config: DBTConfig,
+    environment: Environment | None = None,
+):
     logger.info(
         f"Parsing file {preql_path} with dialect {dialect} and base namespace {config.namespace}"
     )
-    exec = Executor(
-        dialect=dialect,
-        engine=dialect.default_engine(),
-        environment=Environment(
-            working_path=preql_path.parent, namespace=config.namespace
-        ),
-        # hooks=[DebuggingHook()] if debug else [],
+
+    env = environment or Environment(
+        working_path=preql_path.parent if preql_path else None,
+        namespace=config.namespace,
     )
+    exec = Executor(dialect=dialect, engine=dialect.default_engine(), environment=env)
     exec.environment = enrich_environment(exec.environment)
     outputs = {}
     output_data = {}
-    with open(preql_path, "r") as f:
-        script = f.read()
-    _, statements = parse_text(script, exec.environment)
+    _, statements = parse_text(preql_body, exec.environment)
     parsed = [z for z in statements if isinstance(z, Persist)]
     for x in parsed:
         x.select.selection.append(
@@ -69,17 +72,15 @@ def generate_model(preql_path: Path, dialect: Dialects, config: DBTConfig):
                 where_clause=query.where_clause,
                 order_by=query.order_by,
             )
-            outputs[
-                query.output_to.address.location.split(".")[-1]
-            ] = exec.generator.compile_statement(base)
-            output_data[
-                query.output_to.address.location.split(".")[-1]
-            ] = query.datasource
+            outputs[query.output_to.address.location.split(".")[-1]] = (
+                exec.generator.compile_statement(base)
+            )
+            output_data[query.output_to.address.location.split(".")[-1]] = (
+                query.datasource
+            )
 
     for key, value in outputs.items():
-        output_path = (
-            config.root / config.model_path / config.namespace / f"{key}_gen_model.sql"
-        )
+        output_path = config.get_model_path(key)
         output_path.parent.mkdir(parents=True, exist_ok=True)
         with open(output_path, "w") as f:
             f.write(
@@ -90,17 +91,21 @@ def generate_model(preql_path: Path, dialect: Dialects, config: DBTConfig):
             f.write("{{ config(materialized='table') }}\n")
             f.write(value)
 
-        config_path = config.root / config.model_path / config.namespace / f"schema.yml"
         # set config file
-        with open(config_path, "r") as f:
-            loaded = safe_load(f.read())
+        config.config_path.parent.mkdir(parents=True, exist_ok=True)
+        if config.config_path.exists():
+            with open(config.config_path, "r") as f:
+                loaded = safe_load(f.read())
+        else:
+            loaded = {}
         loaded["version"] = 2
         loaded["models"] = loaded.get("models", [])
         ds = output_data[key]
         columns = [
             {
                 "name": c.alias,
-                "description": c.concept.metadata.description or 'No description provided',
+                "description": c.concept.metadata.description
+                or "No description provided",
                 "tests": ["unique"] if [c] == ds.grain.components else [],
             }
             for c in ds.columns
@@ -110,9 +115,7 @@ def generate_model(preql_path: Path, dialect: Dialects, config: DBTConfig):
             "description": "Automatically generated model from preql",
             "columns": columns,
         }
-        loaded["models"] = [
-            x for x in loaded["models"] if x["name"] != nobject["name"]
-        ]
+        loaded["models"] = [x for x in loaded["models"] if x["name"] != nobject["name"]]
         loaded["models"].append(nobject)
-        with open(config_path, "w") as f:
+        with open(config.config_path, "w") as f:
             f.write(dump(loaded))

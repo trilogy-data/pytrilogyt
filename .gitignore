@@ -2,3 +2,6 @@
 dbt.log
 .vscode
 .venv
+*.egg-info
+build/
+__pycache__/

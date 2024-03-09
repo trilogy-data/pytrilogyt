@@ -5,7 +5,7 @@ import re
 import setuptools
 
 _version_re = re.compile(r"__version__\s+=\s+(.*)")
-with open("preql/__init__.py", "rb") as f:
+with open("preqlt/__init__.py", "rb") as f:
     _match = _version_re.search(f.read().decode("utf-8"))
     if _match is None:
         print("No version found")
@@ -17,7 +17,7 @@ with open("requirements.txt", "r") as f:
     install_requires = [line.strip().replace("==", ">=") for line in f.readlines()]
 
 setuptools.setup(
-    name="pypreql",
+    name="pypreqlt",
     version=version,
     url="",
     author="",
@@ -44,9 +44,8 @@ setuptools.setup(
     },
     install_requires=install_requires,
     extras_require={
-        "postgres": ["psycopg2-binary"],
-        "bigquery": ["sqlalchemy-bigquery"],
-        "duckdb": ["duckdb-engine"],
+        "bigquery": ["dbt-bigquery"],
+        "duckdb": ["dbt-duckdb"],
     },
     entry_points={
         "console_scripts": ["preqlt=preqlt.scripts.main:main"],

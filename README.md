@@ -38,3 +38,10 @@ my_first_dbt_model: success
 customers_preql_preqlt_gen_model: success
 my_second_dbt_model: success
 ```
+
+
+### From IO
+
+```console
+Write-Output """constant x <-5; persist into static as static select x;""" | python preqlt/scripts/main.py C:\Users\ethan\coding_projects\pypreql-etl\jaffle_shop bigquery
+```
