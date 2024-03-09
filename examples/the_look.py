@@ -4,7 +4,7 @@ import trilogy_public_models.bigquery.thelook_ecommerce as model
 from sys import path
 from os.path import dirname
 path.append(dirname(dirname(__file__)))
-from preqlt.graph import process
+from preqlt.graph import process, process_raw
 from preql import parse
 
 QUERIES = ["""
@@ -20,7 +20,7 @@ order by orders.id.count desc
 limit 100;
            
 
-auto san_fran_order<- filter orders.id where order.city = 'San Francisco';
+auto san_fran_order<- filter orders.id where users.city = 'San Francisco';
            
 select users.name, san_fran_order.count
 limit 100;
@@ -34,8 +34,9 @@ if __name__ == "__main__":
         _, new_queries = parse(q, environment=model)
         queries += new_queries
 
-
-    kv = process(queries)
+    for q in queries:
+        print(type(q))
+    kv = process_raw(queries, model)
     for k,v in kv.items():
         print(k)
         print(v)
