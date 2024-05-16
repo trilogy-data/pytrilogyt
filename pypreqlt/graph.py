@@ -14,6 +14,21 @@ from typing import List
 from collections import defaultdict
 from preql import Executor, Environment
 from preql.dialect.bigquery import BigqueryDialect
+from preql.core.ergonomics import CTE_NAMES
+from random import choice
+
+
+def remap_dictionary(d: dict, remap: list[str]) -> tuple[dict, dict]:
+    new = {}
+    mapping = {}
+    for k, v in d.items():
+        alias = None
+        while alias is None or alias in new:
+            alias = choice(remap)
+        new[alias] = v
+        mapping[k] = alias
+    return new, mapping
+
 
 def fingerprint_concept(concept: Concept) -> str:
     return concept.address
@@ -39,20 +54,27 @@ def fingerprint_cte(cte: CTE) -> str:
     )
 
 
-def process_raw(inputs: List[Select | Persist], env:Environment):
+def process_raw(inputs: List[Select | Persist], env: Environment):
     parsed = BigqueryDialect().generate_queries(env, inputs)
     return process(parsed, env)
 
-def process(inputs: List[ProcessedQuery | ProcessedQueryPersist], env:Environment):
+
+def process(inputs: List[ProcessedQuery | ProcessedQueryPersist], env: Environment):
     counts = {}
-    valid = [c for c in inputs if isinstance(c, (ProcessedQuery, ProcessedQueryPersist))]
+    lookup = {}
+    valid = [
+        c for c in inputs if isinstance(c, (ProcessedQuery, ProcessedQueryPersist))
+    ]
     if not valid:
         raise ValueError("No valid queries found")
     for x in valid:
         for cte in x.ctes:
             fingerprint = fingerprint_cte(cte)
             counts[fingerprint] = counts.get(fingerprint, 0) + 1
+            lookup[fingerprint] = lookup.get(fingerprint, cte) + cte
     for k, v in counts.items():
-        if v > 1:
-            print(f"Warning: CTE {k} is used {v} times")
+        print(f"CTE {k} is used {v} times")
+    counts, mapping = remap_dictionary(counts, CTE_NAMES)
+    for k, v in counts.items():
+        print(f"CTE {k} is used {v} times")
     return counts

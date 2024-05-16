@@ -3,21 +3,12 @@
 {{ config(materialized='table') }}
 
 WITH 
-quick as (
+toucan as (
 SELECT
     current_datetime() as `_preqlt__created_at`
 
 ),
-vivacious as (
-SELECT
-    orders_orders_raw.`id` as `orders_id`,
-    orders_orders_raw.`order_date` as `orders_date`,
-    orders_orders_raw.`user_id` as `customer_id`,
-    orders_orders_raw.`status` as `orders_status`
-FROM
-    dbt-tutorial.jaffle_shop.orders as orders_orders_raw
-),
-dove as (
+dingo as (
 SELECT
     customer_customers_raw.`id` as `customer_id`,
     customer_customers_raw.`first_name` as `customer_first_name`,
@@ -25,60 +16,96 @@ SELECT
 FROM
     dbt-tutorial.jaffle_shop.customers as customer_customers_raw
 ),
-uneven as (
+abundant as (
 SELECT
-    vivacious.`orders_id` as `orders_id`,
-    dove.`customer_id` as `customer_id`,
-    vivacious.`orders_date` as `orders_date`
+    orders_orders_raw.`id` as `orders_id`,
+    orders_orders_raw.`user_id` as `customer_id`,
+    orders_orders_raw.`order_date` as `orders_date`
 FROM
-    dove as dove
+    dbt-tutorial.jaffle_shop.orders as orders_orders_raw
+),
+pelican as (
+SELECT
+    abundant.`orders_id` as `orders_id`,
+    dingo.`customer_id` as `customer_id`
+FROM
+    abundant as abundant
 
-LEFT OUTER JOIN vivacious on dove.`customer_id` = vivacious.`customer_id`
+FULL JOIN dingo on abundant.`customer_id` = dingo.`customer_id`
 
 ),
-imported as (
+viper as (
 SELECT
-    count(uneven.`orders_id`) as `customer_raw_number_of_orders`,
-    uneven.`customer_id` as `customer_id`,
-    min(uneven.`orders_date`) as `customer_first_order_date`,
-    max(uneven.`orders_date`) as `customer_most_recent_order_date`
+    count(pelican.`orders_id`) as `customer_raw_number_of_orders`,
+    pelican.`customer_id` as `customer_id`
 FROM
-    uneven as uneven
+    pelican as pelican
 GROUP BY 
-    uneven.`customer_id`),
-turkey as (
+    pelican.`customer_id`),
+ceaseless as (
 SELECT
-    coalesce(imported.`customer_raw_number_of_orders`,0) as `customer_number_of_orders`,
-    imported.`customer_id` as `customer_id`
+    coalesce(viper.`customer_raw_number_of_orders`,0) as `customer_number_of_orders`,
+    viper.`customer_id` as `customer_id`
 FROM
-    imported as imported
+    viper as viper
 ),
-macho as (
+brave as (
 SELECT
-    imported.`customer_id` as `customer_id`,
-    dove.`customer_first_name` as `customer_first_name`,
-    dove.`customer_last_name` as `customer_last_name`,
-    imported.`customer_first_order_date` as `customer_first_order_date`,
-    imported.`customer_most_recent_order_date` as `customer_most_recent_order_date`,
-    turkey.`customer_number_of_orders` as `customer_number_of_orders`,
-    quick.`_preqlt__created_at` as `_preqlt__created_at`
+    abundant.`orders_date` as `orders_date`,
+    dingo.`customer_id` as `customer_id`
 FROM
-    imported as imported
+    abundant as abundant
 
-LEFT OUTER JOIN dove on imported.`customer_id` = dove.`customer_id`
+FULL JOIN dingo on abundant.`customer_id` = dingo.`customer_id`
 
-LEFT OUTER JOIN turkey on imported.`customer_id` = turkey.`customer_id`
+),
+jay as (
+SELECT
+    min(brave.`orders_date`) as `customer_first_order_date`,
+    brave.`customer_id` as `customer_id`,
+    max(brave.`orders_date`) as `customer_most_recent_order_date`
+FROM
+    brave as brave
+GROUP BY 
+    brave.`customer_id`),
+pintail as (
+SELECT
+    jay.`customer_first_order_date` as `customer_first_order_date`,
+    ceaseless.`customer_id` as `customer_id`,
+    ceaseless.`customer_number_of_orders` as `customer_number_of_orders`,
+    jay.`customer_most_recent_order_date` as `customer_most_recent_order_date`
+FROM
+    ceaseless as ceaseless
 
-FULL JOIN quick on 1=1
+LEFT OUTER JOIN jay on ceaseless.`customer_id` = jay.`customer_id`
+
+),
+courageous as (
+SELECT
+    pintail.`customer_id` as `customer_id`,
+    dingo.`customer_first_name` as `customer_first_name`,
+    dingo.`customer_last_name` as `customer_last_name`,
+    pintail.`customer_first_order_date` as `customer_first_order_date`,
+    pintail.`customer_most_recent_order_date` as `customer_most_recent_order_date`,
+    pintail.`customer_number_of_orders` as `customer_number_of_orders`,
+    toucan.`_preqlt__created_at` as `_preqlt__created_at`
+FROM
+    ceaseless as ceaseless
+
+LEFT OUTER JOIN pintail on ceaseless.`customer_number_of_orders` = pintail.`customer_number_of_orders` AND ceaseless.`customer_id` = pintail.`customer_id`
+
+LEFT OUTER JOIN dingo on ceaseless.`customer_id` = dingo.`customer_id`
+
+FULL JOIN toucan on 1=1
 
 )
 SELECT
-    macho.`customer_id`,
-    macho.`customer_first_name`,
-    macho.`customer_last_name`,
-    macho.`customer_first_order_date`,
-    macho.`customer_most_recent_order_date`,
-    macho.`customer_number_of_orders`,
-    macho.`_preqlt__created_at`
+    courageous.`customer_id`,
+    courageous.`customer_first_name`,
+    courageous.`customer_last_name`,
+    courageous.`customer_first_order_date`,
+    courageous.`customer_most_recent_order_date`,
+    courageous.`customer_number_of_orders`,
+    courageous.`_preqlt__created_at`
 FROM
-    macho
+    courageous

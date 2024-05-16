@@ -1,4 +1,4 @@
-from preqlt.graph import fingerprint_cte
+from pypreqlt.graph import fingerprint_cte
 from preql.core.models import CompiledCTE, ProcessedQuery, CTE
 
 

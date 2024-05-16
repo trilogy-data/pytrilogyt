@@ -4,10 +4,18 @@ from preql.dialect.enums import Dialects  # noqa
 from datetime import datetime  # noqa
 from pathlib import Path as PathlibPath  # noqa
 from preql.hooks.query_debugger import DebuggingHook  # noqa
-from preqlt.dbt.generate_dbt import generate_model  # noqa
-from preqlt.dbt.run_dbt import run_path  # noqa
-from preqlt.dbt.config import DBTConfig  # noqa
-from os import path
+import os
+from sys import path as sys_path
+
+# handles development cases
+nb_path = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+print(nb_path)
+sys_path.insert(0, nb_path)
+
+from pypreqlt.dbt.generate_dbt import generate_model  # noqa
+from pypreqlt.dbt.run_dbt import run_path  # noqa
+from pypreqlt.dbt.config import DBTConfig  # noqa
+
 
 
 def print_tabulate(q, tabulate):
@@ -25,7 +33,7 @@ def print_tabulate(q, tabulate):
 def main(preql: File, dbt_path, dialect: str, debug: bool, run: bool):
 
     edialect = Dialects(dialect)
-    if path.exists(preql.name):
+    if os.path.exists(preql.name):
         inputp = PathlibPath(preql.name)
     else:
         inputp = None

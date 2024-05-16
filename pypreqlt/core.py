@@ -1,8 +1,8 @@
-from preql.core.models import Environment, Concept, Function
-from preql.core.enums import Purpose, DataType, FunctionType
-from preqlt.enums import PreqltMetrics
+from preql.core.models import Environment, Concept, Function, DataType
+from preql.core.enums import Purpose, FunctionType
+from pypreqlt.enums import PreqltMetrics
 from preql.core.functions import CurrentDatetime
-from preqlt.constants import PREQLT_NAMESPACE
+from pypreqlt.constants import PREQLT_NAMESPACE
 
 ENVIRONMENT_CONCEPTS = [
     Concept(
