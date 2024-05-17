@@ -36,7 +36,6 @@ def main(preql: File, dbt_path, dialect: str, debug: bool, run: bool):
         namespace = None
     config = DBTConfig(root=PathlibPath(dbt_path), namespace=namespace)
 
-    #
     generate_model(
         preql.read(), inputp, dialect=edialect, config=config  # type: ignore
     )
