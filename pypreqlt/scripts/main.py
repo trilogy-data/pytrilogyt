@@ -17,6 +17,7 @@ from pypreqlt.dbt.run_dbt import run_path  # noqa
 from pypreqlt.dbt.config import DBTConfig  # noqa
 
 
+
 def print_tabulate(q, tabulate):
     result = q.fetchall()
     print(tabulate(result, headers=q.keys(), tablefmt="psql"))
@@ -27,7 +28,7 @@ def print_tabulate(q, tabulate):
 @argument("dbt_path", type=Path(exists=True))
 # @argument("write_path", type=Path(exists=True))
 @argument("dialect", type=str)
-@option("--run", type=bool, default=False)
+@option("--run", is_flag=True, type=bool, default=False)
 @option("--debug", type=bool, default=False)
 def main(preql: File, dbt_path, dialect: str, debug: bool, run: bool):
 
