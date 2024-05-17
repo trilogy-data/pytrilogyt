@@ -17,7 +17,6 @@ from pypreqlt.dbt.run_dbt import run_path  # noqa
 from pypreqlt.dbt.config import DBTConfig  # noqa
 
 
-
 def print_tabulate(q, tabulate):
     result = q.fetchall()
     print(tabulate(result, headers=q.keys(), tablefmt="psql"))

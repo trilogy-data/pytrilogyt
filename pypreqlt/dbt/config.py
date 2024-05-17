@@ -13,7 +13,10 @@ class DBTConfig(BaseModel):
     def get_model_path(self, key: str) -> Path:
         if self.namespace:
             output_path = (
-                self.root / self.dbt_model_path / self.namespace / f"{key}_gen_model.sql"
+                self.root
+                / self.dbt_model_path
+                / self.namespace
+                / f"{key}_gen_model.sql"
             )
         else:
             output_path = self.root / self.dbt_model_path / f"{key}_gen_model.sql"
@@ -22,5 +25,5 @@ class DBTConfig(BaseModel):
     @property
     def config_path(self) -> Path:
         if self.namespace:
-            return self.root / self.dbt_model_path / self.namespace / f"schema.yml"
-        return self.root / self.dbt_model_path / f"schema.yml"
+            return self.root / self.dbt_model_path / self.namespace / "schema.yml"
+        return self.root / self.dbt_model_path / "schema.yml"

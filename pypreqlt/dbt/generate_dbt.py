@@ -11,10 +11,8 @@ from preql.core.models import ProcessedQueryPersist, ProcessedQuery, Persist
 from pypreqlt.enums import PreqltMetrics
 from pypreqlt.core import enrich_environment
 from preql.parser import parse_text
-from preql.core.processing.nodes import GroupNode
 from pypreqlt.dbt.config import DBTConfig
 from yaml import safe_load, dump
-from click import File
 
 
 def generate_model_text(model_name, model_type, model_sql):
@@ -58,9 +56,7 @@ def generate_model(
             ]
         )
     queries = exec.generator.generate_queries(exec.environment, parsed)
-    start = datetime.now()
-    for idx, query in enumerate(queries):
-        lstart = datetime.now()
+    for _, query in enumerate(queries):
         if isinstance(query, ProcessedQueryPersist):
             base = ProcessedQuery(
                 output_columns=query.output_columns,

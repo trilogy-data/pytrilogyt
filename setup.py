@@ -48,7 +48,7 @@ setuptools.setup(
         "duckdb": ["dbt-duckdb"],
     },
     entry_points={
-        "console_scripts": ["preqlt=preqlt.scripts.main:main"],
+        "console_scripts": ["preqlt=pypreqlt.scripts.main:main"],
     },
     classifiers=[
         "Programming Language :: Python",

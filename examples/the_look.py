@@ -3,11 +3,13 @@ import trilogy_public_models.bigquery.thelook_ecommerce as model
 # from trilogy_public_models import models
 from sys import path
 from os.path import dirname
+
 path.append(dirname(dirname(__file__)))
-from pypreqlt.graph import process, process_raw
+from pypreqlt.graph import process_raw
 from preql import parse
 
-QUERIES = ["""
+QUERIES = [
+    """
            
 auto users.name <- concat(users.first_name,' ',users.last_name);
 
@@ -29,7 +31,8 @@ limit 100;
 select users.last_name, orders.id.count, users.state
 order by orders.id.count desc;
 
-           """]
+           """
+]
 
 queries = []
 
@@ -41,6 +44,6 @@ if __name__ == "__main__":
     for q in queries:
         print(type(q))
     kv = process_raw(queries, model)
-    for k,v in kv.items():
+    for k, v in kv.items():
         print(k)
         print(v)

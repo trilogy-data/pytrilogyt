@@ -1,6 +1,10 @@
-## POC of DBT integration
+## Simple Data Pipelines
 
-Compiles provided preql script to one dbt model per persist statement.
+Combine the simplicity and guarantees of preql with the power of DBT. 
+
+Compile your models to ETL scripts to run on demand through the rich DBT ecosystem.
+
+Rebuild your graph with a single command.
 
 Executes via DBT CLI.
 

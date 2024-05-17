@@ -6,13 +6,11 @@ from preql.core.models import (
     ProcessedQuery,
     Grain,
     ProcessedQueryPersist,
-    CompiledCTE,
     CTE,
     Concept,
 )
 from typing import List
-from collections import defaultdict
-from preql import Executor, Environment
+from preql import Environment
 from preql.dialect.bigquery import BigqueryDialect
 from preql.core.ergonomics import CTE_NAMES
 from random import choice
