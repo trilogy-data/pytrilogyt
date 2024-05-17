@@ -3,3 +3,4 @@ ruff
 pytest
 pytest-cov
 mypy
+types-PyYAML

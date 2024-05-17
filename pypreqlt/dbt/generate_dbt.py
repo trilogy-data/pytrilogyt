@@ -13,6 +13,9 @@ from pypreqlt.core import enrich_environment
 from preql.parser import parse_text
 from pypreqlt.dbt.config import DBTConfig
 from yaml import safe_load, dump
+import os
+
+DEFAULT_DESCRIPTION: str = "No description provided"
 
 
 def generate_model_text(model_name, model_type, model_sql):
@@ -40,7 +43,7 @@ def generate_model(
     )
 
     env = environment or Environment(
-        working_path=preql_path.parent if preql_path else None,
+        working_path=preql_path.parent if preql_path else os.getcwd(),
         namespace=config.namespace,
     )
     exec = Executor(dialect=dialect, engine=dialect.default_engine(), environment=env)
@@ -49,8 +52,8 @@ def generate_model(
     output_data = {}
     _, statements = parse_text(preql_body, exec.environment)
     parsed = [z for z in statements if isinstance(z, Persist)]
-    for x in parsed:
-        x.select.selection.append(
+    for persist in parsed:
+        persist.select.selection.append(  # type: ignore
             exec.environment.concepts[
                 f"{PREQLT_NAMESPACE}.{PreqltMetrics.CREATED_AT.value}"
             ]
@@ -100,8 +103,11 @@ def generate_model(
         columns = [
             {
                 "name": c.alias,
-                "description": c.concept.metadata.description
-                or "No description provided",
+                "description": (
+                    c.concept.metadata.description or DEFAULT_DESCRIPTION
+                    if c.concept.metadata
+                    else DEFAULT_DESCRIPTION
+                ),
                 "tests": ["unique"] if [c] == ds.grain.components else [],
             }
             for c in ds.columns

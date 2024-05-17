@@ -6,6 +6,7 @@ from preql.core.models import (
     ProcessedQuery,
     Grain,
     ProcessedQueryPersist,
+    ProcessedShowStatement,
     CTE,
     Concept,
 )
@@ -17,8 +18,8 @@ from random import choice
 
 
 def remap_dictionary(d: dict, remap: list[str]) -> tuple[dict, dict]:
-    new = {}
-    mapping = {}
+    new: dict[str, str] = {}
+    mapping: dict[str, str] = {}
     for k, v in d.items():
         alias = None
         while alias is None or alias in new:
@@ -57,9 +58,12 @@ def process_raw(inputs: List[Select | Persist], env: Environment):
     return process(parsed, env)
 
 
-def process(inputs: List[ProcessedQuery | ProcessedQueryPersist], env: Environment):
-    counts = {}
-    lookup = {}
+def process(
+    inputs: List[ProcessedQuery | ProcessedQueryPersist | ProcessedShowStatement],
+    env: Environment,
+):
+    counts: dict[str, int] = {}
+    lookup: dict[str, CTE] = {}
     valid = [
         c for c in inputs if isinstance(c, (ProcessedQuery, ProcessedQueryPersist))
     ]
