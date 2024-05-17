@@ -17,7 +17,7 @@ with open("requirements.txt", "r") as f:
     install_requires = [line.strip().replace("==", ">=") for line in f.readlines()]
 
 setuptools.setup(
-    name="pypreqlt",
+    name="preqlt",
     version=version,
     url="",
     author="",
@@ -48,7 +48,7 @@ setuptools.setup(
         "duckdb": ["dbt-duckdb"],
     },
     entry_points={
-        "console_scripts": ["preqlt=pypreqlt.scripts.main:main"],
+        "console_scripts": ["preqlt=preqlt.scripts.main:main"],
     },
     classifiers=[
         "Programming Language :: Python",

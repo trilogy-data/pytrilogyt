@@ -6,12 +6,12 @@ from datetime import datetime  # noqa
 from pathlib import Path as PathlibPath  # noqa
 from preql.hooks.query_debugger import DebuggingHook  # noqa
 from preql.dialect.enums import Dialects  # noqa
-from pypreqlt.constants import logger, PREQLT_NAMESPACE
+from preqlt.constants import logger, PREQLT_NAMESPACE
 from preql.core.models import ProcessedQueryPersist, ProcessedQuery, Persist
-from pypreqlt.enums import PreqltMetrics
-from pypreqlt.core import enrich_environment
+from preqlt.enums import PreqltMetrics
+from preqlt.core import enrich_environment
 from preql.parser import parse_text
-from pypreqlt.dbt.config import DBTConfig
+from preqlt.dbt.config import DBTConfig
 from yaml import safe_load, dump
 import os
 

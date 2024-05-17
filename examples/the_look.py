@@ -5,7 +5,7 @@ from sys import path
 from os.path import dirname
 
 path.append(dirname(dirname(__file__)))
-from pypreqlt.graph import process_raw
+from preqlt.graph import process_raw
 from preql import parse
 
 QUERIES = [

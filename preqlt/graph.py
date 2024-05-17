@@ -1,4 +1,5 @@
 from preql.core.models import (
+    Address,
     Select,
     Persist,
     QueryDatasource,
@@ -9,17 +10,41 @@ from preql.core.models import (
     ProcessedShowStatement,
     CTE,
     Concept,
+    WhereClause
 )
 from typing import List
 from preql import Environment
-from preql.dialect.bigquery import BigqueryDialect
 from preql.core.ergonomics import CTE_NAMES
 from random import choice
+from dataclasses import dataclass
+from preql.dialect.base import BaseDialect
 
+@dataclass
+class AnalyzeResult:
+    counts:dict[str,str]
+    mapping:dict[str, CTE]
+
+@dataclass
+class ProcessLoopResult:
+    new: List[ProcessedQueryPersist]
+
+def cte_to_persist(input:CTE, name:str, dialect:BaseDialect)->Persist:
+    select=Select(
+            selection = input.output_columns,
+            where_clause = WhereClause(condition = input.condition) if input.condition else None,
+        )
+    datasource = select.to_datasource(namespace = 'default',
+                                      identifier=name, address= Address(location=name),
+                                    )
+    persist = Persist(
+        datasource=datasource,
+        select=select
+    )
+    return persist
 
 def remap_dictionary(d: dict, remap: list[str]) -> tuple[dict, dict]:
     new: dict[str, str] = {}
-    mapping: dict[str, str] = {}
+    mapping: dict[str, CTE] = {}
     for k, v in d.items():
         alias = None
         while alias is None or alias in new:
@@ -53,12 +78,20 @@ def fingerprint_cte(cte: CTE) -> str:
     )
 
 
-def process_raw(inputs: List[Select | Persist], env: Environment):
-    parsed = BigqueryDialect().generate_queries(env, inputs)
-    return process(parsed, env)
+def process_raw(inputs: List[Select | Persist], env: Environment, dialect:BaseDialect,
+                threshold:int=2):
+    complete = False
+    while not complete:
+        parsed = dialect.generate_queries(env, inputs)
+        new = process_loop(parsed, env, dialect, threshold)
+        if new.new:
+            inputs = new.new + parsed
+        else:
+            complete = True
+    return inputs
 
 
-def process(
+def analyze(
     inputs: List[ProcessedQuery | ProcessedQueryPersist | ProcessedShowStatement],
     env: Environment,
 ):
@@ -79,4 +112,19 @@ def process(
     counts, mapping = remap_dictionary(counts, CTE_NAMES)
     for k, v in counts.items():
         print(f"CTE {k} is used {v} times")
-    return counts
+    return AnalyzeResult(counts, mapping)
+
+def process_loop(    inputs: List[ProcessedQuery | ProcessedQueryPersist | ProcessedShowStatement],
+    env: Environment,
+    dialect:BaseDialect,
+    threshold:int =2)->ProcessLoopResult:
+    analysis = analyze( inputs, env)
+    new_persist = []
+    for k, v in analysis.counts.items():
+        if v>threshold:
+            new_persist.append(cte_to_persist(analysis.mapping[k]))
+
+
+    return ProcessLoopResult(
+        new=new_persist
+    )

@@ -8,9 +8,9 @@ from sys import path as sys_path
 nb_path = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
 sys_path.insert(0, nb_path)
 
-from pypreqlt.dbt.generate_dbt import generate_model  # noqa
-from pypreqlt.dbt.run_dbt import run_path  # noqa
-from pypreqlt.dbt.config import DBTConfig  # noqa
+from preqlt.dbt.generate_dbt import generate_model  # noqa
+from preqlt.dbt.run_dbt import run_path  # noqa
+from preqlt.dbt.config import DBTConfig  # noqa
 
 
 def print_tabulate(q, tabulate):
