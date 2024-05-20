@@ -10,7 +10,8 @@ from preql.core.models import (
     ProcessedShowStatement,
     CTE,
     Concept,
-    WhereClause
+    Conditional,
+    WhereClause,
 )
 from typing import List
 from preql import Environment
@@ -19,28 +20,39 @@ from random import choice
 from dataclasses import dataclass
 from preql.dialect.base import BaseDialect
 
+
 @dataclass
 class AnalyzeResult:
-    counts:dict[str,str]
-    mapping:dict[str, CTE]
+    counts: dict[str, str]
+    mapping: dict[str, CTE]
+
 
 @dataclass
 class ProcessLoopResult:
     new: List[ProcessedQueryPersist]
 
-def cte_to_persist(input:CTE, name:str, dialect:BaseDialect)->Persist:
-    select=Select(
-            selection = input.output_columns,
-            where_clause = WhereClause(condition = input.condition) if input.condition else None,
-        )
-    datasource = select.to_datasource(namespace = 'default',
-                                      identifier=name, address= Address(location=name),
-                                    )
-    persist = Persist(
-        datasource=datasource,
-        select=select
+def generate_datasource_name(select:Select, cte_name:str)->str:
+    """Generate a reasonable table name"""
+    base = '_'.join([x.name for x in select.grain.components])
+    if select.where_clause:
+        base = base + "_filtered_on_" + '_'.join([x.name for x in select.where_clause.conditional.concept_arguments])
+    return cte_name +'_'+base
+
+def cte_to_persist(input: CTE, name: str, dialect: BaseDialect) -> Persist:
+    select = Select(
+        selection=input.output_columns,
+        where_clause=(
+            WhereClause(condition=input.condition) if input.condition else None
+        ),
     )
+    datasource = select.to_datasource(
+        namespace="default",
+        identifier=generate_datasource_name(select, name),
+        address=Address(location=name),
+    )
+    persist = Persist(datasource=datasource, select=select)
     return persist
+
 
 def remap_dictionary(d: dict, remap: list[str]) -> tuple[dict, dict]:
     new: dict[str, str] = {}
@@ -69,8 +81,15 @@ def fingerprint_source(source: QueryDatasource | Datasource) -> str:
         source.limit
     )
 
+def fingerprint_filter(filter: Conditional) -> str:
+    return str(filter)
 
 def fingerprint_cte(cte: CTE) -> str:
+    if cte.condition:
+        return (fingerprint_source(cte.source) 
+        + "-".join([fingerprint_cte(x) for x in cte.parent_ctes])
+        + fingerprint_grain(cte.grain)
+        + fingerprint_filter(cte.condition))
     return (
         fingerprint_source(cte.source)
         + "-".join([fingerprint_cte(x) for x in cte.parent_ctes])
@@ -78,14 +97,22 @@ def fingerprint_cte(cte: CTE) -> str:
     )
 
 
-def process_raw(inputs: List[Select | Persist], env: Environment, dialect:BaseDialect,
-                threshold:int=2):
+def process_raw(
+    inputs: List[Select | Persist],
+    env: Environment,
+    dialect: BaseDialect,
+    threshold: int = 2,
+):
     complete = False
     while not complete:
         parsed = dialect.generate_queries(env, inputs)
-        new = process_loop(parsed, env, dialect, threshold)
+        new = process_loop(parsed, env, dialect=dialect,threshold=threshold)
         if new.new:
-            inputs = new.new + parsed
+            insert_index = min([inputs.index(x) for x in inputs if isinstance(x, Select)])
+            # insert the new values before this statement
+            inputs = inputs[:insert_index] + new.new + inputs[insert_index:]
+            # hardcoded until we find out the exit criteria for multipass
+            complete = True
         else:
             complete = True
     return inputs
@@ -112,19 +139,31 @@ def analyze(
     counts, mapping = remap_dictionary(counts, CTE_NAMES)
     for k, v in counts.items():
         print(f"CTE {k} is used {v} times")
-    return AnalyzeResult(counts, mapping)
+    final_map: dict[str, CTE] = {}
+    for fingerprint, cte in lookup.items():
+        final_map[mapping[fingerprint]] = cte
+    return AnalyzeResult(counts, final_map)
 
-def process_loop(    inputs: List[ProcessedQuery | ProcessedQueryPersist | ProcessedShowStatement],
+def is_raw_source_cte(cte:CTE)->bool:
+    if not len(cte.source.datasources) == 1:
+        return False
+    if isinstance(cte.source.datasources[0], Datasource):
+        return True
+
+def process_loop(
+    inputs: List[ProcessedQuery | ProcessedQueryPersist | ProcessedShowStatement],
     env: Environment,
     dialect:BaseDialect,
-    threshold:int =2)->ProcessLoopResult:
-    analysis = analyze( inputs, env)
+    threshold: int = 2,
+) -> ProcessLoopResult:
+    analysis = analyze(inputs, env)
     new_persist = []
     for k, v in analysis.counts.items():
-        if v>threshold:
-            new_persist.append(cte_to_persist(analysis.mapping[k]))
+        if v > threshold:
+            cte = analysis.mapping[k]
+            # skip materializing materialized things
+            if is_raw_source_cte(cte):
+                continue
+            new_persist.append(cte_to_persist(cte, k, dialect=dialect))
 
-
-    return ProcessLoopResult(
-        new=new_persist
-    )
+    return ProcessLoopResult(new=new_persist)
