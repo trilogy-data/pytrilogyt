@@ -60,7 +60,7 @@ def optimize_multiple(base: PathlibPath, paths: list[PathlibPath], dialect: Dial
     # determine the new persists we need to create
     _, new_persists = process_raw(
         inject=False,
-        inputs=[x for x in all_statements if isinstance(x, (Persist,Select))],
+        inputs=[x for x in all_statements if isinstance(x, (Persist, Select))],
         env=env,
         generator=exec.generator,
         threshold=2,

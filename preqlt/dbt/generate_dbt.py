@@ -38,8 +38,8 @@ def generate_model_text(model_name: str, model_type: str, model_sql: str) -> str
 def add_dependencies(value: str, possible_dependencies: dict[str, Datasource]) -> str:
     for key, datasource in possible_dependencies.items():
         datasource_name = datasource.name
-        if not isinstance(datasource.address, Address):
-            continue
+        # if not isinstance(datasource.address, Address):
+        #     continue
         value = value.replace(
             f"{datasource.address.location} as {datasource.address.location}",
             f"{{{{ ref('{datasource_name}') }}}} as {datasource.address.location}",
@@ -103,7 +103,7 @@ def generate_model(
                     if not isinstance(source, Datasource):
                         continue
                     if source.identifier in possible_dependencies:
-                        if isinstance(source.identifier, Address):
+                        if isinstance(source.address, Address):
                             source.address.location = (
                                 f"{{{{ ref('{source.identifier}_gen_model') }}}}"
                             )
@@ -135,8 +135,7 @@ def generate_model(
             # set materialization here
             # TODO: make configurable
             f.write("{{ config(materialized='table') }}\n")
-            rewritten = add_dependencies(value, possible_dependencies)
-            f.write(rewritten)
+            f.write(value)
 
         # set config file
         config.config_path.parent.mkdir(parents=True, exist_ok=True)

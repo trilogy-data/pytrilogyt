@@ -3,27 +3,27 @@
 {{ config(materialized='table') }}
 
 WITH 
-thrush as (
+fabulous as (
 SELECT
     local_split."generic_split" as "generic_split"
 FROM
     {{ ref('split_gen_model') }} as local_split
 ),
-goose as (
+kestrel as (
 SELECT
     cast(get_current_timestamp() as datetime) as "_preqlt__created_at"
 
 ),
-imported as (
+barracuda as (
 SELECT
-    thrush."generic_split" as "generic_split",
-    goose."_preqlt__created_at" as "_preqlt__created_at"
+    fabulous."generic_split" as "generic_split",
+    kestrel."_preqlt__created_at" as "_preqlt__created_at"
 FROM
-    thrush as thrush
-    FULL JOIN goose on 1=1
+    fabulous as fabulous
+    FULL JOIN kestrel on 1=1
 )
 SELECT
-    imported."generic_split",
-    imported."_preqlt__created_at"
+    barracuda."generic_split",
+    barracuda."_preqlt__created_at"
 FROM
-    imported
+    barracuda

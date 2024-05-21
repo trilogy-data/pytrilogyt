@@ -3,28 +3,28 @@
 {{ config(materialized='table') }}
 
 WITH 
-penguin as (
+puffin as (
 SELECT
     [1,2,3,4] as "generic_int_array",
     cast(get_current_timestamp() as datetime) as "_preqlt__created_at"
 
 ),
-komodo as (
+macho as (
 SELECT
-    unnest(penguin."generic_int_array") as "generic_split"
+    unnest(puffin."generic_int_array") as "generic_split"
 FROM
-    penguin as penguin
+    puffin as puffin
 ),
-colossal as (
+premium as (
 SELECT
-    komodo."generic_split" as "generic_split",
-    penguin."_preqlt__created_at" as "_preqlt__created_at"
+    macho."generic_split" as "generic_split",
+    puffin."_preqlt__created_at" as "_preqlt__created_at"
 FROM
-    komodo as komodo
-    FULL JOIN penguin on 1=1
+    macho as macho
+    FULL JOIN puffin on 1=1
 )
 SELECT
-    colossal."generic_split",
-    colossal."_preqlt__created_at"
+    premium."generic_split",
+    premium."_preqlt__created_at"
 FROM
-    colossal
+    premium

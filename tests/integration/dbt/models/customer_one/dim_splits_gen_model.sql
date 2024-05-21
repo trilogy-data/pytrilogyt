@@ -3,27 +3,27 @@
 {{ config(materialized='table') }}
 
 WITH 
-sordid as (
+quizzical as (
 SELECT
     local_split."generic_split" as "generic_split"
 FROM
     {{ ref('split_gen_model') }} as local_split
 ),
-crow as (
+elated as (
 SELECT
     cast(get_current_timestamp() as datetime) as "_preqlt__created_at"
 
 ),
-premium as (
+bear as (
 SELECT
-    sordid."generic_split" as "generic_split",
-    crow."_preqlt__created_at" as "_preqlt__created_at"
+    quizzical."generic_split" as "generic_split",
+    elated."_preqlt__created_at" as "_preqlt__created_at"
 FROM
-    sordid as sordid
-    FULL JOIN crow on 1=1
+    quizzical as quizzical
+    FULL JOIN elated on 1=1
 )
 SELECT
-    premium."generic_split",
-    premium."_preqlt__created_at"
+    bear."generic_split",
+    bear."_preqlt__created_at"
 FROM
-    premium
+    bear

@@ -21,7 +21,7 @@ def test_full_model_build():
     output = results.glob("**/*.sql")
     for f in output:
         # our generated file
-        if "optimization" in str(f):
+        if not "dim_splits" in str(f):
             continue
         if f.is_file():
             with open(f) as file:
