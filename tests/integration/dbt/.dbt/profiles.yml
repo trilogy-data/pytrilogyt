@@ -1,0 +1,6 @@
+integration_test: # this needs to match the profile in your dbt_project.yml file
+    target: dev
+    outputs:
+      dev:
+        type: duckdb 
+        path: './integration_test.duckdb'

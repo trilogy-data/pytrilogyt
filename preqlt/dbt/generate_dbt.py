@@ -1,21 +1,28 @@
 from jinja2 import Template
 from pathlib import Path
 from preql import Executor, Environment
-from preql.dialect.enums import Dialects 
-from preqlt.constants import logger, PREQLT_NAMESPACE, OPTIMIZATION_NAMESPACE
-from preql.core.models import ProcessedQueryPersist, ProcessedQuery, Persist, Import, Datasource, CTE
+from preql.dialect.enums import Dialects
+from preqlt.constants import logger, PREQLT_NAMESPACE
+from preql.core.models import (
+    ProcessedQueryPersist,
+    ProcessedQuery,
+    Persist,
+    Import,
+    Datasource,
+    Address,
+)
 from preqlt.enums import PreqltMetrics
 from preqlt.core import enrich_environment
-from preql.parser import parse
 from preql.parser import parse_text
 from preqlt.dbt.config import DBTConfig
 from yaml import safe_load, dump
 import os
-from preql.core.query_processor import process_query, process_persist
+from preql.core.query_processor import process_persist
+
 DEFAULT_DESCRIPTION: str = "No description provided"
 
 
-def generate_model_text(model_name:str, model_type:str, model_sql:str)->str:
+def generate_model_text(model_name: str, model_type: str, model_sql: str) -> str:
     template = Template(
         """
     {{ model_type }} "{{ model_name }}" {
@@ -27,11 +34,18 @@ def generate_model_text(model_name:str, model_type:str, model_sql:str)->str:
         model_name=model_name, model_type=model_type, model_sql=model_sql
     )
 
-def add_dependencies(value:str, possible_dependencies:dict[str, Datasource])->str:
+
+def add_dependencies(value: str, possible_dependencies: dict[str, Datasource]) -> str:
     for key, datasource in possible_dependencies.items():
         datasource_name = datasource.name
-        value = value.replace(f'{datasource.address.location} as {datasource.address.location}', f"{{{{ ref('{datasource_name}') }}}} as {datasource.address.location}")
+        if not isinstance(datasource.address, Address):
+            continue
+        value = value.replace(
+            f"{datasource.address.location} as {datasource.address.location}",
+            f"{{{{ ref('{datasource_name}') }}}} as {datasource.address.location}",
+        )
     return value
+
 
 def generate_model(
     preql_body: str,
@@ -46,7 +60,7 @@ def generate_model(
         f"Parsing file {preql_path} with dialect {dialect} and base namespace {config.namespace}"
     )
 
-    env:Environment = environment or Environment(
+    env: Environment = environment or Environment(
         working_path=preql_path.parent if preql_path else os.getcwd(),
         namespace=config.namespace,
     )
@@ -55,13 +69,21 @@ def generate_model(
     possible_dependencies = {}
     for extra_import in extra_imports or []:
         with open(extra_import.path) as f:
-            local_env, persists = parse_text(f.read(), environment=Environment(working_path=Path(extra_import.path).parent))
+            local_env, persists = parse_text(
+                f.read(),
+                environment=Environment(working_path=Path(extra_import.path).parent),
+            )
             # exec.environment.add_import(extra_import.alias, local_env)
             for q in persists:
                 if isinstance(q, Persist):
-                    processed = process_persist(local_env, q,)
+                    processed = process_persist(
+                        local_env,
+                        q,
+                    )
                     exec.environment.add_datasource(processed.datasource)
-                    possible_dependencies[processed.datasource.name] = processed.datasource
+                    possible_dependencies[processed.datasource.name] = (
+                        processed.datasource
+                    )
     outputs = {}
     output_data = {}
     _, statements = parse_text(preql_body, exec.environment)
@@ -81,7 +103,10 @@ def generate_model(
                     if not isinstance(source, Datasource):
                         continue
                     if source.identifier in possible_dependencies:
-                        source.address.location = f"'{{{{ ref('{source.identifier}_gen_model') }}}}'"
+                        if isinstance(source.identifier, Address):
+                            source.address.location = (
+                                f"{{{{ ref('{source.identifier}_gen_model') }}}}"
+                            )
             base = ProcessedQuery(
                 output_columns=query.output_columns,
                 ctes=query.ctes,
@@ -99,7 +124,6 @@ def generate_model(
             output_data[query.output_to.address.location.split(".")[-1]] = (
                 query.datasource
             )
-
 
     for key, value in outputs.items():
         output_path = config.get_model_path(key)

@@ -12,6 +12,8 @@ from preql.core.models import (
     Concept,
     Conditional,
     WhereClause,
+    Comparison,
+    Parenthetical,
 )
 from typing import List
 from preql import Environment
@@ -24,7 +26,7 @@ from preql.dialect.base import BaseDialect
 
 @dataclass
 class AnalyzeResult:
-    counts: dict[str, str]
+    counts: dict[str, int]
     mapping: dict[str, CTE]
 
 
@@ -32,23 +34,35 @@ class AnalyzeResult:
 class ProcessLoopResult:
     new: List[Persist]
 
-def name_to_short_name(x:str):
+
+def name_to_short_name(x: str):
     if x.startswith(VIRTUAL_CONCEPT_PREFIX):
-        return 'virtual'
+        return "virtual"
     return x
 
-def generate_datasource_name(select:Select, cte_name:str)->str:
+
+def generate_datasource_name(select: Select, cte_name: str) -> str:
     """Generate a reasonable table name"""
-    base = '_'.join([name_to_short_name(x.name) for x in select.grain.components])
+    base = "_".join([name_to_short_name(x.name) for x in select.grain.components])
     if select.where_clause:
-        base = base + "_filtered_on_" + '_'.join([name_to_short_name(x.name) for x in select.where_clause.conditional.concept_arguments])
+        base = (
+            base
+            + "_filtered_on_"
+            + "_".join(
+                [
+                    name_to_short_name(x.name)
+                    for x in select.where_clause.conditional.concept_arguments
+                ]
+            )
+        )
     return base
+
 
 def cte_to_persist(input: CTE, name: str, generator: BaseDialect) -> Persist:
     select = Select(
         selection=input.output_columns,
         where_clause=(
-            WhereClause(condition=input.condition) if input.condition else None
+            WhereClause(conditional=input.condition) if input.condition else None
         ),
     )
     datasource = select.to_datasource(
@@ -87,39 +101,46 @@ def fingerprint_source(source: QueryDatasource | Datasource) -> str:
         source.limit
     )
 
-def fingerprint_filter(filter: Conditional) -> str:
+
+def fingerprint_filter(filter: Conditional | Comparison | Parenthetical) -> str:
     return str(filter)
+
 
 def fingerprint_cte(cte: CTE) -> str:
     if cte.condition:
-        return (fingerprint_source(cte.source) 
-        + "-".join([fingerprint_cte(x) for x in cte.parent_ctes])
-        + fingerprint_grain(cte.grain)
-        + fingerprint_filter(cte.condition))
+        return (
+            fingerprint_source(cte.source)
+            + "-".join([fingerprint_cte(x) for x in cte.parent_ctes])
+            + fingerprint_grain(cte.grain)
+            + fingerprint_filter(cte.condition)
+        )
     return (
         fingerprint_source(cte.source)
         + "-".join([fingerprint_cte(x) for x in cte.parent_ctes])
         + fingerprint_grain(cte.grain)
     )
 
+
 def process_raw(
     inputs: List[Select | Persist],
     env: Environment,
     generator: BaseDialect,
     threshold: int = 2,
-    inject:bool = False
-)->tuple[list[Select | Persist], list[Persist]]:
+    inject: bool = False,
+) -> tuple[list[Select | Persist], list[Persist]]:
     complete = False
     outputs = []
     while not complete:
         parsed = generator.generate_queries(env, inputs)
-        new = process_loop(parsed, env, generator=generator,threshold=threshold)
+        new = process_loop(parsed, env, generator=generator, threshold=threshold)
         if new.new:
-            outputs +=new.new
+            outputs += new.new
             # hardcoded until we figure out the right exit criterai
             complete = True
             if inject:
-                insert_index = min([inputs.index(x) for x in inputs if isinstance(x, Select)])
+                insert_index = min(
+                    [inputs.index(x) for x in inputs if isinstance(x, Select)]
+                )
                 # insert the new values before this statement
                 inputs = inputs[:insert_index] + new.new + inputs[insert_index:]
         else:
@@ -153,22 +174,25 @@ def analyze(
         final_map[mapping[fingerprint]] = cte
     return AnalyzeResult(counts, final_map)
 
-def is_raw_source_cte(cte:CTE)->bool:
+
+def is_raw_source_cte(cte: CTE) -> bool:
     if not len(cte.source.datasources) == 1:
         return False
     if isinstance(cte.source.datasources[0], Datasource):
         return True
     return False
 
-def has_anon_concepts(cte:CTE)-> bool:
+
+def has_anon_concepts(cte: CTE) -> bool:
     if any([x.name.startswith(VIRTUAL_CONCEPT_PREFIX) for x in cte.output_columns]):
         return True
     return False
 
+
 def process_loop(
     inputs: List[ProcessedQuery | ProcessedQueryPersist | ProcessedShowStatement],
     env: Environment,
-    generator:BaseDialect,
+    generator: BaseDialect,
     threshold: int = 2,
 ) -> ProcessLoopResult:
     analysis = analyze(inputs, env)

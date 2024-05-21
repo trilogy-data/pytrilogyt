@@ -1,0 +1,8 @@
+models:
+- columns:
+  - description: No description provided
+    name: generic_split
+    tests: []
+  description: Automatically generated model from preql
+  name: split_gen_model
+version: 2

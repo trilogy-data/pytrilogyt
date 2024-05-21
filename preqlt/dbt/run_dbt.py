@@ -11,13 +11,14 @@ def run_path(path: Path):
         "run",
         "--project-dir",
         str(path),
-        " --profiles-dir",
+        "--profiles-dir",
         str(path / ".dbt"),
     ]
 
     # run the command
     res: dbtRunnerResult = dbt.invoke(cli_args)
-
+    if not res.success:
+        raise RuntimeError(res.exception)
     # inspect the results
     if not isinstance(res.result, RunExecutionResult):
         return

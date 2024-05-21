@@ -1,6 +1,6 @@
 from preqlt.graph import fingerprint_cte, process_raw
 from preql.core.models import CTE, QueryDatasource, Environment
-from preql import Dialects, Environment, parse
+from preql import Dialects, parse
 from preql.dialect.duckdb import DuckDBDialect
 from preql.parsing.render import Renderer
 from preql.core.enums import SourceType
@@ -31,7 +31,9 @@ def test_fingerprint(test_environment: Environment):
     b = fingerprint_cte(test)
     assert a == b
 
+
 # from preql.core.processing.concept_strategies_v3
+
 
 def test_integration():
     env = Environment()
@@ -55,7 +57,9 @@ select split;
     dialect = DuckDBDialect()
     initial = dialect.generate_queries(env, parsed)
     assert len(initial) == 3
-    consolidated, new = process_raw(parsed, env=env, dialect=dialect, threshold=2)
+    consolidated, new = process_raw(
+        parsed, env=env, generator=dialect, threshold=2, inject=True
+    )
 
     # we should have the one consolidated CTE first
     assert len(consolidated) == 6
@@ -64,21 +68,21 @@ select split;
     for x in consolidated:
         final.append(renderer.to_string(x))
 
-    reparsed = exec.parse_text('\n'.join(final),persist=True)
+    reparsed = exec.parse_text("\n".join(final), persist=True)
 
     # we should have our new datasource
     assert len(env.datasources) == 1
 
     instance = list(env.datasources.values())[0]
-    split = env.concepts['split']
+    split = env.concepts["split"]
     assert split.address in [x.address for x in instance.output_concepts]
     assert split.address in [x.address for x in env.materialized_concepts]
-    assert 'local.split' in [x.address for x in env.materialized_concepts]
+    assert "local.split" in [x.address for x in env.materialized_concepts]
     env = exec.environment
     instance = list(env.datasources.values())[0]
     assert split.address in [x.address for x in instance.output_concepts]
     assert split.address in [x.address for x in env.materialized_concepts]
-    assert 'local.split' in [x.address for x in env.materialized_concepts]
+    assert "local.split" in [x.address for x in env.materialized_concepts]
     final = reparsed[-1]
     # check that oure queries use the new datasource
     assert final.ctes[0].source.datasources[0] == instance

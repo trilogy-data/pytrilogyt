@@ -1,0 +1,6 @@
+                 
+
+import generic as generic;
+
+                  
+persist dim_splits into dim_splits from select generic.split;
