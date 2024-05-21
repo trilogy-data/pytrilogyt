@@ -35,16 +35,7 @@ def generate_model_text(model_name: str, model_type: str, model_sql: str) -> str
     )
 
 
-def add_dependencies(value: str, possible_dependencies: dict[str, Datasource]) -> str:
-    for key, datasource in possible_dependencies.items():
-        datasource_name = datasource.name
-        # if not isinstance(datasource.address, Address):
-        #     continue
-        value = value.replace(
-            f"{datasource.address.location} as {datasource.address.location}",
-            f"{{{{ ref('{datasource_name}') }}}} as {datasource.address.location}",
-        )
-    return value
+
 
 
 def generate_model(
