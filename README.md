@@ -1,12 +1,16 @@
 ## Simple Data Pipelines
 
-Combine the simplicity and guarantees of preql with the power of DBT. 
+Combine the simplicity and guarantees of Preql with the power of open source ETL. 
 
-Compile your models to ETL scripts to run on demand through the rich DBT ecosystem.
+Compile your models to ETL scripts to run on demand through the modern data stack. Rebuild on demand.
 
-Rebuild your graph with a single command.
+Currently supported backends:
+- DBT
 
-Executes via DBT CLI.
+
+## Flags
+
+--optimize=X - Any CTE used at least X times in calculating final model outputs will be materialized for reuse.
 
 ## How to run
 

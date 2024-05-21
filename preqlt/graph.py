@@ -16,6 +16,7 @@ from preql.core.models import (
 from typing import List
 from preql import Environment
 from preql.core.ergonomics import CTE_NAMES
+from preql.constants import VIRTUAL_CONCEPT_PREFIX
 from random import choice
 from dataclasses import dataclass
 from preql.dialect.base import BaseDialect
@@ -29,16 +30,21 @@ class AnalyzeResult:
 
 @dataclass
 class ProcessLoopResult:
-    new: List[ProcessedQueryPersist]
+    new: List[Persist]
+
+def name_to_short_name(x:str):
+    if x.startswith(VIRTUAL_CONCEPT_PREFIX):
+        return 'virtual'
+    return x
 
 def generate_datasource_name(select:Select, cte_name:str)->str:
     """Generate a reasonable table name"""
-    base = '_'.join([x.name for x in select.grain.components])
+    base = '_'.join([name_to_short_name(x.name) for x in select.grain.components])
     if select.where_clause:
-        base = base + "_filtered_on_" + '_'.join([x.name for x in select.where_clause.conditional.concept_arguments])
-    return cte_name +'_'+base
+        base = base + "_filtered_on_" + '_'.join([name_to_short_name(x.name) for x in select.where_clause.conditional.concept_arguments])
+    return base
 
-def cte_to_persist(input: CTE, name: str, dialect: BaseDialect) -> Persist:
+def cte_to_persist(input: CTE, name: str, generator: BaseDialect) -> Persist:
     select = Select(
         selection=input.output_columns,
         where_clause=(
@@ -48,7 +54,7 @@ def cte_to_persist(input: CTE, name: str, dialect: BaseDialect) -> Persist:
     datasource = select.to_datasource(
         namespace="default",
         identifier=generate_datasource_name(select, name),
-        address=Address(location=name),
+        address=Address(location=generate_datasource_name(select, name)),
     )
     persist = Persist(datasource=datasource, select=select)
     return persist
@@ -96,26 +102,29 @@ def fingerprint_cte(cte: CTE) -> str:
         + fingerprint_grain(cte.grain)
     )
 
-
 def process_raw(
     inputs: List[Select | Persist],
     env: Environment,
-    dialect: BaseDialect,
+    generator: BaseDialect,
     threshold: int = 2,
-):
+    inject:bool = False
+)->tuple[list[Select | Persist], list[Persist]]:
     complete = False
+    outputs = []
     while not complete:
-        parsed = dialect.generate_queries(env, inputs)
-        new = process_loop(parsed, env, dialect=dialect,threshold=threshold)
+        parsed = generator.generate_queries(env, inputs)
+        new = process_loop(parsed, env, generator=generator,threshold=threshold)
         if new.new:
-            insert_index = min([inputs.index(x) for x in inputs if isinstance(x, Select)])
-            # insert the new values before this statement
-            inputs = inputs[:insert_index] + new.new + inputs[insert_index:]
-            # hardcoded until we find out the exit criteria for multipass
+            outputs +=new.new
+            # hardcoded until we figure out the right exit criterai
             complete = True
+            if inject:
+                insert_index = min([inputs.index(x) for x in inputs if isinstance(x, Select)])
+                # insert the new values before this statement
+                inputs = inputs[:insert_index] + new.new + inputs[insert_index:]
         else:
             complete = True
-    return inputs
+    return inputs, outputs
 
 
 def analyze(
@@ -149,21 +158,29 @@ def is_raw_source_cte(cte:CTE)->bool:
         return False
     if isinstance(cte.source.datasources[0], Datasource):
         return True
+    return False
+
+def has_anon_concepts(cte:CTE)-> bool:
+    if any([x.name.startswith(VIRTUAL_CONCEPT_PREFIX) for x in cte.output_columns]):
+        return True
+    return False
 
 def process_loop(
     inputs: List[ProcessedQuery | ProcessedQueryPersist | ProcessedShowStatement],
     env: Environment,
-    dialect:BaseDialect,
+    generator:BaseDialect,
     threshold: int = 2,
 ) -> ProcessLoopResult:
     analysis = analyze(inputs, env)
     new_persist = []
     for k, v in analysis.counts.items():
-        if v > threshold:
+        if v >= threshold:
             cte = analysis.mapping[k]
             # skip materializing materialized things
             if is_raw_source_cte(cte):
                 continue
-            new_persist.append(cte_to_persist(cte, k, dialect=dialect))
+            if has_anon_concepts(cte):
+                continue
+            new_persist.append(cte_to_persist(cte, k, generator=generator))
 
     return ProcessLoopResult(new=new_persist)

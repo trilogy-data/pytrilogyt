@@ -22,3 +22,4 @@ def enrich_environment(env: Environment):
     for concept in ENVIRONMENT_CONCEPTS:
         env.add_concept(concept)
     return env
+

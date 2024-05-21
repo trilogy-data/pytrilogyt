@@ -55,7 +55,7 @@ select split;
     dialect = DuckDBDialect()
     initial = dialect.generate_queries(env, parsed)
     assert len(initial) == 3
-    consolidated = process_raw(parsed, env=env, dialect=dialect, threshold=2)
+    consolidated, new = process_raw(parsed, env=env, dialect=dialect, threshold=2)
 
     # we should have the one consolidated CTE first
     assert len(consolidated) == 6

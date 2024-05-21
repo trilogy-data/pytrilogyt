@@ -3,6 +3,8 @@ from logging import StreamHandler, INFO
 
 PREQLT_NAMESPACE = "_preqlt"
 
+OPTIMIZATION_NAMESPACE = "optimization"
+
 
 logger = getLogger()
 
