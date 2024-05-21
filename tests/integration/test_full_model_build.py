@@ -38,7 +38,6 @@ def test_cli_string():
             "persist static_one into static_one from select 1-> test;",
             str(root.parent / "dbt/"),
             "duck_db",
-            "--run",
         ],
     )
     if result.exception:
