@@ -1,8 +1,20 @@
-## POC of DBT integration
+## Simple Data Pipelines
 
-Compiles provided preql script to one dbt model per persist statement.
+Combine the simplicity and guarantees of Preql with the power of open source ETL. 
 
-Executes via DBT CLI.
+Compile your models to ETL scripts to run on demand through the modern data stack. Rebuild on demand.
+
+Currently supported backends:
+- DBT
+
+
+## Flags
+
+--optimize=X - Any CTE used at least X times in calculating final model outputs will be materialized for reuse.
+
+## Install
+
+`pip install pypreqlt`
 
 ## How to run
 
@@ -37,4 +49,11 @@ customers: success
 my_first_dbt_model: success
 customers_preql_preqlt_gen_model: success
 my_second_dbt_model: success
+```
+
+
+### From IO
+
+```console
+Write-Output """constant x <-5; persist into static as static select x;""" | python preqlt/scripts/main.py C:\Users\ethan\coding_projects\pypreql-etl\jaffle_shop bigquery
 ```

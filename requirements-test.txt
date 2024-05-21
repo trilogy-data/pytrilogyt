@@ -1,0 +1,8 @@
+black
+ruff
+pytest
+pytest-cov
+mypy
+types-PyYAML
+duckdb-engine
+dbt-duckdb

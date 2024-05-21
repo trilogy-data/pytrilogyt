@@ -1,4 +1,13 @@
 *.pyc
 dbt.log
-jaffle_shop
 .vscode
+.venv
+*.egg-info
+build/
+__pycache__/
+.pytest_cache
+.mypy_cache
+.mypy_cache/.*json
+.ruff_cache
+integration_test.duckdb
+tests/integration/dbt/target

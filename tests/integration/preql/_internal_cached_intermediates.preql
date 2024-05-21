@@ -1,0 +1,3 @@
+import generic as generic;
+PERSIST split INTO split FROM SELECT
+    generic.split,;
