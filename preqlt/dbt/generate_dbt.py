@@ -35,9 +35,6 @@ def generate_model_text(model_name: str, model_type: str, model_sql: str) -> str
     )
 
 
-
-
-
 def generate_model(
     preql_body: str,
     preql_path: Path | None,
