@@ -5,3 +5,4 @@ pytest-cov
 mypy
 types-PyYAML
 duckdb-engine
+dbt-duckdb

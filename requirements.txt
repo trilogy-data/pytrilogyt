@@ -1,2 +1,2 @@
-pypreql
+pypreql>=0.0.1.86
 dbt-core
