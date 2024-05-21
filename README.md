@@ -12,6 +12,10 @@ Currently supported backends:
 
 --optimize=X - Any CTE used at least X times in calculating final model outputs will be materialized for reuse.
 
+## Install
+
+`pip install pypreqlt`
+
 ## How to run
 
 Copy example_file contents into models\example for the "jaffle_project" DBT starter

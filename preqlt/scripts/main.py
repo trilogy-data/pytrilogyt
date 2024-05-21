@@ -101,13 +101,16 @@ def main(preql: str | Path, dbt_path:Path, dialect: str, debug: bool, run: bool)
             # with multiple files, we can attempt to optimize dependency
             children = list(preql.glob("*.preql"))
             root = optimize_multiple(preql, children, dialect=edialect)
-            config = DBTConfig(root=PathlibPath(dbt_path), namespace=preql.stem)
+            config = DBTConfig(root=PathlibPath(dbt_path), namespace=OPTIMIZATION_NAMESPACE)
             with open(root.path) as f:
                 generate_model(
                     f.read(), root.path, dialect=edialect, config=config,
                     # environment = env  # type: ignore
                 )
             for file in children:
+                # don't build hidden files
+                if file.stem.startswith('_'):
+                    continue
                 config = DBTConfig(root=PathlibPath(dbt_path), namespace=file.stem)
                 with open(file) as f:
                     generate_model(
