@@ -1,0 +1,24 @@
+import customer as customer;
+import store as store;
+import store_returns as returns;
+
+# query 1
+rowset customer_store_orders_by_state <-select
+    customer.id,
+    store.id,
+    store.state,
+    returns.date.year,
+    sum(returns.return_amount)-> total_returns
+where
+    returns.date.year = 2022
+    and store.state = 'CA';
+
+auto total_returns <- avg(customer_store_orders_by_state.total_returns) by * ;
+
+select
+    customer_store_orders_by_state.store.id,
+    --total_returns,
+    --customer_store_orders_by_state.total_returns,
+where
+    customer_store_orders_by_state.total_returns > (1.2*total_returns) ;
+
