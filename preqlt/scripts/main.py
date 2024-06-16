@@ -20,6 +20,7 @@ from preqlt.dbt.config import DBTConfig  # noqa
 from preqlt.graph import process_raw  # noqa
 from preqlt.exceptions import OptimizationError  # noqa
 
+OPTIMIZATION_FILE = "_internal_cached_intermediates.preql"
 
 @dataclass
 class OptimizationResult:
@@ -43,8 +44,10 @@ def optimize_multiple(base: PathlibPath, paths: list[PathlibPath], dialect: Dial
     # first - ingest and proecss all statements
     imports: dict[str, Import] = {}
     for path in paths:
+        if path.name == OPTIMIZATION_FILE:
+            continue
         with open(path) as f:
-            local_env = Environment(working_path=path.parent)
+            local_env = Environment(working_path=path.parent,)
             try:
                 new_env, statements = parse_text(f.read(), environment=local_env)
             except Exception as e:
@@ -68,17 +71,17 @@ def optimize_multiple(base: PathlibPath, paths: list[PathlibPath], dialect: Dial
     # inject those
     print("len inputs", len(all_statements))
     print("length new"), len(new_persists)
-    with open(base / "_internal_cached_intermediates.preql", "w") as f:
+    with open(base / OPTIMIZATION_FILE, "w") as f:
         for k, nimport in imports.items():
             f.write(renderer.to_string(nimport) + "\n")
         for x in new_persists:
             f.write(renderer.to_string(x) + "\n")
     # add our new import to all modules with persists
     return OptimizationResult(
-        path=base / "_internal_cached_intermediates.preql",
+        path=base / OPTIMIZATION_FILE,
         new_import=Import(
             alias=OPTIMIZATION_NAMESPACE,
-            path=str(base / "_internal_cached_intermediates.preql"),
+            path=str(base / OPTIMIZATION_FILE),
         ),
     )
 

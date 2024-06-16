@@ -1,42 +1,21 @@
 import store as store;
 import store_sales as store_sales;
 import item as item;
-import date as date;
+import date as return_date;
 import time as time;
 import customer as customer;
 
-#Column Datatype NULLs Primary Key Foreign Key
-#sr_returned_date_sk identifier d_date_sk
-#sr_return_time_sk identifier t_time_sk
-#sr_item_sk (1) identifier N Y i_item_sk,ss_item_sk
-#sr_customer_sk identifier c_customer_sk
-#sr_cdemo_sk identifier cd_demo_sk
-#sr_hdemo_sk identifier hd_demo_sk
-#sr_addr_sk identifier ca_address_sk
-#sr_store_sk identifier s_store_sk
-#sr_reason_sk identifier r_reason_sk
-#sr_ticket_number (2) identifier N Y ss_ticket_number
-#sr_return_quantity integer
-#sr_return_amt decimal(7,2)
-#sr_return_tax decimal(7,2)
-#sr_return_amt_inc_tax decimal(7,2)
-#sr_fee decimal(7,2)
-#sr_return_ship_cost decimal(7,2)
-#sr_refunded_cash decimal(7,2)
-#sr_reversed_charge decimal(7,2)
-#sr_store_credit decimal(7,2)
-#sr_net_loss decimal(7,2)
 
 property <store_sales.ticket_number, item.id>.return_amount float;
 
 datasource store_returns(
-    sr_returned_date_sk:date.id,
-    sr_return_time_sk: time.id,
-    sr_item_sk:~ item.id,
-    sr_customer_sk:customer.id,
-    sr_return_amt: return_amount,
-    sr_ticket_number: ~store_sales.ticket_number
-
+    SR_RETURNED_DATE_SK: return_date.id,
+    SR_RETURN_TIME_SK: time.id,
+    SR_ITEM_SK: item.id,
+    SR_CUSTOMER_SK: customer.id,
+    SR_RETURN_AMT: return_amount,
+    SR_TICKET_NUMBER: store_sales.ticket_number,
+    SR_STORE_SK: store.id,
 )
 grain (store_sales.ticket_number, item.id)
-address store_returns;
+address SNOWFLAKE_SAMPLE_DATA.TPCDS_SF10TCL.store_returns;
