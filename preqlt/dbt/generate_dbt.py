@@ -10,6 +10,7 @@ from preql.core.models import (
     Import,
     Datasource,
     Address,
+    SelectItem,
 )
 from preqlt.enums import PreqltMetrics
 from preqlt.core import enrich_environment
@@ -74,8 +75,8 @@ def generate_model(
                 exec.environment.add_datasource(processed.datasource)
                 possible_dependencies[processed.datasource.name] = processed.datasource
 
-    outputs = {}
-    output_data = {}
+    outputs: dict[str, str] = {}
+    output_data: dict[str, Datasource] = {}
     logger.info(f"Reparsing post optimization for {preql_path}.")
     try:
         _, statements = parse_text(preql_body, exec.environment)
@@ -84,14 +85,16 @@ def generate_model(
 
     parsed = [z for z in statements if isinstance(z, Persist)]
     for persist in parsed:
-        persist.select.selection.append(  # type: ignore
-            exec.environment.concepts[
-                f"{PREQLT_NAMESPACE}.{PreqltMetrics.CREATED_AT.value}"
-            ]
+        persist.select.selection.append(
+            SelectItem(
+                content=exec.environment.concepts[
+                    f"{PREQLT_NAMESPACE}.{PreqltMetrics.CREATED_AT.value}"
+                ]
+            )
         )
     logger.info("generating queries")
-    queries = exec.generator.generate_queries(exec.environment, parsed)
-    for _, query in enumerate(queries):
+    pqueries = exec.generator.generate_queries(exec.environment, parsed)
+    for _, query in enumerate(pqueries):
         if isinstance(query, ProcessedQueryPersist):
             for cte in query.ctes:
                 for source in cte.source.datasources:
@@ -127,9 +130,9 @@ def generate_model(
         output_path = config.get_model_path(key)
         parent = str(output_path.parent)
         output_path.parent.mkdir(parents=True, exist_ok=True)
-        for f in output_path.parent.iterdir():
-            if f.is_file() and f.name.endswith("gen_model.sql"):
-                existing[parent].add(f)
+        for subf in output_path.parent.iterdir():
+            if subf.is_file() and subf.name.endswith("gen_model.sql"):
+                existing[parent].add(subf)
         should_exist[parent].add(output_path)
         with open(output_path, "w") as f:
             f.write(
@@ -175,8 +178,8 @@ def generate_model(
         loaded["models"] = models
         f.write(dump(loaded))
 
-    for key, values in existing.items():
-        for value in values:
-            if value not in should_exist[key]:
-                logger.info("Removing old file: %s", value)
-                os.remove(value)
+    for key, paths in existing.items():
+        for path in paths:
+            if path not in should_exist[key]:
+                logger.info("Removing old file: %s", path)
+                os.remove(path)

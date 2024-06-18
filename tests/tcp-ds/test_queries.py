@@ -3,11 +3,9 @@ from pathlib import Path
 
 from preql import Environment
 from preql import Dialects
-from preql.dialect.config import SnowflakeConfig
 from dotenv import load_dotenv
 from datetime import datetime
 from preql.hooks.query_debugger import DebuggingHook
-import os
 
 load_dotenv()
 working_path = Path(__file__).parent
