@@ -44,7 +44,7 @@ def test_two():
         environment=env,
         hooks=[DebuggingHook(process_other=False, process_ctes=False)],
     )
-    results = exec.generate_sql(text)
+    _ = exec.generate_sql(text)
     # results = exec.execute_text(text)
     # for row in results[0].fetchall():
     #     print(row)
@@ -72,7 +72,7 @@ def test_three():
     #     ),
     #     hooks=[DebuggingHook(process_other=False, process_ctes=False)],
     # )
-    results = exec.generate_sql(text)
+    _ = exec.generate_sql(text)
     # results = exec.execute_text(text)
     # for row in results[0].fetchall():
     #     print(row)
