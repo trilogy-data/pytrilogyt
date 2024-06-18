@@ -3,28 +3,28 @@
 {{ config(materialized='table') }}
 
 WITH 
-shark as (
+fabulous as (
 SELECT
     [1,2,3,4] as "generic_int_array",
     cast(get_current_timestamp() as datetime) as "_preqlt__created_at"
 
 ),
-odd as (
+imported as (
 SELECT
-    unnest(shark."generic_int_array") as "generic_split"
+    unnest(fabulous."generic_int_array") as "generic_split"
 FROM
-    shark as shark
+    fabulous as fabulous
 ),
-canary as (
+goldfinch as (
 SELECT
-    odd."generic_split" as "generic_split",
-    shark."_preqlt__created_at" as "_preqlt__created_at"
+    imported."generic_split" as "generic_split",
+    fabulous."_preqlt__created_at" as "_preqlt__created_at"
 FROM
-    odd as odd
-    FULL JOIN shark on 1=1
+    imported as imported
+    LEFT OUTER JOIN fabulous on 1=1
 )
 SELECT
-    canary."generic_split",
-    canary."_preqlt__created_at"
+    goldfinch."generic_split",
+    goldfinch."_preqlt__created_at"
 FROM
-    canary
+    goldfinch

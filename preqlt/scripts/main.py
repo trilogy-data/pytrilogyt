@@ -6,7 +6,7 @@ from sys import path as sys_path
 from preql import Environment, Executor
 from preql.parser import parse_text
 from preql.parsing.render import Renderer
-from preql.core.models import Import, Persist, Select
+from preql.core.models import ImportStatement, PersistStatement, SelectStatement
 from dataclasses import dataclass
 
 # handles development cases
@@ -27,7 +27,7 @@ OPTIMIZATION_FILE = "_internal_cached_intermediates.preql"
 @dataclass
 class OptimizationResult:
     path: PathlibPath
-    new_import: Import
+    new_import: ImportStatement
 
 
 renderer = Renderer()
@@ -44,7 +44,7 @@ def optimize_multiple(base: PathlibPath, paths: list[PathlibPath], dialect: Dial
     exec = Executor(dialect=dialect, engine=dialect.default_engine(), environment=env)
     all_statements = []
     # first - ingest and proecss all statements
-    imports: dict[str, Import] = {}
+    imports: dict[str, ImportStatement] = {}
     for path in paths:
         if path.name == OPTIMIZATION_FILE:
             continue
@@ -67,7 +67,11 @@ def optimize_multiple(base: PathlibPath, paths: list[PathlibPath], dialect: Dial
     # determine the new persists we need to create
     _, new_persists = process_raw(
         inject=False,
-        inputs=[x for x in all_statements if isinstance(x, (Persist, Select))],
+        inputs=[
+            x
+            for x in all_statements
+            if isinstance(x, (PersistStatement, SelectStatement))
+        ],
         env=env,
         generator=exec.generator,
         threshold=2,
@@ -83,7 +87,7 @@ def optimize_multiple(base: PathlibPath, paths: list[PathlibPath], dialect: Dial
     # add our new import to all modules with persists
     return OptimizationResult(
         path=base / OPTIMIZATION_FILE,
-        new_import=Import(
+        new_import=ImportStatement(
             alias=OPTIMIZATION_NAMESPACE,
             path=str(base / OPTIMIZATION_FILE),
         ),

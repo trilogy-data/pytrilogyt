@@ -3,27 +3,23 @@
 {{ config(materialized='table') }}
 
 WITH 
-skylark as (
+scrawny as (
 SELECT
-    local_split_ad1a64057f9ab34fecfe3f4ee78660bb0316dbda9370581ffbeb1e8bddf3d598."generic_split" as "generic_split"
-FROM
-    {{ ref('split_ad1a64057f9ab34fecfe3f4ee78660bb0316dbda9370581ffbeb1e8bddf3d598_gen_model') }} as local_split_ad1a64057f9ab34fecfe3f4ee78660bb0316dbda9370581ffbeb1e8bddf3d598
-),
-rhea as (
-SELECT
-    cast(get_current_timestamp() as datetime) as "_preqlt__created_at"
+    cast(get_current_timestamp() as datetime) as "_preqlt__created_at",
+    unnest([1,2,3,4]) as "generic_split"
 
 ),
-stork as (
+wakeful as (
 SELECT
-    skylark."generic_split" as "generic_split",
-    rhea."_preqlt__created_at" as "_preqlt__created_at"
+    scrawny."generic_split" as "generic_split",
+    scrawny."_preqlt__created_at" as "_preqlt__created_at"
 FROM
-    skylark as skylark
-    FULL JOIN rhea on 1=1
-)
+    scrawny as scrawny
+
+GROUP BY 
+    scrawny."generic_split")
 SELECT
-    stork."generic_split",
-    stork."_preqlt__created_at"
+    wakeful."generic_split",
+    wakeful."_preqlt__created_at"
 FROM
-    stork
+    wakeful

@@ -6,8 +6,8 @@ from preqlt.constants import logger, PREQLT_NAMESPACE
 from preql.core.models import (
     ProcessedQueryPersist,
     ProcessedQuery,
-    Persist,
-    Import,
+    PersistStatement,
+    ImportStatement,
     Datasource,
     Address,
     SelectItem,
@@ -43,7 +43,7 @@ def generate_model(
     dialect: Dialects,
     config: DBTConfig,
     environment: Environment | None = None,
-    extra_imports: list[Import] | None = None,
+    extra_imports: list[ImportStatement] | None = None,
     optimize: bool = True,
 ):
     logger.info(
@@ -63,11 +63,11 @@ def generate_model(
                 f.read(),
                 environment=Environment(working_path=Path(extra_import.path).parent),
             )
-        persists = [x for x in queries if isinstance(x, Persist)]
+        persists = [x for x in queries if isinstance(x, PersistStatement)]
         logger.info(f"Extra dependencies parsed, have {len(persists)} persists.")
         # exec.environment.add_import(extra_import.alias, local_env)
         for q in persists:
-            if isinstance(q, Persist):
+            if isinstance(q, PersistStatement):
                 processed = process_persist(
                     local_env,
                     q,
@@ -83,7 +83,7 @@ def generate_model(
     except Exception as e:
         raise SyntaxError(f"Unable to parse {preql_body}" + str(e))
 
-    parsed = [z for z in statements if isinstance(z, Persist)]
+    parsed = [z for z in statements if isinstance(z, PersistStatement)]
     for persist in parsed:
         persist.select.selection.append(
             SelectItem(
