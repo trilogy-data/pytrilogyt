@@ -7,7 +7,7 @@ import date as date;
 #is, compute the increase of Monday, Tuesday, ... Sunday sales from one year to the following
 # trilogy run C:\Users\ethan\coding_projects\pypreql-etl\tests\tcp-ds\query02.preql snowflake --username EFROMVT --account DHZVXJH-DE83081 --password <>
 
-merge date.id, store_sales.date_id, web_sales.date_id;
+merge date.id, store_sales.date.id, web_sales.date.id;
 
 rowset sales_by_weekday_year <- select 
     date.year,

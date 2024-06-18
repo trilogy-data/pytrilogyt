@@ -20,7 +20,9 @@ from preqlt.dbt.config import DBTConfig  # noqa
 from preqlt.graph import process_raw  # noqa
 from preqlt.exceptions import OptimizationError  # noqa
 
+
 OPTIMIZATION_FILE = "_internal_cached_intermediates.preql"
+
 
 @dataclass
 class OptimizationResult:
@@ -47,7 +49,9 @@ def optimize_multiple(base: PathlibPath, paths: list[PathlibPath], dialect: Dial
         if path.name == OPTIMIZATION_FILE:
             continue
         with open(path) as f:
-            local_env = Environment(working_path=path.parent,)
+            local_env = Environment(
+                working_path=path.parent,
+            )
             try:
                 new_env, statements = parse_text(f.read(), environment=local_env)
             except Exception as e:
@@ -127,6 +131,7 @@ def main_file_wrapper(
                     # environment = env  # type: ignore
                 )
     if run:
+        print("Executing generated models")
         run_path(PathlibPath(dbt_path))
     return 0
 

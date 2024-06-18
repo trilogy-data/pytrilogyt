@@ -3,28 +3,28 @@
 {{ config(materialized='table') }}
 
 WITH 
-puffin as (
+shark as (
 SELECT
     [1,2,3,4] as "generic_int_array",
     cast(get_current_timestamp() as datetime) as "_preqlt__created_at"
 
 ),
-macho as (
+odd as (
 SELECT
-    unnest(puffin."generic_int_array") as "generic_split"
+    unnest(shark."generic_int_array") as "generic_split"
 FROM
-    puffin as puffin
+    shark as shark
 ),
-premium as (
+canary as (
 SELECT
-    macho."generic_split" as "generic_split",
-    puffin."_preqlt__created_at" as "_preqlt__created_at"
+    odd."generic_split" as "generic_split",
+    shark."_preqlt__created_at" as "_preqlt__created_at"
 FROM
-    macho as macho
-    FULL JOIN puffin on 1=1
+    odd as odd
+    FULL JOIN shark on 1=1
 )
 SELECT
-    premium."generic_split",
-    premium."_preqlt__created_at"
+    canary."generic_split",
+    canary."_preqlt__created_at"
 FROM
-    premium
+    canary

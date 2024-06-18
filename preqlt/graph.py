@@ -22,6 +22,7 @@ from preql.constants import VIRTUAL_CONCEPT_PREFIX
 from random import choice
 from dataclasses import dataclass
 from preql.dialect.base import BaseDialect
+from hashlib import sha256
 
 
 @dataclass
@@ -41,9 +42,17 @@ def name_to_short_name(x: str):
     return x
 
 
+# hash a
+def hash_concepts(concepts: list[Concept]) -> str:
+    return sha256("".join([x.name for x in concepts]).encode()).hexdigest()
+
+
 def generate_datasource_name(select: Select, cte_name: str) -> str:
     """Generate a reasonable table name"""
-    base = "_".join([name_to_short_name(x.name) for x in select.grain.components])
+    base = "_".join(
+        [name_to_short_name(x.name) for x in select.grain.components]
+        + [hash_concepts(select.output_components)]
+    )
     if select.where_clause:
         base = (
             base
@@ -135,7 +144,7 @@ def process_raw(
         new = process_loop(parsed, env, generator=generator, threshold=threshold)
         if new.new:
             outputs += new.new
-            # hardcoded until we figure out the right exit criterai
+            # hardcoded until we figure out the right exit criteria
             complete = True
             if inject:
                 insert_index = min(

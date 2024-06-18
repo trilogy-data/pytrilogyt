@@ -3,27 +3,27 @@
 {{ config(materialized='table') }}
 
 WITH 
-fabulous as (
+skylark as (
 SELECT
-    local_split."generic_split" as "generic_split"
+    local_split_ad1a64057f9ab34fecfe3f4ee78660bb0316dbda9370581ffbeb1e8bddf3d598."generic_split" as "generic_split"
 FROM
-    {{ ref('split_gen_model') }} as local_split
+    {{ ref('split_ad1a64057f9ab34fecfe3f4ee78660bb0316dbda9370581ffbeb1e8bddf3d598_gen_model') }} as local_split_ad1a64057f9ab34fecfe3f4ee78660bb0316dbda9370581ffbeb1e8bddf3d598
 ),
-kestrel as (
+rhea as (
 SELECT
     cast(get_current_timestamp() as datetime) as "_preqlt__created_at"
 
 ),
-barracuda as (
+stork as (
 SELECT
-    fabulous."generic_split" as "generic_split",
-    kestrel."_preqlt__created_at" as "_preqlt__created_at"
+    skylark."generic_split" as "generic_split",
+    rhea."_preqlt__created_at" as "_preqlt__created_at"
 FROM
-    fabulous as fabulous
-    FULL JOIN kestrel on 1=1
+    skylark as skylark
+    FULL JOIN rhea on 1=1
 )
 SELECT
-    barracuda."generic_split",
-    barracuda."_preqlt__created_at"
+    stork."generic_split",
+    stork."_preqlt__created_at"
 FROM
-    barracuda
+    stork
