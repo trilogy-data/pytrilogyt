@@ -3,23 +3,27 @@
 {{ config(materialized='table') }}
 
 WITH 
-scrawny as (
+wary as (
 SELECT
-    cast(get_current_timestamp() as datetime) as "_preqlt__created_at",
-    unnest([1,2,3,4]) as "generic_split"
+    local_split_ad1a64057f9ab34fecfe3f4ee78660bb0316dbda9370581ffbeb1e8bddf3d598."generic_split" as "generic_split"
+FROM
+    {{ ref('split_ad1a64057f9ab34fecfe3f4ee78660bb0316dbda9370581ffbeb1e8bddf3d598_gen_model') }} as local_split_ad1a64057f9ab34fecfe3f4ee78660bb0316dbda9370581ffbeb1e8bddf3d598
+),
+python as (
+SELECT
+    cast(get_current_timestamp() as datetime) as "_preqlt__created_at"
 
 ),
-wakeful as (
+viper as (
 SELECT
-    scrawny."generic_split" as "generic_split",
-    scrawny."_preqlt__created_at" as "_preqlt__created_at"
+    wary."generic_split" as "generic_split",
+    python."_preqlt__created_at" as "_preqlt__created_at"
 FROM
-    scrawny as scrawny
-
-GROUP BY 
-    scrawny."generic_split")
+    wary as wary
+    LEFT OUTER JOIN python on 1=1
+)
 SELECT
-    wakeful."generic_split",
-    wakeful."_preqlt__created_at"
+    viper."generic_split",
+    viper."_preqlt__created_at"
 FROM
-    wakeful
+    viper

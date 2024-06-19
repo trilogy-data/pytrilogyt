@@ -3,28 +3,28 @@
 {{ config(materialized='table') }}
 
 WITH 
-fabulous as (
+dingo as (
 SELECT
     [1,2,3,4] as "generic_int_array",
     cast(get_current_timestamp() as datetime) as "_preqlt__created_at"
 
 ),
-imported as (
+owl as (
 SELECT
-    unnest(fabulous."generic_int_array") as "generic_split"
+    unnest(dingo."generic_int_array") as "generic_split"
 FROM
-    fabulous as fabulous
+    dingo as dingo
 ),
-goldfinch as (
+rook as (
 SELECT
-    imported."generic_split" as "generic_split",
-    fabulous."_preqlt__created_at" as "_preqlt__created_at"
+    owl."generic_split" as "generic_split",
+    dingo."_preqlt__created_at" as "_preqlt__created_at"
 FROM
-    imported as imported
-    LEFT OUTER JOIN fabulous on 1=1
+    owl as owl
+    LEFT OUTER JOIN dingo on 1=1
 )
 SELECT
-    goldfinch."generic_split",
-    goldfinch."_preqlt__created_at"
+    rook."generic_split",
+    rook."_preqlt__created_at"
 FROM
-    goldfinch
+    rook

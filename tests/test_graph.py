@@ -1,5 +1,5 @@
 from preqlt.graph import fingerprint_cte, process_raw
-from preql.core.models import CTE, QueryDatasource, Environment
+from preql.core.models import CTE, QueryDatasource, Environment, LooseConceptList
 from preql import Dialects, parse
 from preql.dialect.duckdb import DuckDBDialect
 from preql.parsing.render import Renderer
@@ -83,6 +83,14 @@ select split;
     assert split.address in [x.address for x in instance.output_concepts]
     assert split.address in [x.address for x in env.materialized_concepts]
     assert "local.split" in [x.address for x in env.materialized_concepts]
+    materialized_lcl = LooseConceptList(
+        concepts=[
+            x
+            for x in reparsed[-1].output_columns
+            if x.address in [z.address for z in env.materialized_concepts]
+        ]
+    )
+    assert materialized_lcl.addresses == {"local.split"}
     final = reparsed[-1]
     # check that oure queries use the new datasource
     assert final.ctes[0].source.datasources[0] == instance

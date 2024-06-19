@@ -3,23 +3,27 @@
 {{ config(materialized='table') }}
 
 WITH 
-sedate as (
+brave as (
 SELECT
-    cast(get_current_timestamp() as datetime) as "_preqlt__created_at",
-    unnest([1,2,3,4]) as "generic_split"
+    local_split_ad1a64057f9ab34fecfe3f4ee78660bb0316dbda9370581ffbeb1e8bddf3d598."generic_split" as "generic_split"
+FROM
+    {{ ref('split_ad1a64057f9ab34fecfe3f4ee78660bb0316dbda9370581ffbeb1e8bddf3d598_gen_model') }} as local_split_ad1a64057f9ab34fecfe3f4ee78660bb0316dbda9370581ffbeb1e8bddf3d598
+),
+busy as (
+SELECT
+    cast(get_current_timestamp() as datetime) as "_preqlt__created_at"
 
 ),
-obsolete as (
+highfalutin as (
 SELECT
-    sedate."generic_split" as "generic_split",
-    sedate."_preqlt__created_at" as "_preqlt__created_at"
+    brave."generic_split" as "generic_split",
+    busy."_preqlt__created_at" as "_preqlt__created_at"
 FROM
-    sedate as sedate
-
-GROUP BY 
-    sedate."generic_split")
+    brave as brave
+    LEFT OUTER JOIN busy on 1=1
+)
 SELECT
-    obsolete."generic_split",
-    obsolete."_preqlt__created_at"
+    highfalutin."generic_split",
+    highfalutin."_preqlt__created_at"
 FROM
-    obsolete
+    highfalutin
