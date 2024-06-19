@@ -1,8 +1,10 @@
-## Simple Data Pipelines
+## Simple Declarative Data Pipelines
 
-Combine the simplicity and guarantees of Preql with the power of open source ETL. 
+Combine the simplicity of Preql/Trilogy with the modern data stack. 
 
-Compile your models to ETL scripts to run on demand through the modern data stack. Rebuild on demand.
+Compile your models to ETL scripts to run on demand. Rebuild, run, and test easily.
+
+Translates 'Persist' statements in Preql/Trilogy to scheduled ETL jobs. 
 
 Currently supported backends:
 - DBT
@@ -12,19 +14,26 @@ Currently supported backends:
 
 --optimize=X - Any CTE used at least X times in calculating final model outputs will be materialized for reuse.
 
+
+> [!TIP]
+> Don't worry about optimizing your temp table graph ever again - write your final tables and let PreqLT handle the rest.
+
+
 ## Install
 
 `pip install pypreqlt`
 
-## How to run
+## How to Run
 
-Copy example_file contents into models\example for the "jaffle_project" DBT starter
+preqlt <preql_path> <dbt_project_root_path> <backend> --run
 
-```console
-python preqlt/scripts/main.py C:\Users\ethan\coding_projects\pypreql-etl\jaffle_shop\models\example\customer.preql C:\Users\ethan\coding_projects\pypreql-etl\jaffle_shop bigquery
+```bash
+preqlt dbt/models/core/ ./dbt bigquery --run
 ```
 
-```console
+Each source preql file will be built into a separate DBT sub folder with one model per persist statement.
+
+```bash
 17:12:37  Running with dbt=1.7.4
 17:12:38  Registered adapter: bigquery=1.7.2
 17:12:38  Found 4 models, 4 tests, 0 sources, 0 exposures, 0 metrics, 447 macros, 0 groups, 0 semantic models
@@ -55,5 +64,5 @@ my_second_dbt_model: success
 ### From IO
 
 ```console
-Write-Output """constant x <-5; persist into static as static select x;""" | python preqlt/scripts/main.py C:\Users\ethan\coding_projects\pypreql-etl\jaffle_shop bigquery
+Write-Output """constant x <-5; persist into static as static select x;""" | preqlt C:\Users\ethan\coding_projects\pypreql-etl\jaffle_shop bigquery
 ```
