@@ -9,6 +9,9 @@ Translates 'Persist' statements in Preql/Trilogy to scheduled ETL jobs.
 Currently supported backends:
 - DBT
 
+> [!WARNING]
+> This is a work in progress. Please report any issues or feature requests.
+
 
 ## Flags
 
