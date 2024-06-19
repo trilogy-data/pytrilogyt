@@ -1,7 +1,7 @@
 models:
 - columns:
   - description: No description provided
-    name: io_test
+    name: local_test
     tests: []
   description: Automatically generated model from preql
   name: static_one_gen_model

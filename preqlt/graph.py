@@ -1,7 +1,7 @@
 from preql.core.models import (
     Address,
-    Select,
-    Persist,
+    SelectStatement,
+    PersistStatement,
     QueryDatasource,
     Datasource,
     ProcessedQuery,
@@ -22,6 +22,7 @@ from preql.constants import VIRTUAL_CONCEPT_PREFIX
 from random import choice
 from dataclasses import dataclass
 from preql.dialect.base import BaseDialect
+from hashlib import sha256
 
 
 @dataclass
@@ -32,7 +33,7 @@ class AnalyzeResult:
 
 @dataclass
 class ProcessLoopResult:
-    new: List[Persist]
+    new: List[PersistStatement]
 
 
 def name_to_short_name(x: str):
@@ -41,9 +42,17 @@ def name_to_short_name(x: str):
     return x
 
 
-def generate_datasource_name(select: Select, cte_name: str) -> str:
+# hash a
+def hash_concepts(concepts: list[Concept]) -> str:
+    return sha256("".join([x.name for x in concepts]).encode()).hexdigest()
+
+
+def generate_datasource_name(select: SelectStatement, cte_name: str) -> str:
     """Generate a reasonable table name"""
-    base = "_".join([name_to_short_name(x.name) for x in select.grain.components])
+    base = "_".join(
+        [name_to_short_name(x.name) for x in select.grain.components]
+        + [hash_concepts(select.output_components)]
+    )
     if select.where_clause:
         base = (
             base
@@ -58,8 +67,8 @@ def generate_datasource_name(select: Select, cte_name: str) -> str:
     return base
 
 
-def cte_to_persist(input: CTE, name: str, generator: BaseDialect) -> Persist:
-    select = Select(
+def cte_to_persist(input: CTE, name: str, generator: BaseDialect) -> PersistStatement:
+    select = SelectStatement(
         selection=input.output_columns,
         where_clause=(
             WhereClause(conditional=input.condition) if input.condition else None
@@ -70,7 +79,7 @@ def cte_to_persist(input: CTE, name: str, generator: BaseDialect) -> Persist:
         identifier=generate_datasource_name(select, name),
         address=Address(location=generate_datasource_name(select, name)),
     )
-    persist = Persist(datasource=datasource, select=select)
+    persist = PersistStatement(datasource=datasource, select=select)
     return persist
 
 
@@ -122,12 +131,12 @@ def fingerprint_cte(cte: CTE) -> str:
 
 
 def process_raw(
-    inputs: List[Select | Persist],
+    inputs: List[SelectStatement | PersistStatement],
     env: Environment,
     generator: BaseDialect,
     threshold: int = 2,
     inject: bool = False,
-) -> tuple[list[Select | Persist], list[Persist]]:
+) -> tuple[list[SelectStatement | PersistStatement], list[PersistStatement]]:
     complete = False
     outputs = []
     while not complete:
@@ -135,11 +144,11 @@ def process_raw(
         new = process_loop(parsed, env, generator=generator, threshold=threshold)
         if new.new:
             outputs += new.new
-            # hardcoded until we figure out the right exit criterai
+            # hardcoded until we figure out the right exit criteria
             complete = True
             if inject:
                 insert_index = min(
-                    [inputs.index(x) for x in inputs if isinstance(x, Select)]
+                    [inputs.index(x) for x in inputs if isinstance(x, SelectStatement)]
                 )
                 # insert the new values before this statement
                 inputs = inputs[:insert_index] + new.new + inputs[insert_index:]

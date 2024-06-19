@@ -8,7 +8,10 @@ root = Path(__file__)
 
 
 def test_full_model_build():
-
+    fake = root.parent / "dbt" / "models" / "customer_two" / "fake_gen_model.sql"
+    with open(fake, "w") as f:
+        f.write("SELECT 1")
+    assert fake.exists()
     main_file_wrapper(
         root.parent / "preql/",
         root.parent / "dbt/",
@@ -21,13 +24,15 @@ def test_full_model_build():
     output = results.glob("**/*.sql")
     for f in output:
         # our generated file
-        if not "dim_splits" in str(f):
+        if "dim_splits" not in str(f):
             continue
         if f.is_file():
             with open(f) as file:
                 content = file.read()
                 # validate we are using our generated model
-                assert "ref('split_gen_model')" in content
+                assert "_gen_model')" in content
+
+    assert not fake.exists(), f"Fake file {fake} was not deleted"
 
 
 def test_cli_string():

@@ -6,7 +6,7 @@ from sys import path as sys_path
 from preql import Environment, Executor
 from preql.parser import parse_text
 from preql.parsing.render import Renderer
-from preql.core.models import Import, Persist, Select
+from preql.core.models import ImportStatement, PersistStatement, SelectStatement
 from dataclasses import dataclass
 
 # handles development cases
@@ -21,10 +21,13 @@ from preqlt.graph import process_raw  # noqa
 from preqlt.exceptions import OptimizationError  # noqa
 
 
+OPTIMIZATION_FILE = "_internal_cached_intermediates.preql"
+
+
 @dataclass
 class OptimizationResult:
     path: PathlibPath
-    new_import: Import
+    new_import: ImportStatement
 
 
 renderer = Renderer()
@@ -41,10 +44,14 @@ def optimize_multiple(base: PathlibPath, paths: list[PathlibPath], dialect: Dial
     exec = Executor(dialect=dialect, engine=dialect.default_engine(), environment=env)
     all_statements = []
     # first - ingest and proecss all statements
-    imports: dict[str, Import] = {}
+    imports: dict[str, ImportStatement] = {}
     for path in paths:
+        if path.name == OPTIMIZATION_FILE:
+            continue
         with open(path) as f:
-            local_env = Environment(working_path=path.parent)
+            local_env = Environment(
+                working_path=path.parent,
+            )
             try:
                 new_env, statements = parse_text(f.read(), environment=local_env)
             except Exception as e:
@@ -60,7 +67,11 @@ def optimize_multiple(base: PathlibPath, paths: list[PathlibPath], dialect: Dial
     # determine the new persists we need to create
     _, new_persists = process_raw(
         inject=False,
-        inputs=[x for x in all_statements if isinstance(x, (Persist, Select))],
+        inputs=[
+            x
+            for x in all_statements
+            if isinstance(x, (PersistStatement, SelectStatement))
+        ],
         env=env,
         generator=exec.generator,
         threshold=2,
@@ -68,17 +79,17 @@ def optimize_multiple(base: PathlibPath, paths: list[PathlibPath], dialect: Dial
     # inject those
     print("len inputs", len(all_statements))
     print("length new"), len(new_persists)
-    with open(base / "_internal_cached_intermediates.preql", "w") as f:
+    with open(base / OPTIMIZATION_FILE, "w") as f:
         for k, nimport in imports.items():
             f.write(renderer.to_string(nimport) + "\n")
         for x in new_persists:
             f.write(renderer.to_string(x) + "\n")
     # add our new import to all modules with persists
     return OptimizationResult(
-        path=base / "_internal_cached_intermediates.preql",
-        new_import=Import(
+        path=base / OPTIMIZATION_FILE,
+        new_import=ImportStatement(
             alias=OPTIMIZATION_NAMESPACE,
-            path=str(base / "_internal_cached_intermediates.preql"),
+            path=str(base / OPTIMIZATION_FILE),
         ),
     )
 
@@ -124,6 +135,7 @@ def main_file_wrapper(
                     # environment = env  # type: ignore
                 )
     if run:
+        print("Executing generated models")
         run_path(PathlibPath(dbt_path))
     return 0
 

@@ -3,14 +3,14 @@
 {{ config(materialized='table') }}
 
 WITH 
-swift as (
+barracuda as (
 SELECT
-    1 as "io_test",
+    1 as "test",
     cast(get_current_timestamp() as datetime) as "_preqlt__created_at"
 
 )
 SELECT
-    swift."io_test",
-    swift."_preqlt__created_at"
+    barracuda."test",
+    barracuda."_preqlt__created_at"
 FROM
-    swift
+    barracuda

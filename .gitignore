@@ -11,3 +11,4 @@ __pycache__/
 .ruff_cache
 integration_test.duckdb
 tests/integration/dbt/target
+.env

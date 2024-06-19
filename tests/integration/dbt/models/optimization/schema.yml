@@ -4,5 +4,5 @@ models:
     name: generic_split
     tests: []
   description: Automatically generated model from preql
-  name: split_gen_model
+  name: split_ad1a64057f9ab34fecfe3f4ee78660bb0316dbda9370581ffbeb1e8bddf3d598_gen_model
 version: 2

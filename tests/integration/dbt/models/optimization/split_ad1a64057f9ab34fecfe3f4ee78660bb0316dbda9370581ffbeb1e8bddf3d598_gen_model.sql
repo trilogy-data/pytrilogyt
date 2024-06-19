@@ -3,28 +3,28 @@
 {{ config(materialized='table') }}
 
 WITH 
-puffin as (
+dingo as (
 SELECT
     [1,2,3,4] as "generic_int_array",
     cast(get_current_timestamp() as datetime) as "_preqlt__created_at"
 
 ),
-macho as (
+owl as (
 SELECT
-    unnest(puffin."generic_int_array") as "generic_split"
+    unnest(dingo."generic_int_array") as "generic_split"
 FROM
-    puffin as puffin
+    dingo as dingo
 ),
-premium as (
+rook as (
 SELECT
-    macho."generic_split" as "generic_split",
-    puffin."_preqlt__created_at" as "_preqlt__created_at"
+    owl."generic_split" as "generic_split",
+    dingo."_preqlt__created_at" as "_preqlt__created_at"
 FROM
-    macho as macho
-    FULL JOIN puffin on 1=1
+    owl as owl
+    LEFT OUTER JOIN dingo on 1=1
 )
 SELECT
-    premium."generic_split",
-    premium."_preqlt__created_at"
+    rook."generic_split",
+    rook."_preqlt__created_at"
 FROM
-    premium
+    rook

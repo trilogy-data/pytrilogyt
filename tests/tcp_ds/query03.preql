@@ -1,0 +1,41 @@
+import store_sales as store_sales;
+import web_sales as web_sales;
+import date as date;
+
+# query 2
+#Report the ratios of weekly web and catalog sales increases from one year to the next year for each week. That
+#is, compute the increase of Monday, Tuesday, ... Sunday sales from one year to the following
+# trilogy run C:\Users\ethan\coding_projects\pypreql-etl\tests\tcp-ds\query02.preql snowflake --username EFROMVT --account DHZVXJH-DE83081 --password <>
+
+#merge date.id,store_sales.date.id;
+
+rowset merged_sales <- select 
+    web_sales.date.year,
+    web_sales.date.day_of_week,
+    sum(web_sales.sales_price) as yearly_web_sales
+where 
+    web_sales.date.year in (2001,2002)
+merge
+select 
+    store_sales.date.year,
+    store_sales.date.day_of_week,
+    sum(store_sales.sales_price) as yearly_store_sales
+where 
+    web_sales.date.year in (2001,2002)
+align  
+    year:web_sales.date.year,store_sales.date.year,
+    day_of_week:web_sales.date.day_of_week,store_sales.date.day_of_week,
+
+;
+
+with yearly_agg AS
+select
+    merged_sales.year,
+    SUM(CASE WHEN merged_sales.day_of_week = 1 THEN merged_sales.yearly_web_sales +merged_sales.yearly_store_sales ELSE 0.0 END) as monday_sales;
+
+
+select 
+    yearly_agg.merged_sales.year,
+    yearly_agg.monday_sales,
+    yearly_agg.monday_sales / (lag yearly_agg.monday_sales by yearly_agg.merged_sales.year asc) as monday_increase
+;

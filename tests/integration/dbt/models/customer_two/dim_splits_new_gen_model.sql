@@ -3,27 +3,27 @@
 {{ config(materialized='table') }}
 
 WITH 
-fabulous as (
+wary as (
 SELECT
-    local_split."generic_split" as "generic_split"
+    local_split_ad1a64057f9ab34fecfe3f4ee78660bb0316dbda9370581ffbeb1e8bddf3d598."generic_split" as "generic_split"
 FROM
-    {{ ref('split_gen_model') }} as local_split
+    {{ ref('split_ad1a64057f9ab34fecfe3f4ee78660bb0316dbda9370581ffbeb1e8bddf3d598_gen_model') }} as local_split_ad1a64057f9ab34fecfe3f4ee78660bb0316dbda9370581ffbeb1e8bddf3d598
 ),
-kestrel as (
+python as (
 SELECT
     cast(get_current_timestamp() as datetime) as "_preqlt__created_at"
 
 ),
-barracuda as (
+viper as (
 SELECT
-    fabulous."generic_split" as "generic_split",
-    kestrel."_preqlt__created_at" as "_preqlt__created_at"
+    wary."generic_split" as "generic_split",
+    python."_preqlt__created_at" as "_preqlt__created_at"
 FROM
-    fabulous as fabulous
-    FULL JOIN kestrel on 1=1
+    wary as wary
+    LEFT OUTER JOIN python on 1=1
 )
 SELECT
-    barracuda."generic_split",
-    barracuda."_preqlt__created_at"
+    viper."generic_split",
+    viper."_preqlt__created_at"
 FROM
-    barracuda
+    viper
