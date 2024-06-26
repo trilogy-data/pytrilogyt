@@ -1,7 +1,7 @@
-from preql.core.models import Environment, Concept, DataType
-from preql.core.enums import Purpose
+from trilogy.core.models import Environment, Concept, DataType
+from trilogy.core.enums import Purpose
 from preqlt.enums import PreqltMetrics
-from preql.core.functions import CurrentDatetime
+from trilogy.core.functions import CurrentDatetime
 from preqlt.constants import PREQLT_NAMESPACE
 
 ENVIRONMENT_CONCEPTS = [

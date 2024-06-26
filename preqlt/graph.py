@@ -1,4 +1,4 @@
-from preql.core.models import (
+from trilogy.core.models import (
     Address,
     SelectStatement,
     PersistStatement,
@@ -17,11 +17,11 @@ from preql.core.models import (
 )
 from typing import List
 from preql import Environment
-from preql.core.ergonomics import CTE_NAMES
-from preql.constants import VIRTUAL_CONCEPT_PREFIX
+from trilogy.core.ergonomics import CTE_NAMES
+from trilogy.constants import VIRTUAL_CONCEPT_PREFIX
 from random import choice
 from dataclasses import dataclass
-from preql.dialect.base import BaseDialect
+from trilogy.dialect.base import BaseDialect
 from hashlib import sha256
 
 

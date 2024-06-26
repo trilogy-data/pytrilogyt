@@ -1,12 +1,12 @@
 from click import command, Path, argument, option
-from preql.dialect.enums import Dialects  # noqa
+from trilogy.dialect.enums import Dialects  # noqa
 from pathlib import Path as PathlibPath  # noqa
 import os
 from sys import path as sys_path
 from preql import Environment, Executor
-from preql.parser import parse_text
-from preql.parsing.render import Renderer
-from preql.core.models import ImportStatement, PersistStatement, SelectStatement
+from trilogy.parser import parse_text
+from trilogy.parsing.render import Renderer
+from trilogy.core.models import ImportStatement, PersistStatement, SelectStatement
 from dataclasses import dataclass
 
 # handles development cases
