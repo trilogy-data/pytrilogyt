@@ -3,27 +3,27 @@
 {{ config(materialized='table') }}
 
 WITH 
-wary as (
+yummy as (
 SELECT
     local_split_ad1a64057f9ab34fecfe3f4ee78660bb0316dbda9370581ffbeb1e8bddf3d598."generic_split" as "generic_split"
 FROM
     {{ ref('split_ad1a64057f9ab34fecfe3f4ee78660bb0316dbda9370581ffbeb1e8bddf3d598_gen_model') }} as local_split_ad1a64057f9ab34fecfe3f4ee78660bb0316dbda9370581ffbeb1e8bddf3d598
 ),
-python as (
+cuckoo as (
 SELECT
     cast(get_current_timestamp() as datetime) as "_preqlt__created_at"
 
 ),
-viper as (
+turkey as (
 SELECT
-    wary."generic_split" as "generic_split",
-    python."_preqlt__created_at" as "_preqlt__created_at"
+    yummy."generic_split" as "generic_split",
+    cuckoo."_preqlt__created_at" as "_preqlt__created_at"
 FROM
-    wary as wary
-    LEFT OUTER JOIN python on 1=1
+    yummy as yummy
+    FULL JOIN cuckoo on 1=1
 )
 SELECT
-    viper."generic_split",
-    viper."_preqlt__created_at"
+    turkey."generic_split",
+    turkey."_preqlt__created_at"
 FROM
-    viper
+    turkey

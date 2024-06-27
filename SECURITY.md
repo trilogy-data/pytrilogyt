@@ -1,7 +1,7 @@
 # Security Policies and Procedures
 
 This document outlines security procedures and general policies for the
-`preqlt` project.
+`trilogyt` project.
 
 * [Reporting a Bug](#reporting-a-bug)
 * [Disclosure Policy](#disclosure-policy)
@@ -9,9 +9,9 @@ This document outlines security procedures and general policies for the
 
 ## Reporting a Bug
 
-The `preql` team and community take all security bugs in
-`preqlt` seriously.  Thank you for improving the security of
-`preqlt`. We appreciate your efforts and responsible disclosure and
+The `trilogy` team and community take all security bugs in
+`trilogyt` seriously.  Thank you for improving the security of
+`trilogyt`. We appreciate your efforts and responsible disclosure and
 will make every effort to acknowledge your contributions.
 
 Report security bugs by emailing `preql-community@gmail.com`.

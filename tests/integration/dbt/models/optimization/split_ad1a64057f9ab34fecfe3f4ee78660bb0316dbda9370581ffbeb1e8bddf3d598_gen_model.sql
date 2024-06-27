@@ -3,28 +3,28 @@
 {{ config(materialized='table') }}
 
 WITH 
-dingo as (
+thrush as (
 SELECT
     [1,2,3,4] as "generic_int_array",
     cast(get_current_timestamp() as datetime) as "_preqlt__created_at"
 
 ),
-owl as (
+lark as (
 SELECT
-    unnest(dingo."generic_int_array") as "generic_split"
+    unnest(thrush."generic_int_array") as "generic_split"
 FROM
-    dingo as dingo
+    thrush as thrush
 ),
-rook as (
+penguin as (
 SELECT
-    owl."generic_split" as "generic_split",
-    dingo."_preqlt__created_at" as "_preqlt__created_at"
+    lark."generic_split" as "generic_split",
+    thrush."_preqlt__created_at" as "_preqlt__created_at"
 FROM
-    owl as owl
-    LEFT OUTER JOIN dingo on 1=1
+    lark as lark
+    FULL JOIN thrush on 1=1
 )
 SELECT
-    rook."generic_split",
-    rook."_preqlt__created_at"
+    penguin."generic_split",
+    penguin."_preqlt__created_at"
 FROM
-    rook
+    penguin

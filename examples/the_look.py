@@ -5,8 +5,8 @@ from sys import path
 from os.path import dirname
 
 path.append(dirname(dirname(__file__)))
-from preqlt.graph import process_raw
-from preql import parse
+from trilogyt.graph import process_raw
+from trilogy import parse
 
 QUERIES = [
     """

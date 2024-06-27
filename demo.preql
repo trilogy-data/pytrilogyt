@@ -1,0 +1,60 @@
+key sentence_id int;
+property sentence_id.word_one string; # comments after a definition 
+property sentence_id.word_two string; # are syntactic sugar for adding
+property sentence_id.word_three string; # a description to it
+
+# comments in other places are just comments
+
+# define our datasources as queries in duckdb
+datasource word_one(
+    sentence: sentence_id,
+    word:word_one
+)
+grain(sentence_id)
+query '''
+select 1 as sentence, 'Hello' as word
+union all
+select 2, 'Bonjour'
+''';
+
+datasource word_two(
+    sentence: sentence_id,
+    word:word_two
+)
+grain(sentence_id)
+query '''
+select 1 as sentence, 'World' as word
+union all
+select 2 as sentence, 'World'
+''';
+
+datasource word_three(
+    sentence: sentence_id,
+    word:word_three
+)
+grain(sentence_id)
+query '''
+select 1 as sentence, '!' as word
+union all
+select 2 as sentence, '!'
+''';
+
+# an actual select statement
+# joins are automatically resolved between the 3 sources
+with sentences as
+select sentence_id, word_one || ' ' || word_two ||  word_three as text;
+
+SELECT
+    --sentences.sentence_id,
+    sentences.text
+WHERE 
+    sentences.sentence_id = 1
+;
+
+SELECT
+    --sentences.sentence_id,
+    sentences.text
+WHERE 
+    sentences.sentence_id = 2
+;
+# semicolon termination for all statements

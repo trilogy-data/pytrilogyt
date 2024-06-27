@@ -1,5 +1,5 @@
 
-# Welcome to the Preql Contributing Guide <!-- omit in toc -->
+# Welcome to the Trilogy Contributing Guide <!-- omit in toc -->
 
 Thank you for investing your time in contributing to our project! :.
 
