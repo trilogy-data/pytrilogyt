@@ -3,7 +3,7 @@ from trilogy.dialect.enums import Dialects  # noqa
 from pathlib import Path as PathlibPath  # noqa
 import os
 from sys import path as sys_path
-from preql import Environment, Executor
+from trilogy import Environment, Executor
 from trilogy.parser import parse_text
 from trilogy.parsing.render import Renderer
 from trilogy.core.models import ImportStatement, PersistStatement, SelectStatement
@@ -13,12 +13,12 @@ from dataclasses import dataclass
 nb_path = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
 sys_path.insert(0, nb_path)
 
-from preqlt.constants import OPTIMIZATION_NAMESPACE  # noqa
-from preqlt.dbt.generate_dbt import generate_model  # noqa
-from preqlt.dbt.run_dbt import run_path  # noqa
-from preqlt.dbt.config import DBTConfig  # noqa
-from preqlt.graph import process_raw  # noqa
-from preqlt.exceptions import OptimizationError  # noqa
+from trilogyt.constants import OPTIMIZATION_NAMESPACE  # noqa
+from trilogyt.dbt.generate_dbt import generate_model  # noqa
+from trilogyt.dbt.run_dbt import run_path  # noqa
+from trilogyt.dbt.config import DBTConfig  # noqa
+from trilogyt.graph import process_raw  # noqa
+from trilogyt.exceptions import OptimizationError  # noqa
 
 
 OPTIMIZATION_FILE = "_internal_cached_intermediates.preql"

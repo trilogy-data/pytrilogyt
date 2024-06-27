@@ -16,7 +16,7 @@ from trilogy.core.models import (
     Parenthetical,
 )
 from typing import List
-from preql import Environment
+from trilogy import Environment
 from trilogy.core.ergonomics import CTE_NAMES
 from trilogy.constants import VIRTUAL_CONCEPT_PREFIX
 from random import choice

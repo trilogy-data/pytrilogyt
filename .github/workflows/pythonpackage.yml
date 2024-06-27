@@ -31,11 +31,11 @@ jobs:
       - name: Lint with mypy
         run: |
           # stop the build if there are Python syntax errors or undefined names
-          mypy preqlt
+          mypy trilogyt
       - name: Lint with ruff
         run: |
           # stop the build if there are Python syntax errors or undefined names
-          ruff check preqlt
+          ruff check trilogyt
       - name: Test with pytest
         run: |
           pip install pytest

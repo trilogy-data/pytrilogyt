@@ -1,9 +1,9 @@
-from preqlt.graph import fingerprint_cte, process_raw
-from preql.core.models import CTE, QueryDatasource, Environment, LooseConceptList
-from preql import Dialects, parse
-from preql.dialect.duckdb import DuckDBDialect
-from preql.parsing.render import Renderer
-from preql.core.enums import SourceType
+from trilogyt.graph import fingerprint_cte, process_raw
+from trilogy.core.models import CTE, QueryDatasource, Environment, LooseConceptList
+from trilogy import Dialects, parse
+from trilogy.dialect.duckdb import DuckDBDialect
+from trilogy.parsing.render import Renderer
+from trilogy.core.enums import SourceType
 
 
 def test_fingerprint(test_environment: Environment):
@@ -31,8 +31,6 @@ def test_fingerprint(test_environment: Environment):
     b = fingerprint_cte(test)
     assert a == b
 
-
-# from preql.core.processing.concept_strategies_v3
 
 
 def test_integration():

@@ -1,2 +1,2 @@
-pypreql>=0.0.1.96
+trilogy>=0.0.1.96
 dbt-core

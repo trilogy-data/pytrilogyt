@@ -1,23 +1,23 @@
-from preql import parse
+from trilogy import parse
 from pathlib import Path
 
-from preql import Environment
-from preql import Dialects
+from trilogy import Environment
+from trilogy import Dialects
 from dotenv import load_dotenv
 from datetime import datetime
-from preql.hooks.query_debugger import DebuggingHook
+from trilogy.hooks.query_debugger import DebuggingHook
 import os
-from preql.dialect.config import SnowflakeConfig
+from trilogy.dialect.config import SnowflakeConfig
 
 
 load_dotenv()
 working_path = Path(__file__).parent
 test = working_path / "queries.preql"
 
-
 RUN_SNOWFLAKE = os.getenv("RUN_SNOWFLAKE", False)
 
-def run_snowflake(env:Environment, text:str):
+
+def run_snowflake(env: Environment, text: str):
     exec = Dialects.SNOWFLAKE.default_executor(
         environment=env,
         conf=SnowflakeConfig(
@@ -31,12 +31,14 @@ def run_snowflake(env:Environment, text:str):
     for row in results[0].fetchall():
         print(row)
 
-def render_duck_db(env:Environment, text:str):
+
+def render_duck_db(env: Environment, text: str):
     exec = Dialects.DUCK_DB.default_executor(
         environment=env,
         hooks=[DebuggingHook(process_other=False, process_ctes=False)],
     )
     _ = exec.generate_sql(text)
+
 
 def test_one():
     env = Environment(working_path=working_path)
@@ -82,6 +84,7 @@ def test_three():
     else:
         render_duck_db(env, text)
 
+
 def test_four():
     env = Environment(working_path=working_path)
 
@@ -95,7 +98,6 @@ def test_four():
         run_snowflake(env, text)
     else:
         render_duck_db(env, text)
-
 
 
 if __name__ == "__main__":

@@ -5,7 +5,7 @@ import re
 import setuptools
 
 _version_re = re.compile(r"__version__\s+=\s+(.*)")
-with open("preqlt/__init__.py", "rb") as f:
+with open("trilogyt/__init__.py", "rb") as f:
     _match = _version_re.search(f.read().decode("utf-8"))
     if _match is None:
         print("No version found")
@@ -17,7 +17,7 @@ with open("requirements.txt", "r") as f:
     install_requires = [line.strip().replace("==", ">=") for line in f.readlines()]
 
 setuptools.setup(
-    name="pypreqlt",
+    name="pytrilogyt",
     version=version,
     url="",
     author="",
@@ -48,7 +48,7 @@ setuptools.setup(
         "duckdb": ["dbt-duckdb"],
     },
     entry_points={
-        "console_scripts": ["preqlt=preqlt.scripts.main:main"],
+        "console_scripts": ["trilogyt=trilogyt.scripts.main:main"],
     },
     classifiers=[
         "Programming Language :: Python",

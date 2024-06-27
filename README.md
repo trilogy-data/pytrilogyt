@@ -1,10 +1,10 @@
 ## Simple Declarative Data Pipelines
 
-Combine the simplicity of Preql/Trilogy with the modern data stack. 
+Combine the simplicity of Trilogy with the modern data stack. 
 
 Compile your models to ETL scripts to run on demand. Rebuild, run, and test easily.
 
-Translates 'Persist' statements in Preql/Trilogy to scheduled ETL jobs. 
+Translates 'Persist' statements in Trilogy to scheduled ETL jobs. 
 
 Currently supported backends:
 - DBT
@@ -19,19 +19,19 @@ Currently supported backends:
 
 
 > [!TIP]
-> Don't worry about optimizing your temp table graph ever again - write your final tables and let PreqLT handle the rest.
+> Don't worry about optimizing your temp table graph ever again - write your final tables and let TrilogyT handle the rest.
 
 
 ## Install
 
-`pip install pypreqlt`
+`pip install pytrilogyt`
 
 ## How to Run
 
 preqlt <preql_path> <dbt_project_root_path> <backend> --run
 
 ```bash
-preqlt dbt/models/core/ ./dbt bigquery --run
+trilogyt dbt/models/core/ ./dbt bigquery --run
 ```
 
 Each source preql file will be built into a separate DBT sub folder with one model per persist statement.
@@ -67,5 +67,5 @@ my_second_dbt_model: success
 ### From IO
 
 ```console
-Write-Output """constant x <-5; persist into static as static select x;""" | preqlt C:\Users\ethan\coding_projects\pypreql-etl\jaffle_shop bigquery
+Write-Output """constant x <-5; persist into static as static select x;""" | trilogyt <output_path> bigquery
 ```

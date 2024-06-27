@@ -3,14 +3,14 @@
 {{ config(materialized='table') }}
 
 WITH 
-barracuda as (
+abhorrent as (
 SELECT
     1 as "test",
     cast(get_current_timestamp() as datetime) as "_preqlt__created_at"
 
 )
 SELECT
-    barracuda."test",
-    barracuda."_preqlt__created_at"
+    abhorrent."test",
+    abhorrent."_preqlt__created_at"
 FROM
-    barracuda
+    abhorrent

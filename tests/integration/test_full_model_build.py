@@ -1,10 +1,9 @@
-from preqlt.scripts.main import main_file_wrapper, main
-from preql import Dialects
+from trilogyt.scripts.main import main_file_wrapper, main
+from trilogy import Dialects
 from pathlib import Path
 from click.testing import CliRunner
 
 root = Path(__file__)
-# preql: str | Path, dbt_path:Path, dialect: str, debug: bool, run: bool):
 
 
 def test_full_model_build():

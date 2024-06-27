@@ -3,27 +3,27 @@
 {{ config(materialized='table') }}
 
 WITH 
-brave as (
+budgie as (
 SELECT
     local_split_ad1a64057f9ab34fecfe3f4ee78660bb0316dbda9370581ffbeb1e8bddf3d598."generic_split" as "generic_split"
 FROM
     {{ ref('split_ad1a64057f9ab34fecfe3f4ee78660bb0316dbda9370581ffbeb1e8bddf3d598_gen_model') }} as local_split_ad1a64057f9ab34fecfe3f4ee78660bb0316dbda9370581ffbeb1e8bddf3d598
 ),
-busy as (
+deeply as (
 SELECT
     cast(get_current_timestamp() as datetime) as "_preqlt__created_at"
 
 ),
-highfalutin as (
+sloppy as (
 SELECT
-    brave."generic_split" as "generic_split",
-    busy."_preqlt__created_at" as "_preqlt__created_at"
+    budgie."generic_split" as "generic_split",
+    deeply."_preqlt__created_at" as "_preqlt__created_at"
 FROM
-    brave as brave
-    LEFT OUTER JOIN busy on 1=1
+    budgie as budgie
+    FULL JOIN deeply on 1=1
 )
 SELECT
-    highfalutin."generic_split",
-    highfalutin."_preqlt__created_at"
+    sloppy."generic_split",
+    sloppy."_preqlt__created_at"
 FROM
-    highfalutin
+    sloppy

@@ -1,8 +1,8 @@
 from jinja2 import Template
 from pathlib import Path
-from preql import Executor, Environment
+from trilogy import Executor, Environment
 from trilogy.dialect.enums import Dialects
-from preqlt.constants import logger, PREQLT_NAMESPACE
+from trilogyt.constants import logger, TRILOGY_NAMESPACE
 from trilogy.core.models import (
     ProcessedQueryPersist,
     ProcessedQuery,
@@ -12,10 +12,10 @@ from trilogy.core.models import (
     Address,
     SelectItem,
 )
-from preqlt.enums import PreqltMetrics
-from preqlt.core import enrich_environment
+from trilogyt.enums import PreqltMetrics
+from trilogyt.core import enrich_environment
 from trilogy.parser import parse_text
-from preqlt.dbt.config import DBTConfig
+from trilogyt.dbt.config import DBTConfig
 from yaml import safe_load, dump
 import os
 from trilogy.core.query_processor import process_persist
@@ -88,7 +88,7 @@ def generate_model(
         persist.select.selection.append(
             SelectItem(
                 content=exec.environment.concepts[
-                    f"{PREQLT_NAMESPACE}.{PreqltMetrics.CREATED_AT.value}"
+                    f"{TRILOGY_NAMESPACE}.{PreqltMetrics.CREATED_AT.value}"
                 ]
             )
         )
