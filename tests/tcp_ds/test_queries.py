@@ -83,22 +83,3 @@ def test_three():
         run_snowflake(env, text)
     else:
         render_duck_db(env, text)
-
-
-def test_four():
-    env = Environment(working_path=working_path)
-
-    start = datetime.now()
-    with open(working_path / "query04.preql") as f:
-        text = f.read()
-        env, queries = parse(text, env)
-
-    print(datetime.now() - start)
-    if RUN_SNOWFLAKE:
-        run_snowflake(env, text)
-    else:
-        render_duck_db(env, text)
-
-
-if __name__ == "__main__":
-    test_three()
