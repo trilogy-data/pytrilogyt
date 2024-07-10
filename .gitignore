@@ -12,3 +12,8 @@ __pycache__/
 integration_test.duckdb
 tests/integration/dbt/target
 .env
+memory.db
+memory.db.wal
+
+*.prof
+tests/tcp_ds_duckdb/memory

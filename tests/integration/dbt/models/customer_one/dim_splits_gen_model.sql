@@ -3,27 +3,16 @@
 {{ config(materialized='table') }}
 
 WITH 
-budgie as (
+hawk as (
 SELECT
-    local_split_ad1a64057f9ab34fecfe3f4ee78660bb0316dbda9370581ffbeb1e8bddf3d598."generic_split" as "generic_split"
-FROM
-    {{ ref('split_ad1a64057f9ab34fecfe3f4ee78660bb0316dbda9370581ffbeb1e8bddf3d598_gen_model') }} as local_split_ad1a64057f9ab34fecfe3f4ee78660bb0316dbda9370581ffbeb1e8bddf3d598
-),
-deeply as (
-SELECT
-    cast(get_current_timestamp() as datetime) as "_preqlt__created_at"
+    cast(get_current_timestamp() as datetime) as "_trilogyt__created_at"
 
-),
-sloppy as (
-SELECT
-    budgie."generic_split" as "generic_split",
-    deeply."_preqlt__created_at" as "_preqlt__created_at"
-FROM
-    budgie as budgie
-    FULL JOIN deeply on 1=1
 )
+
 SELECT
-    sloppy."generic_split",
-    sloppy."_preqlt__created_at"
+    split_ad1a64057f9ab34fecfe3f4ee78660bb0316dbda9370581ffbeb1e8bddf3d598."generic_split" as "generic_split",
+    hawk."_trilogyt__created_at" as "_trilogyt__created_at"
 FROM
-    sloppy
+    {{ ref('split_ad1a64057f9ab34fecfe3f4ee78660bb0316dbda9370581ffbeb1e8bddf3d598_gen_model') }} as split_ad1a64057f9ab34fecfe3f4ee78660bb0316dbda9370581ffbeb1e8bddf3d598
+    FULL JOIN hawk on 1=1
+

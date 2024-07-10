@@ -2,15 +2,9 @@
 -- Do not edit manually
 {{ config(materialized='table') }}
 
-WITH 
-abhorrent as (
+
 SELECT
     1 as "test",
-    cast(get_current_timestamp() as datetime) as "_preqlt__created_at"
+    cast(get_current_timestamp() as datetime) as "_trilogyt__created_at"
 
-)
-SELECT
-    abhorrent."test",
-    abhorrent."_preqlt__created_at"
-FROM
-    abhorrent
+
