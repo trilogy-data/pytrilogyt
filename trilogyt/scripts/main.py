@@ -89,7 +89,7 @@ def optimize_multiple(base: PathlibPath, paths: list[PathlibPath], dialect: Dial
         path=base / OPTIMIZATION_FILE,
         new_import=ImportStatement(
             alias=OPTIMIZATION_NAMESPACE,
-            path=str(base / OPTIMIZATION_FILE),
+            path=base / OPTIMIZATION_FILE,
         ),
     )
 
