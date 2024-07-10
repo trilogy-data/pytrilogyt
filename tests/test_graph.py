@@ -32,7 +32,6 @@ def test_fingerprint(test_environment: Environment):
     assert a == b
 
 
-
 def test_integration():
     env = Environment()
 

@@ -3,28 +3,23 @@
 {{ config(materialized='table') }}
 
 WITH 
-thrush as (
+jay as (
 SELECT
     [1,2,3,4] as "generic_int_array",
-    cast(get_current_timestamp() as datetime) as "_preqlt__created_at"
+    cast(get_current_timestamp() as datetime) as "_trilogyt__created_at"
 
 ),
-lark as (
+magpie as (
 SELECT
-    unnest(thrush."generic_int_array") as "generic_split"
+    unnest(jay."generic_int_array") as "generic_split"
 FROM
-    thrush as thrush
-),
-penguin as (
-SELECT
-    lark."generic_split" as "generic_split",
-    thrush."_preqlt__created_at" as "_preqlt__created_at"
-FROM
-    lark as lark
-    FULL JOIN thrush on 1=1
+    jay as jay
 )
+
 SELECT
-    penguin."generic_split",
-    penguin."_preqlt__created_at"
+    magpie."generic_split" as "generic_split",
+    jay."_trilogyt__created_at" as "_trilogyt__created_at"
 FROM
-    penguin
+    magpie as magpie
+    FULL JOIN jay on 1=1
+
