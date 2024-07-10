@@ -73,7 +73,9 @@ def generate_model(
                     q,
                 )
                 exec.environment.add_datasource(processed.datasource)
-                possible_dependencies[processed.datasource.name] = processed.datasource
+                possible_dependencies[processed.datasource.identifier] = (
+                    processed.datasource
+                )
 
     outputs: dict[str, str] = {}
     output_data: dict[str, Datasource] = {}
@@ -93,10 +95,16 @@ def generate_model(
             )
         )
     logger.info("generating queries")
+    logger.info(f"possible dependencies are {list(possible_dependencies.keys())}")
     pqueries = exec.generator.generate_queries(exec.environment, parsed)
     for _, query in enumerate(pqueries):
         if isinstance(query, ProcessedQueryPersist):
             for cte in query.ctes:
+                # handle inlined datasources
+                if cte.base_name_override in possible_dependencies:
+                    cte.base_name_override = (
+                        f"{{{{ ref('{cte.base_name_override}_gen_model') }}}}"
+                    )
                 for source in cte.source.datasources:
                     if not isinstance(source, Datasource):
                         continue

@@ -89,7 +89,7 @@ def test_four():
     env = Environment(working_path=working_path)
 
     start = datetime.now()
-    with open(working_path / "query03.preql") as f:
+    with open(working_path / "query04.preql") as f:
         text = f.read()
         env, queries = parse(text, env)
 
