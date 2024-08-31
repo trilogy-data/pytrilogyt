@@ -25,7 +25,7 @@ if __name__ == "__main__":
     fig, ax = plt.subplots()
     ax.set_title("Query execution time")
     ax.set_xlabel("Query")
-    ax.set_ylabel("Execution time (ms)")
+    ax.set_ylabel("Execution time (s)")
 
     df["query_id"] = df["query_id"].astype("category")
     df["query_id"] = df["query_id"].cat.set_categories(df["query_id"].unique())

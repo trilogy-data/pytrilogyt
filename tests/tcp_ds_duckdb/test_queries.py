@@ -15,6 +15,9 @@ def run_query(engine: Executor, idx: int):
 
     with open(working_path / f"query{idx:02d}.preql") as f:
         text = f.read()
+    # warmup - don't count
+    base = engine.execute_raw_sql(f"PRAGMA tpcds({idx});")
+
     start = datetime.now()
     # fetch our results
     base = engine.execute_raw_sql(f"PRAGMA tpcds({idx});")
@@ -30,6 +33,9 @@ def run_query(engine: Executor, idx: int):
     generated = datetime.now()
     generation_time = generated - parsed
     results = engine.execute_raw_sql(generated_sql[-1])
+    # reset generated since we're running this twice
+    generated = datetime.now()
+    results = engine.execute_raw_sql(generated_sql[-1])
     comp_results = list(results.fetchall())
     assert len(comp_results) > 0, "No results returned"
     execed = datetime.now()
@@ -41,7 +47,7 @@ def run_query(engine: Executor, idx: int):
     if len(base_results) != len(comp_results):
         assert False, f"Row count mismatch: {len(base_results)} != {len(comp_results)}"
     for ridx, row in enumerate(base_results):
-        assert row == comp_results[ridx]
+        assert row == comp_results[ridx], f"Row mismatch (expected v actual): {row} != {comp_results[ridx]}"
 
     with open(working_path / f"zquery{idx:02d}.log", "w") as f:
         f.write(
@@ -93,3 +99,34 @@ def test_seven(engine):
 
 def test_eight(engine):
     run_query(engine, 8)
+
+
+def test_ten(engine):
+    run_query(engine, 10)
+
+def test_twelve(engine):
+    run_query(engine, 12)
+
+def test_sixteen(engine):
+    run_query(engine, 16)
+
+
+
+def run_adhoc(number: int):
+    from trilogy import Environment, Dialects
+    from trilogy.hooks.query_debugger import DebuggingHook
+    from trilogy import CONFIG
+    env = Environment(working_path=Path(__file__).parent)
+    engine: Executor = Dialects.DUCK_DB.default_executor(environment=env, hooks=[DebuggingHook()])
+    engine.execute_raw_sql(
+        """INSTALL tpcds;
+LOAD tpcds;
+SELECT * FROM dsdgen(sf=1);"""
+    )
+    run_query(engine, number)
+    print('passed!')
+
+
+if __name__ == "__main__":
+    run_adhoc(15)
+

@@ -418,7 +418,7 @@ SELECT
     store_sales.store.name,
     sum(filter store_sales.net_profit
         where  
-        store_sales.date.quarter_of_year = 2
+        store_sales.date.quarter = 2
         and store_sales.date.year = 1998
         and substring(store_sales.store.zip, 1, 2) in final_zips
 

@@ -101,6 +101,7 @@ def generate_model(
         if isinstance(query, ProcessedQueryPersist):
             for cte in query.ctes:
                 # handle inlined datasources
+                print('checking cte', cte.base_name_override, possible_dependencies)
                 if cte.base_name_override in possible_dependencies:
                     cte.base_name_override = (
                         f"{{{{ ref('{cte.base_name_override}_gen_model') }}}}"
@@ -113,12 +114,17 @@ def generate_model(
                             source.address.location = (
                                 f"{{{{ ref('{source.identifier}_gen_model') }}}}"
                             )
+                        elif isinstance(source.address, str):
+                            source.address = (
+                                f"{{{{ ref('{source.identifier}_gen_model') }}}}"
+                            )   
             base = ProcessedQuery(
                 output_columns=query.output_columns,
                 ctes=query.ctes,
                 base=query.base,
                 joins=query.joins,
                 grain=query.grain,
+                hidden_columns=query.hidden_columns,
                 limit=query.limit,
                 where_clause=query.where_clause,
                 order_by=query.order_by,
