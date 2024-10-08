@@ -1,3 +1,11 @@
-const int_array <- [1,2,3,4];
+key int_array list<int>;
+
+datasource avalues (
+    int_array:int_array
+)
+grain (int_array)
+query '''
+select [1,2,3,4] as int_array
+''';
 
 auto split <- unnest(int_array);

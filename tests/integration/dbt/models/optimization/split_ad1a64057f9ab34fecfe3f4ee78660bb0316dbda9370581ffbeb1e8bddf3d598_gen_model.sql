@@ -3,23 +3,30 @@
 {{ config(materialized='table') }}
 
 WITH 
-jay as (
+juicy as (
 SELECT
-    [1,2,3,4] as "generic_int_array",
+    avalues."int_array" as "generic_int_array"
+FROM
+    (
+select [1,2,3,4] as int_array
+) as avalues),
+quetzal as (
+SELECT
     cast(get_current_timestamp() as datetime) as "_trilogyt__created_at"
-
 ),
-magpie as (
+skylark as (
 SELECT
-    unnest(jay."generic_int_array") as "generic_split"
+    unnest(juicy."generic_int_array") as "generic_split"
 FROM
-    jay as jay
-)
-
+    juicy),
+abundant as (
 SELECT
-    magpie."generic_split" as "generic_split",
-    jay."_trilogyt__created_at" as "_trilogyt__created_at"
+    skylark."generic_split" as "generic_split"
 FROM
-    magpie as magpie
-    FULL JOIN jay on 1=1
-
+    skylark)
+SELECT
+    abundant."generic_split" as "generic_split",
+    quetzal."_trilogyt__created_at" as "_trilogyt__created_at"
+FROM
+    abundant
+    FULL JOIN quetzal on 1=1

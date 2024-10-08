@@ -1,9 +1,13 @@
-
-
-import store_sales as store_sales;
-import customer as customer;
-
-const zips_pre <- unnest(['24128',
+SELECT s_store_name,
+       sum(ss_net_profit)
+FROM store_sales,
+     date_dim,
+     store,
+  (SELECT ca_zip
+   FROM
+     (SELECT SUBSTRING(ca_zip, 1, 5) ca_zip
+      FROM customer_address
+      WHERE SUBSTRING(ca_zip, 1, 5) IN ('24128',
                                      '76232',
                                      '65084',
                                      '87816',
@@ -402,30 +406,22 @@ const zips_pre <- unnest(['24128',
                                      '35258',
                                      '31387',
                                      '35458',
-                                     '35576'
-        ]);
-
-auto zips <- substring(cast(zips_pre as string),1,5);
-
-auto zip_p_count <- count(filter customer.id where customer.preferred_cust_flag = 'Y')  by customer.zip;
-
-auto p_cust_zip <- filter customer.zip where zip_p_count  > 10;
-
-auto final_zips <-substring(filter zips where zips in substring(p_cust_zip, 1,5),1,2);
-
-
-SELECT
-    store_sales.store.name,
-    sum(filter store_sales.net_profit
-        where  
-        store_sales.date.quarter = 2
-        and store_sales.date.year = 1998
-        and substring(store_sales.store.zip, 1, 2) in final_zips
-
-    ) ->store_net_profit
-where 
-    store_net_profit is not null
-order by
-    store_sales.store.name asc
-limit 100
-;
+                                     '35576') INTERSECT
+        SELECT ca_zip
+        FROM
+          (SELECT SUBSTRING(ca_zip, 1, 5) ca_zip,
+                  count(*) cnt
+           FROM customer_address,
+                customer
+           WHERE ca_address_sk = c_current_addr_sk
+             AND c_preferred_cust_flag='Y'
+           GROUP BY ca_zip
+           HAVING count(*) > 10)A1)A2) V1
+WHERE ss_store_sk = s_store_sk
+  AND ss_sold_date_sk = d_date_sk
+  AND d_qoy = 2
+  AND d_year = 1998
+  AND (SUBSTRING(s_zip, 1, 2) = SUBSTRING(V1.ca_zip, 1, 2))
+GROUP BY s_store_name
+ORDER BY s_store_name
+LIMIT 100;

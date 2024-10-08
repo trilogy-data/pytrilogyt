@@ -7,16 +7,14 @@ import catalog_sales as catalog_sales;
 #dependent count, employed dependent count and college dependent count who live in certain counties and who
 # have purchased from both stores and another sales channel during a three month time period of a given year.
 
+
 merge catalog_sales.customer.id into ~customer.id;
 merge web_sales.customer.id into ~customer.id;
 merge store_sales.customer.id into ~customer.id;
 
-
-auto relevant_customers <- filter 
-    customer.id 
-where 
+auto relevant_customers <-  customer.id ?
     store_sales.date.year = 2002 and store_sales.date.month_of_year in (1,2,3,4)
-        and ((web_sales.date.year = 2002 and web_sales.date.month_of_year in (1,2,3,4)) or (catalog_sales.date.year = 2002 and catalog_sales.date.month_of_year in (1,2,3,4)))
+    and ((web_sales.date.year = 2002 and web_sales.date.month_of_year in (1,2,3,4)) or (catalog_sales.date.year = 2002 and catalog_sales.date.month_of_year in (1,2,3,4)))
     and customer.county in (
     'Rush County',
     'Toole County',
@@ -27,6 +25,7 @@ where
 
 with base as select 
     customer.id,
+    customer.demographics.id,
     customer.demographics.gender,
     customer.demographics.marital_status,
     customer.demographics.education_status,
@@ -36,7 +35,7 @@ with base as select
     customer.demographics.employed_dependent_count,
     customer.demographics.college_dependent_count,
 WHERE
-customer.id in relevant_customers
+    customer.id in relevant_customers
 ;
 
 SELECT
@@ -59,7 +58,9 @@ SELECT
      ) as cnt5,
     base.customer.demographics.college_dependent_count,
             count(base.customer.id
-     ) as cnt6,
+     ) as cnt6
+WHERE
+    base.customer.demographics.gender is not null
 ORDER BY
     base.customer.demographics.gender asc,
     base.customer.demographics.marital_status asc,

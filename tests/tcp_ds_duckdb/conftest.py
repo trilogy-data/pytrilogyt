@@ -7,6 +7,8 @@ from logging import INFO
 
 working_path = Path(__file__).parent
 
+SCALE_FACTOR = 5
+
 
 @pytest.fixture(scope="session")
 def engine():
@@ -16,11 +18,14 @@ def engine():
         hooks=[DebuggingHook(level=INFO, process_other=False, process_ctes=False)],
         conf=DuckDBConfig(),
     )
-    memory = working_path / "memory" / "schema.sql"
-    db_path = working_path / "memory"
+    db_path = working_path / f"sf_{SCALE_FACTOR}" / "memory"
+    memory = db_path / "schema.sql"
+
     if Path(memory).exists():
         # TODO: Detect if loaded
         engine.execute_raw_sql(f"IMPORT DATABASE '{db_path}';")
+    else:
+        Path(db_path).parent.mkdir(parents=True, exist_ok=True)
     results = engine.execute_raw_sql("SHOW TABLES;").fetchall()
     tables = [r[0] for r in results]
 
@@ -29,7 +34,7 @@ def engine():
             f"""
         INSTALL tpcds;
         LOAD tpcds;
-        SELECT * FROM dsdgen(sf=1);
+        SELECT * FROM dsdgen(sf={SCALE_FACTOR});
         EXPORT DATABASE '{db_path}' (FORMAT PARQUET);"""
         )
     yield engine
