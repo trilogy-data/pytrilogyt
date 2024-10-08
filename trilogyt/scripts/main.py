@@ -6,7 +6,7 @@ from sys import path as sys_path
 from trilogy import Environment, Executor
 from trilogy.parser import parse_text
 from trilogy.parsing.render import Renderer
-from trilogy.core.models import ImportStatement, PersistStatement, SelectStatement
+from trilogy.core.models import ImportStatement, PersistStatement, SelectStatement, RowsetDerivationStatement
 from dataclasses import dataclass
 
 # handles development cases
@@ -40,11 +40,12 @@ def print_tabulate(q, tabulate):
 
 def optimize_multiple(base: PathlibPath, paths: list[PathlibPath], dialect: Dialects):
 
-    env = Environment(working_path=base.stem, namespace="optimize")
-    exec = Executor(dialect=dialect, engine=dialect.default_engine(), environment=env)
+    optimize_env = Environment(working_path=base.stem, namespace="optimize")
+    exec = Executor(dialect=dialect, engine=dialect.default_engine(), environment=optimize_env)
     all_statements = []
     # first - ingest and proecss all statements
     imports: dict[str, ImportStatement] = {}
+    
     for path in paths:
         if path.name == OPTIMIZATION_FILE:
             continue
@@ -62,7 +63,11 @@ def optimize_multiple(base: PathlibPath, paths: list[PathlibPath], dialect: Dial
                     if existing.path != v.path:
                         raise OptimizationError("")
                 imports[k] = v
-        env.add_import(path.stem, new_env)
+            for k, v in new_env.concepts.items():
+                optimize_env.concepts[k] = v
+            for k, v in new_env.datasources.items():
+                optimize_env.datasources[k] = v
+            optimize_env.gen_concept_list_caches()
         all_statements += statements
     # determine the new persists we need to create
     _, new_persists = process_raw(
@@ -70,18 +75,21 @@ def optimize_multiple(base: PathlibPath, paths: list[PathlibPath], dialect: Dial
         inputs=[
             x
             for x in all_statements
-            if isinstance(x, (PersistStatement, SelectStatement))
+            if isinstance(x, (RowsetDerivationStatement, PersistStatement, SelectStatement))
         ],
-        env=env,
+        env=optimize_env,
         generator=exec.generator,
         threshold=2,
     )
+    ctes: list[RowsetDerivationStatement] = [x for x in all_statements if isinstance(x, RowsetDerivationStatement)]
     # inject those
     print("len inputs", len(all_statements))
     print("length new"), len(new_persists)
     with open(base / OPTIMIZATION_FILE, "w") as f:
         for k, nimport in imports.items():
             f.write(renderer.to_string(nimport) + "\n")
+        for cte in ctes:
+            f.write(renderer.to_string(cte) + "\n")
         for x in new_persists:
             f.write(renderer.to_string(x) + "\n")
     # add our new import to all modules with persists

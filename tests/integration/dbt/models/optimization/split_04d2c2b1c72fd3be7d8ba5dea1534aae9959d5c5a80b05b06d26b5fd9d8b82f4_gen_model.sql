@@ -3,30 +3,30 @@
 {{ config(materialized='table') }}
 
 WITH 
-juicy as (
+lark as (
 SELECT
     avalues."int_array" as "generic_int_array"
 FROM
     (
 select [1,2,3,4] as int_array
 ) as avalues),
-quetzal as (
+falcon as (
 SELECT
     cast(get_current_timestamp() as datetime) as "_trilogyt__created_at"
 ),
-skylark as (
+sweltering as (
 SELECT
-    unnest(juicy."generic_int_array") as "generic_split"
+    unnest(lark."generic_int_array") as "generic_split"
 FROM
-    juicy),
-abundant as (
+    lark),
+pigeon as (
 SELECT
-    skylark."generic_split" as "generic_split"
+    sweltering."generic_split" as "generic_split"
 FROM
-    skylark)
+    sweltering)
 SELECT
-    abundant."generic_split" as "generic_split",
-    quetzal."_trilogyt__created_at" as "_trilogyt__created_at"
+    pigeon."generic_split" as "generic_split",
+    falcon."_trilogyt__created_at" as "_trilogyt__created_at"
 FROM
-    abundant
-    FULL JOIN quetzal on 1=1
+    pigeon
+    FULL JOIN falcon on 1=1

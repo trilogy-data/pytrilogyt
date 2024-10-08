@@ -23,7 +23,7 @@ def test_fingerprint(test_environment: Environment):
         name="test",
         source=qds,
         output_columns=[oid],
-        source_map={oid.address: qds.name},
+        source_map={oid.address: [qds.name]},
         grain=qds.grain,
     )
     a = fingerprint_cte(test)
@@ -37,7 +37,15 @@ def test_integration():
 
     env, parsed = parse(
         """
-const int_array<- [1,2,3,4];
+key int_array list<int>;
+
+datasource int_source (
+int_array:int_array
+)
+grain (int_array)
+query '''
+select [1,2,3,4] as int_array
+''';
                    
 auto split <- unnest(int_array);
                    
@@ -59,24 +67,23 @@ select split;
     )
 
     # we should have the one consolidated CTE first
-    assert len(consolidated) == 6
+    assert len(consolidated) == 7
     renderer = Renderer()
     final = []
     for x in consolidated:
         final.append(renderer.to_string(x))
-
     reparsed = exec.parse_text("\n".join(final), persist=True)
 
     # we should have our new datasource
-    assert len(env.datasources) == 1
+    assert len(env.datasources) == 2
 
-    instance = list(env.datasources.values())[0]
+    instance = list(env.datasources.values())[1]
     split = env.concepts["split"]
     assert split.address in [x.address for x in instance.output_concepts]
     assert split.address in [x.address for x in env.materialized_concepts]
     assert "local.split" in [x.address for x in env.materialized_concepts]
     env = exec.environment
-    instance = list(env.datasources.values())[0]
+    instance = list(env.datasources.values())[1]
     assert split.address in [x.address for x in instance.output_concepts]
     assert split.address in [x.address for x in env.materialized_concepts]
     assert "local.split" in [x.address for x in env.materialized_concepts]
@@ -90,4 +97,4 @@ select split;
     assert materialized_lcl.addresses == {"local.split"}
     final = reparsed[-1]
     # check that oure queries use the new datasource
-    assert final.ctes[0].source.datasources[0] == instance
+    assert final.ctes[0].source.datasources[0] == instance, final.ctes[0].source.datasources[0]

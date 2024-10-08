@@ -87,7 +87,7 @@ def generate_model(
                     processed.datasource
                 )
                 for x in processed.datasource.output_concepts:
-                    assert x.address in executor.environment.materialized_concepts
+                    assert x.address in executor.environment.materialized_concepts, f'{x.address} not in {[x.address for x in executor.environment.materialized_concepts]}'
                     assert executor.environment.concepts[x.address] == x
                     assert len(executor.environment.concepts[x.address].sources) == 0
                     persist_override[x.address] = x
@@ -103,8 +103,8 @@ def generate_model(
     from collections import Counter
     logger.info(Counter([type(c) for c in statements]))
     for k, v in persist_override.items():
-        assert executor.environment.concepts[k].derivation == v.derivation, k
-        executor.environment.add_concept(v)  
+        assert executor.environment.concepts[k].derivation == v.derivation, str(executor.environment.concepts[k].derivation) + str(v.derivation)
+        executor.environment.add_concept(v, force=True)  
     parsed = [z for z in statements if isinstance(z, PersistStatement)]
     for persist in parsed:
         persist.select.selection.append(

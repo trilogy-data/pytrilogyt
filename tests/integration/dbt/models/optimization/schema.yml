@@ -4,5 +4,11 @@ models:
     name: generic_split
     tests: []
   description: Automatically generated model from preql
-  name: split_ad1a64057f9ab34fecfe3f4ee78660bb0316dbda9370581ffbeb1e8bddf3d598_gen_model
+  name: split_04d2c2b1c72fd3be7d8ba5dea1534aae9959d5c5a80b05b06d26b5fd9d8b82f4_gen_model
+- columns:
+  - description: No description provided
+    name: cte_generic_split
+    tests: []
+  description: Automatically generated model from preql
+  name: split_4a0c66eaa9bd766e209f4290311d8aaa8f79548618dc80e573bc787a6dd476e4_gen_model
 version: 2
