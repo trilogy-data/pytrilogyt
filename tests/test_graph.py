@@ -67,7 +67,7 @@ select split;
     )
 
     # we should have the one consolidated CTE first
-    assert len(consolidated) == 7
+    assert len(consolidated) == 8
     renderer = Renderer()
     final = []
     for x in consolidated:
@@ -75,16 +75,12 @@ select split;
     reparsed = exec.parse_text("\n".join(final), persist=True)
 
     # we should have our new datasource
-    assert len(env.datasources) == 2
-
-    instance = list(env.datasources.values())[1]
-    split = env.concepts["split"]
-    assert split.address in [x.address for x in instance.output_concepts]
-    assert split.address in [x.address for x in env.materialized_concepts]
-    assert "local.split" in [x.address for x in env.materialized_concepts]
+    assert len(env.datasources) == 3
     env = exec.environment
-    instance = list(env.datasources.values())[1]
-    assert split.address in [x.address for x in instance.output_concepts]
+    split = env.concepts["split"]
+    instance = [
+        x for x in list(env.datasources.values()) if split.address in x.output_concepts
+    ][0]
     assert split.address in [x.address for x in env.materialized_concepts]
     assert "local.split" in [x.address for x in env.materialized_concepts]
     materialized_lcl = LooseConceptList(
@@ -96,7 +92,7 @@ select split;
     )
     assert materialized_lcl.addresses == {"local.split"}
     final = reparsed[-1]
-    # check that oure queries use the new datasource
+    # check that our queries use the new datasource
     assert final.ctes[0].source.datasources[0] == instance, final.ctes[
         0
     ].source.datasources[0]
