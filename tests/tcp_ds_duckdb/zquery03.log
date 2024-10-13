@@ -1,10 +1,10 @@
 {
     "query_id": 3,
-    "parse_time": 6.638983,
-    "generation_time": 0.0,
-    "exec_time": 0.770699,
-    "comp_time": 1.731755,
-    "total_time": 10.721593,
-    "sql_comp_time": 0.687419,
-    "generated_sql": "\nWITH \nwakeful as (\nSELECT\n    store_sales.\"SS_EXT_SALES_PRICE\" as \"store_sales_ext_sales_price\",\n    date.\"D_MOY\" as \"store_sales_date_month_of_year\",\n    items.\"I_MANUFACT_ID\" as \"store_sales_item_manufacturer_id\",\n    items.\"I_BRAND_ID\" as \"store_sales_item_brand_id\",\n    items.\"I_BRAND\" as \"store_sales_item_brand_name\",\n    cast(\"D_YEAR\" as int) as \"store_sales_date_year\",\n    store_sales.\"SS_TICKET_NUMBER\" as \"store_sales_ticket_number\",\n    items.\"I_ITEM_SK\" as \"store_sales_item_id\"\nFROM\n    memory.store_sales as store_sales\n    INNER JOIN memory.item as items on store_sales.\"SS_ITEM_SK\" = items.\"I_ITEM_SK\"\n    INNER JOIN memory.date_dim as date on store_sales.\"SS_SOLD_DATE_SK\" = date.\"D_DATE_SK\"\nWHERE\n    date.\"D_MOY\" = 11 and items.\"I_MANUFACT_ID\" = 128\n)\nSELECT\n    wakeful.\"store_sales_date_year\" as \"store_sales_date_year\",\n    wakeful.\"store_sales_item_brand_id\" as \"store_sales_item_brand_id\",\n    wakeful.\"store_sales_item_brand_name\" as \"store_sales_item_brand_name\",\n    sum(wakeful.\"store_sales_ext_sales_price\") as \"sum_agg\"\nFROM\n    wakeful\nGROUP BY \n    wakeful.\"store_sales_date_year\",\n    wakeful.\"store_sales_item_brand_name\",\n    wakeful.\"store_sales_item_brand_id\"\nORDER BY \n    wakeful.\"store_sales_date_year\" asc,\n    sum(wakeful.\"store_sales_ext_sales_price\") desc,\n    wakeful.\"store_sales_item_brand_id\" asc\nLIMIT (100)"
+    "parse_time": 6.345131,
+    "generation_time": 0.010538,
+    "exec_time": 0.525357,
+    "comp_time": 0.365361,
+    "total_time": 8.192319,
+    "sql_comp_time": 0.353858,
+    "generated_sql": "\nWITH \nvacuous as (\nSELECT\n    store_sales.\"SS_EXT_SALES_PRICE\" as \"store_sales_ext_sales_price\",\n    date.\"D_MOY\" as \"store_sales_date_month_of_year\",\n    items.\"I_MANUFACT_ID\" as \"store_sales_item_manufacturer_id\",\n    items.\"I_BRAND_ID\" as \"store_sales_item_brand_id\",\n    items.\"I_BRAND\" as \"store_sales_item_brand_name\",\n    cast(\"D_YEAR\" as int) as \"store_sales_date_year\",\n    store_sales.\"SS_TICKET_NUMBER\" as \"store_sales_ticket_number\",\n    items.\"I_ITEM_SK\" as \"store_sales_item_id\"\nFROM\n    memory.store_sales as store_sales\n    INNER JOIN memory.date_dim as date on store_sales.\"SS_SOLD_DATE_SK\" = date.\"D_DATE_SK\"\n    INNER JOIN memory.item as items on store_sales.\"SS_ITEM_SK\" = items.\"I_ITEM_SK\"\nWHERE\n    date.\"D_MOY\" = 11 and items.\"I_MANUFACT_ID\" = 128\n)\nSELECT\n    vacuous.\"store_sales_date_year\" as \"store_sales_date_year\",\n    vacuous.\"store_sales_item_brand_id\" as \"store_sales_item_brand_id\",\n    vacuous.\"store_sales_item_brand_name\" as \"store_sales_item_brand_name\",\n    sum(vacuous.\"store_sales_ext_sales_price\") as \"sum_agg\"\nFROM\n    vacuous\nGROUP BY \n    vacuous.\"store_sales_item_brand_id\",\n    vacuous.\"store_sales_date_year\",\n    vacuous.\"store_sales_item_brand_name\"\nORDER BY \n    vacuous.\"store_sales_date_year\" asc,\n    sum(vacuous.\"store_sales_ext_sales_price\") desc,\n    vacuous.\"store_sales_item_brand_id\" asc\nLIMIT (100)"
 }
