@@ -2,7 +2,6 @@ from jinja2 import Template
 from pathlib import Path
 from trilogy import Executor, Environment
 from trilogy.dialect.enums import Dialects
-from trilogyt.constants import logger, TRILOGY_NAMESPACE
 from trilogy.core.models import (
     ProcessedQueryPersist,
     ProcessedQuery,
@@ -12,7 +11,9 @@ from trilogy.core.models import (
     Address,
     SelectItem,
     Concept,
+    ConceptTransform,
 )
+from trilogyt.constants import logger, TRILOGY_NAMESPACE
 from trilogyt.enums import PreqltMetrics
 from trilogyt.core import enrich_environment
 from trilogy.parser import parse_text
@@ -21,7 +22,7 @@ from yaml import safe_load, dump
 import os
 from trilogy.core.query_processor import process_persist
 from collections import defaultdict
-from trilogy.core.processing.node_generators import gen_select_node
+from collections import Counter
 
 DEFAULT_DESCRIPTION: str = "No description provided"
 
@@ -56,7 +57,9 @@ def generate_model(
         working_path=preql_path.parent if preql_path else os.getcwd(),
         # namespace=config.namespace,
     )
-    executor = Executor(dialect=dialect, engine=dialect.default_engine(), environment=env)
+    executor = Executor(
+        dialect=dialect, engine=dialect.default_engine(), environment=env
+    )
     executor.environment = enrich_environment(executor.environment)
     possible_dependencies = {}
     persist_override = {}
@@ -67,14 +70,16 @@ def generate_model(
                 environment=Environment(working_path=Path(extra_import.path).parent),
             )
         persists = [x for x in queries if isinstance(x, PersistStatement)]
-        output_cs:list[Concept] = []
+        output_cs: list[Concept] = []
         for persist in persists:
             for x in persist.select.selection:
-                if isinstance(x, SelectItem):
-                    output_cs.append(x.content)
+                if isinstance(x.content, ConceptTransform):
+                    output_cs.append(x.content.output)
                 else:
-                    output_cs.append(x)
-        logger.info(f"Extra dependencies parsed, have {len(persists)} persists adding {[x.address for x in output_cs]}.")
+                    output_cs.append(x.content)
+        logger.info(
+            f"Extra dependencies parsed, have {len(persists)} persists adding {[x.address for x in output_cs]}."
+        )
         # exec.environment.add_import(extra_import.alias, local_env)
         for q in persists:
             if isinstance(q, PersistStatement):
@@ -86,11 +91,8 @@ def generate_model(
                 possible_dependencies[processed.datasource.identifier] = (
                     processed.datasource
                 )
-                for x in processed.datasource.output_concepts:
-                    assert x.address in executor.environment.materialized_concepts, f'{x.address} not in {[x.address for x in executor.environment.materialized_concepts]}'
-                    assert executor.environment.concepts[x.address] == x
-                    assert len(executor.environment.concepts[x.address].sources) == 0
-                    persist_override[x.address] = x
+                for oc in processed.datasource.output_concepts:
+                    persist_override[oc.address] = oc
 
     outputs: dict[str, str] = {}
     output_data: dict[str, Datasource] = {}
@@ -100,11 +102,9 @@ def generate_model(
     except Exception as e:
         raise SyntaxError(f"Unable to parse {preql_body}" + str(e))
 
-    from collections import Counter
     logger.info(Counter([type(c) for c in statements]))
     for k, v in persist_override.items():
-        assert executor.environment.concepts[k].derivation == v.derivation, str(executor.environment.concepts[k].derivation) + str(v.derivation)
-        executor.environment.add_concept(v, force=True)  
+        executor.environment.add_concept(v, force=True)
     parsed = [z for z in statements if isinstance(z, PersistStatement)]
     for persist in parsed:
         persist.select.selection.append(
@@ -121,15 +121,14 @@ def generate_model(
         for c in ds.output_concepts:
             assert c.address in executor.environment.materialized_concepts
     pqueries = executor.generator.generate_queries(executor.environment, parsed)
-    logger.info(f'got {len(pqueries)} queries')
-    from collections import Counter
+    logger.info(f"got {len(pqueries)} queries")
     logger.info(Counter([type(c) for c in pqueries]))
     for _, query in enumerate(pqueries):
         if isinstance(query, ProcessedQueryPersist):
-            logger.info(f'Starting on {_}')
+            logger.info(f"Starting on {_}")
             for cte in query.ctes:
                 # handle inlined datasources
-                logger.info(f'checking cte {cte.name} with {possible_dependencies}')
+                logger.info(f"checking cte {cte.name} with {possible_dependencies}")
                 if cte.base_name_override in possible_dependencies:
                     cte.base_name_override = (
                         f"{{{{ ref('{cte.base_name_override}_gen_model') }}}}"
@@ -146,7 +145,7 @@ def generate_model(
                         elif isinstance(source.address, str):
                             source.address = (
                                 f"{{{{ ref('{source.identifier}_gen_model') }}}}"
-                            )   
+                            )
             base = ProcessedQuery(
                 output_columns=query.output_columns,
                 ctes=query.ctes,

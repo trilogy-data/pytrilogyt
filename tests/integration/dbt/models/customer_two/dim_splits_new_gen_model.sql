@@ -3,13 +3,14 @@
 {{ config(materialized='table') }}
 
 WITH 
-falcon as (
+quizzical as (
 SELECT
     cast(get_current_timestamp() as datetime) as "_trilogyt__created_at"
 )
 SELECT
-    split_04d2c2b1c72fd3be7d8ba5dea1534aae9959d5c5a80b05b06d26b5fd9d8b82f4."generic_split" as "generic_split",
-    falcon."_trilogyt__created_at" as "_trilogyt__created_at"
+    scalar_split_dd968c4c1215b184ec36e1ed881d193d3e8e2ad062dd6750257f78115dccdfd7."generic_split" as "generic_split",
+    scalar_split_dd968c4c1215b184ec36e1ed881d193d3e8e2ad062dd6750257f78115dccdfd7."generic_scalar" as "generic_scalar",
+    quizzical."_trilogyt__created_at" as "_trilogyt__created_at"
 FROM
-    {{ ref('split_04d2c2b1c72fd3be7d8ba5dea1534aae9959d5c5a80b05b06d26b5fd9d8b82f4_gen_model') }} as split_04d2c2b1c72fd3be7d8ba5dea1534aae9959d5c5a80b05b06d26b5fd9d8b82f4
-    FULL JOIN falcon on 1=1
+    {{ ref('scalar_split_dd968c4c1215b184ec36e1ed881d193d3e8e2ad062dd6750257f78115dccdfd7_gen_model') }} as scalar_split_dd968c4c1215b184ec36e1ed881d193d3e8e2ad062dd6750257f78115dccdfd7
+    FULL JOIN quizzical on 1=1

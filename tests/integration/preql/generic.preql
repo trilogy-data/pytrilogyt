@@ -1,11 +1,15 @@
-key int_array list<int>;
+
+key scalar int;
+property scalar.int_array list<int>;
+auto split <- unnest(int_array);
 
 datasource avalues (
-    int_array:int_array
+    int_array:int_array,
+    scalar:scalar
+
 )
-grain (int_array)
+grain (scalar)
 query '''
-select [1,2,3,4] as int_array
+select [1,2,3,4] as int_array, 2 as scalar
 ''';
 
-auto split <- unnest(int_array);

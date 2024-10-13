@@ -8,7 +8,7 @@ from datetime import datetime
 from trilogy.hooks.query_debugger import DebuggingHook
 import os
 from trilogy.dialect.config import SnowflakeConfig
-
+import pytest
 
 load_dotenv()
 working_path = Path(__file__).parent
@@ -40,6 +40,7 @@ def render_duck_db(env: Environment, text: str):
     _ = exec.generate_sql(text)
 
 
+@pytest.mark.skip(reason="no billing")
 def test_one():
     env = Environment(working_path=working_path)
 
@@ -55,6 +56,7 @@ def test_one():
         render_duck_db(env, text)
 
 
+@pytest.mark.skip(reason="no billing")
 def test_two():
     env = Environment(working_path=working_path)
 
@@ -70,6 +72,7 @@ def test_two():
         render_duck_db(env, text)
 
 
+@pytest.mark.skip(reason="no billing")
 def test_three():
     env = Environment(working_path=working_path)
 

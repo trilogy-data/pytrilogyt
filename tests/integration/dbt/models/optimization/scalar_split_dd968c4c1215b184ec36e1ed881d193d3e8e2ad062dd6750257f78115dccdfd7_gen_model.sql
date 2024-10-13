@@ -5,7 +5,8 @@
 WITH 
 highfalutin as (
 SELECT
-    avalues."int_array" as "generic_int_array"
+    avalues."int_array" as "generic_int_array",
+    avalues."scalar" as "generic_scalar"
 FROM
     (
 select [1,2,3,4] as int_array, 2 as scalar
@@ -14,29 +15,22 @@ quizzical as (
 SELECT
     cast(get_current_timestamp() as datetime) as "_trilogyt__created_at"
 ),
-cooperative as (
+wakeful as (
 SELECT
-    highfalutin."generic_int_array" as "generic_int_array"
+    unnest(highfalutin."generic_int_array") as "generic_split",
+    highfalutin."generic_scalar" as "generic_scalar"
 FROM
-    highfalutin
-GROUP BY 
-    highfalutin."generic_int_array"),
-questionable as (
+    highfalutin),
+cheerful as (
 SELECT
-    unnest(cooperative."generic_int_array") as "generic_split"
+    wakeful."generic_split" as "generic_split",
+    wakeful."generic_scalar" as "generic_scalar"
 FROM
-    cooperative),
-abundant as (
+    wakeful)
 SELECT
-    questionable."generic_split" as "cte_generic_split"
-FROM
-    questionable
-WHERE
-    questionable."generic_split" in ( 1,2,3 )
-)
-SELECT
-    abundant."cte_generic_split" as "cte_generic_split",
+    cheerful."generic_split" as "generic_split",
+    cheerful."generic_scalar" as "generic_scalar",
     quizzical."_trilogyt__created_at" as "_trilogyt__created_at"
 FROM
-    abundant
+    cheerful
     FULL JOIN quizzical on 1=1

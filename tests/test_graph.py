@@ -97,4 +97,6 @@ select split;
     assert materialized_lcl.addresses == {"local.split"}
     final = reparsed[-1]
     # check that oure queries use the new datasource
-    assert final.ctes[0].source.datasources[0] == instance, final.ctes[0].source.datasources[0]
+    assert final.ctes[0].source.datasources[0] == instance, final.ctes[
+        0
+    ].source.datasources[0]

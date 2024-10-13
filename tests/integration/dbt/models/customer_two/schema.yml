@@ -3,6 +3,9 @@ models:
   - description: No description provided
     name: generic_split
     tests: []
+  - description: No description provided
+    name: generic_scalar
+    tests: []
   description: Automatically generated model from preql
   name: dim_splits_new_gen_model
 version: 2

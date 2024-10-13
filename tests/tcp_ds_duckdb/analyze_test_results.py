@@ -14,7 +14,7 @@ if __name__ == "__main__":
             with open(root / filename, "r") as f:
                 loaded = json.loads(f.read())
                 results.append(loaded)
-                print(f'----{filename}----')
+                print(f"----{filename}----")
                 print(loaded["generated_sql"])
                 print("-------")
 
@@ -33,6 +33,8 @@ if __name__ == "__main__":
 
     df = df.sort_values("query_id")
 
-    ax.boxplot([df["exec_time"], df["comp_time"]], tick_labels=["Trilogy", "DuckDBDefault"])
+    ax.boxplot(
+        [df["exec_time"], df["comp_time"]], tick_labels=["Trilogy", "DuckDBDefault"]
+    )
 
     plt.show()

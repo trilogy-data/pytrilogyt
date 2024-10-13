@@ -1,10 +1,22 @@
 models:
 - columns:
   - description: No description provided
-    name: generic_split
+    name: generic_int_array
+    tests: []
+  - description: No description provided
+    name: generic_scalar
     tests: []
   description: Automatically generated model from preql
-  name: split_04d2c2b1c72fd3be7d8ba5dea1534aae9959d5c5a80b05b06d26b5fd9d8b82f4_gen_model
+  name: scalar_445831a9e9e484d7f90c672304367319328b5fd8d8093cc8a12c9d788f4e4bd7_gen_model
+- columns:
+  - description: No description provided
+    name: generic_split
+    tests: []
+  - description: No description provided
+    name: generic_scalar
+    tests: []
+  description: Automatically generated model from preql
+  name: scalar_split_dd968c4c1215b184ec36e1ed881d193d3e8e2ad062dd6750257f78115dccdfd7_gen_model
 - columns:
   - description: No description provided
     name: cte_generic_split
