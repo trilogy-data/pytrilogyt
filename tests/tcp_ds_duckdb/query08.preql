@@ -3,7 +3,7 @@
 import store_sales as store_sales;
 import customer as customer;
 
-const zips_pre <- ['24128',
+const zips_pre <- unnest(['24128',
                                      '76232',
                                      '65084',
                                      '87816',
@@ -403,9 +403,9 @@ const zips_pre <- ['24128',
                                      '31387',
                                      '35458',
                                      '35576'
-        ];
+        ]);
 
-auto zips <- substring(cast(unnest(zips_pre) as string),1,5);
+auto zips <- substring(cast(zips_pre as string),1,5);
 
 auto zip_p_count <- count(filter customer.id where customer.preferred_cust_flag = 'Y')  by customer.zip;
 
@@ -416,15 +416,12 @@ auto final_zips <-substring(filter zips where zips in substring(p_cust_zip, 1,5)
 
 SELECT
     store_sales.store.name,
-    sum(filter store_sales.net_profit
-        where  
-        store_sales.date.quarter_of_year = 2
-        and store_sales.date.year = 1998
-        and substring(store_sales.store.zip, 1, 2) in final_zips
-
+    sum(store_sales.net_profit
     ) ->store_net_profit
 where 
-    store_net_profit is not null
+        store_sales.date.quarter = 2
+        and store_sales.date.year = 1998
+        and substring(store_sales.store.zip, 1, 2) in final_zips
 order by
     store_sales.store.name asc
 limit 100

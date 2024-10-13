@@ -3,16 +3,14 @@
 {{ config(materialized='table') }}
 
 WITH 
-cuckoo as (
+quizzical as (
 SELECT
     cast(get_current_timestamp() as datetime) as "_trilogyt__created_at"
-
 )
-
 SELECT
-    split_ad1a64057f9ab34fecfe3f4ee78660bb0316dbda9370581ffbeb1e8bddf3d598."generic_split" as "generic_split",
-    cuckoo."_trilogyt__created_at" as "_trilogyt__created_at"
+    scalar_split_dd968c4c1215b184ec36e1ed881d193d3e8e2ad062dd6750257f78115dccdfd7."generic_split" as "generic_split",
+    scalar_split_dd968c4c1215b184ec36e1ed881d193d3e8e2ad062dd6750257f78115dccdfd7."generic_scalar" as "generic_scalar",
+    quizzical."_trilogyt__created_at" as "_trilogyt__created_at"
 FROM
-    {{ ref('split_ad1a64057f9ab34fecfe3f4ee78660bb0316dbda9370581ffbeb1e8bddf3d598_gen_model') }} as split_ad1a64057f9ab34fecfe3f4ee78660bb0316dbda9370581ffbeb1e8bddf3d598
-    FULL JOIN cuckoo on 1=1
-
+    {{ ref('scalar_split_dd968c4c1215b184ec36e1ed881d193d3e8e2ad062dd6750257f78115dccdfd7_gen_model') }} as scalar_split_dd968c4c1215b184ec36e1ed881d193d3e8e2ad062dd6750257f78115dccdfd7
+    FULL JOIN quizzical on 1=1

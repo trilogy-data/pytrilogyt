@@ -6,7 +6,7 @@ from click.testing import CliRunner
 root = Path(__file__)
 
 
-def test_full_model_build():
+def test_full_model_build(logger):
     fake = root.parent / "dbt" / "models" / "customer_two" / "fake_gen_model.sql"
     with open(fake, "w") as f:
         f.write("SELECT 1")
@@ -29,7 +29,7 @@ def test_full_model_build():
             with open(f) as file:
                 content = file.read()
                 # validate we are using our generated model
-                assert "_gen_model')" in content
+                assert "_gen_model')" in content, content
 
     assert not fake.exists(), f"Fake file {fake} was not deleted"
 

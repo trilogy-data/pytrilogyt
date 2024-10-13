@@ -14,6 +14,7 @@ if __name__ == "__main__":
             with open(root / filename, "r") as f:
                 loaded = json.loads(f.read())
                 results.append(loaded)
+                print(f"----{filename}----")
                 print(loaded["generated_sql"])
                 print("-------")
 
@@ -25,13 +26,15 @@ if __name__ == "__main__":
     fig, ax = plt.subplots()
     ax.set_title("Query execution time")
     ax.set_xlabel("Query")
-    ax.set_ylabel("Execution time (ms)")
+    ax.set_ylabel("Execution time (s)")
 
     df["query_id"] = df["query_id"].astype("category")
     df["query_id"] = df["query_id"].cat.set_categories(df["query_id"].unique())
 
     df = df.sort_values("query_id")
 
-    ax.boxplot([df["exec_time"], df["comp_time"]], labels=["Trilogy", "DuckDBDefault"])
+    ax.boxplot(
+        [df["exec_time"], df["comp_time"]], tick_labels=["Trilogy", "DuckDBDefault"]
+    )
 
     plt.show()

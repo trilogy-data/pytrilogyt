@@ -3,16 +3,20 @@
 {{ config(materialized='table') }}
 
 WITH 
-hawk as (
+quizzical as (
 SELECT
     cast(get_current_timestamp() as datetime) as "_trilogyt__created_at"
-
-)
-
+),
+dynamic as (
 SELECT
-    split_ad1a64057f9ab34fecfe3f4ee78660bb0316dbda9370581ffbeb1e8bddf3d598."generic_split" as "generic_split",
-    hawk."_trilogyt__created_at" as "_trilogyt__created_at"
+    scalar_split_dd968c4c1215b184ec36e1ed881d193d3e8e2ad062dd6750257f78115dccdfd7."generic_split" as "generic_split"
 FROM
-    {{ ref('split_ad1a64057f9ab34fecfe3f4ee78660bb0316dbda9370581ffbeb1e8bddf3d598_gen_model') }} as split_ad1a64057f9ab34fecfe3f4ee78660bb0316dbda9370581ffbeb1e8bddf3d598
-    FULL JOIN hawk on 1=1
-
+    {{ ref('scalar_split_dd968c4c1215b184ec36e1ed881d193d3e8e2ad062dd6750257f78115dccdfd7_gen_model') }} as scalar_split_dd968c4c1215b184ec36e1ed881d193d3e8e2ad062dd6750257f78115dccdfd7
+GROUP BY 
+    scalar_split_dd968c4c1215b184ec36e1ed881d193d3e8e2ad062dd6750257f78115dccdfd7."generic_split")
+SELECT
+    dynamic."generic_split" as "generic_split",
+    quizzical."_trilogyt__created_at" as "_trilogyt__created_at"
+FROM
+    dynamic
+    FULL JOIN quizzical on 1=1

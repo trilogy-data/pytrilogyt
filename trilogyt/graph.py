@@ -8,12 +8,14 @@ from trilogy.core.models import (
     Grain,
     ProcessedQueryPersist,
     ProcessedShowStatement,
+    ProcessedRawSQLStatement,
     CTE,
     Concept,
     Conditional,
     WhereClause,
     Comparison,
     Parenthetical,
+    RowsetDerivationStatement,
 )
 from typing import List
 from trilogy import Environment
@@ -23,6 +25,7 @@ from random import choice
 from dataclasses import dataclass
 from trilogy.dialect.base import BaseDialect
 from hashlib import sha256
+from trilogy.core.enums import PurposeLineage
 
 
 @dataclass
@@ -44,7 +47,7 @@ def name_to_short_name(x: str):
 
 # hash a
 def hash_concepts(concepts: list[Concept]) -> str:
-    return sha256("".join([x.name for x in concepts]).encode()).hexdigest()
+    return sha256("".join([x.address for x in concepts]).encode()).hexdigest()
 
 
 def generate_datasource_name(select: SelectStatement, cte_name: str) -> str:
@@ -54,6 +57,7 @@ def generate_datasource_name(select: SelectStatement, cte_name: str) -> str:
         + [hash_concepts(select.output_components)]
     )
     if select.where_clause:
+        # TODO: needs to include the filter predicates
         base = (
             base
             + "_filtered_on_"
@@ -68,12 +72,21 @@ def generate_datasource_name(select: SelectStatement, cte_name: str) -> str:
 
 
 def cte_to_persist(input: CTE, name: str, generator: BaseDialect) -> PersistStatement:
-    select = SelectStatement(
-        selection=input.output_columns,
-        where_clause=(
-            WhereClause(conditional=input.condition) if input.condition else None
-        ),
-    )
+
+    # a rowset will have the CTE ported over and we can assume the select statement doesn't need
+    # further filtering
+    rowset = any([x.derivation == PurposeLineage.ROWSET for x in input.output_columns])
+    if rowset:
+        select = SelectStatement(
+            selection=input.output_columns,
+        )
+    else:
+        select = SelectStatement(
+            selection=input.output_columns,
+            where_clause=(
+                WhereClause(conditional=input.condition) if input.condition else None
+            ),
+        )
     datasource = select.to_datasource(
         namespace="default",
         identifier=generate_datasource_name(select, name),
@@ -131,15 +144,21 @@ def fingerprint_cte(cte: CTE) -> str:
 
 
 def process_raw(
-    inputs: List[SelectStatement | PersistStatement],
+    inputs: List[RowsetDerivationStatement | SelectStatement | PersistStatement],
     env: Environment,
     generator: BaseDialect,
     threshold: int = 2,
     inject: bool = False,
-) -> tuple[list[SelectStatement | PersistStatement], list[PersistStatement]]:
+) -> tuple[
+    list[RowsetDerivationStatement | SelectStatement | PersistStatement],
+    list[PersistStatement],
+]:
     complete = False
     outputs = []
+    x = 0
     while not complete:
+        x += 1
+        print(f" loop {x}")
         parsed = generator.generate_queries(env, inputs)
         new = process_loop(parsed, env, generator=generator, threshold=threshold)
         if new.new:
@@ -174,13 +193,17 @@ def analyze(
             counts[fingerprint] = counts.get(fingerprint, 0) + 1
             lookup[fingerprint] = lookup.get(fingerprint, cte) + cte
     for k, v in counts.items():
-        print(f"CTE {k} is used {v} times")
+        print(
+            f"CTE {k} outputs {[x.address for x in lookup[k].output_columns]} is used {v} times"
+        )
     counts, mapping = remap_dictionary(counts, CTE_NAMES)
-    for k, v in counts.items():
-        print(f"CTE {k} is used {v} times")
+    # for k, v in counts.items():
+    #     print(f"CTE {k} is used {v} times")
     final_map: dict[str, CTE] = {}
     for fingerprint, cte in lookup.items():
         final_map[mapping[fingerprint]] = cte
+    for k2, v2 in final_map.items():
+        print(f"CTE {k2} outputs {[x.address for x in v2.output_columns]}")
     return AnalyzeResult(counts, final_map)
 
 
@@ -188,6 +211,9 @@ def is_raw_source_cte(cte: CTE) -> bool:
     if not len(cte.source.datasources) == 1:
         return False
     if isinstance(cte.source.datasources[0], Datasource):
+        source = cte.source.datasources[0]
+        if isinstance(source.address, Address) and source.address.is_query:
+            return False
         return True
     return False
 
@@ -199,14 +225,23 @@ def has_anon_concepts(cte: CTE) -> bool:
 
 
 def process_loop(
-    inputs: List[ProcessedQuery | ProcessedQueryPersist | ProcessedShowStatement],
+    inputs: List[
+        ProcessedQuery
+        | ProcessedQueryPersist
+        | ProcessedShowStatement
+        | ProcessedRawSQLStatement
+    ],
     env: Environment,
     generator: BaseDialect,
     threshold: int = 2,
 ) -> ProcessLoopResult:
-    analysis = analyze(inputs, env)
+    analysis = analyze(
+        [x for x in inputs if isinstance(x, (ProcessedQuery, ProcessedQueryPersist))],
+        env,
+    )
     new_persist = []
     for k, v in analysis.counts.items():
+        print(f"CTE {k} is used {v} times")
         if v >= threshold:
             cte = analysis.mapping[k]
             # skip materializing materialized things
@@ -214,6 +249,9 @@ def process_loop(
                 continue
             if has_anon_concepts(cte):
                 continue
+            print(
+                f"Creating new persist statement from cte {k} with output {[x.address for x in cte.output_columns]}"
+            )
             new_persist.append(cte_to_persist(cte, k, generator=generator))
 
     return ProcessLoopResult(new=new_persist)

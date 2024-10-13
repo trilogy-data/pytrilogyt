@@ -1,12 +1,8 @@
-from logging import getLogger
-from logging import StreamHandler, INFO
+from trilogy.constants import logger
 
 TRILOGY_NAMESPACE = "_trilogyt"
 
 OPTIMIZATION_NAMESPACE = "optimization"
 
 
-logger = getLogger()
-
-logger.addHandler(StreamHandler())
-logger.setLevel(INFO)
+logger = logger
