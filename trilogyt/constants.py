@@ -1,8 +1,8 @@
-from trilogy.constants import logger
+from logging import getLogger, Logger
 
 TRILOGY_NAMESPACE = "_trilogyt"
 
 OPTIMIZATION_NAMESPACE = "optimization"
 
 
-logger = logger
+logger:Logger = getLogger('trilogyt')
