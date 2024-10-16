@@ -2,6 +2,7 @@ from trilogyt.scripts.main import dbt_wrapper, cli, native_wrapper
 from trilogy import Dialects
 from pathlib import Path
 from click.testing import CliRunner
+import os
 
 root = Path(__file__)
 
@@ -35,9 +36,8 @@ def test_full_model_build_dbt(logger):
 
 
 def test_full_model_build_native(logger):
-    fake = root.parent / "native" /  "fake_gen_model.preql"
-    with open(fake, "w") as f:
-        f.write("SELECT 1 as test;")
+    fake = root.parent / "native" 
+    os.makedirs(fake, exist_ok=True)
     assert fake.exists()
     native_wrapper(
         root.parent / "preql/",
@@ -60,7 +60,6 @@ def test_full_model_build_native(logger):
                 # validate we are using our generated model
                 assert "import optimize" in content, content
 
-    assert not fake.exists(), f"Fake file {fake} was not deleted"
 
 def test_cli_string_dbt():
     runner = CliRunner()

@@ -26,6 +26,11 @@ def native_wrapper(
     preql: PathlibPath, output_path: PathlibPath, dialect: Dialects, debug: bool, run: bool
 ):
     logger.info(f"Running native wrapper with {preql} and {output_path}")
+    
+    existing = output_path.glob("**/*.preql")
+    for item in existing:
+        logger.debug(f"Removing existing {item}")
+        os.remove(item)
     if preql.is_file():
         with open(preql) as f:
             generate_model(
@@ -61,6 +66,7 @@ def native_wrapper(
                     extra_imports=[root.new_import],
                     # environment = env  # type: ignore
                 )
+
     if run:
         print("Executing generated models")
         run_path(output_path, dialect=dialect)
