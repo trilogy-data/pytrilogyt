@@ -80,8 +80,9 @@ def native_string_command_wrapper(
     generate_model(
 
         preql_body = preql,
-        preql_path = None,
-        output_path = output_path / "io.preql",
+        # this doesn't exist, but will after we run
+        preql_path = output_path / 'io.preql',
+        output_path = output_path ,
         # environment = env  # type: ignore
     )
     if run:
