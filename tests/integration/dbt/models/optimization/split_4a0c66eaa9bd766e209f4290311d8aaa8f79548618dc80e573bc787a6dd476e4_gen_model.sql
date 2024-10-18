@@ -32,7 +32,7 @@ SELECT
 FROM
     questionable
 WHERE
-    questionable."generic_split" in ( 1,2,3 )
+    questionable."generic_split" in (1,2,3)
 )
 SELECT
     abundant."cte_generic_split" as "cte_generic_split",

@@ -1,0 +1,10 @@
+# Generated from preql source: tests\integration\preql\customer_one.preql
+# Do not edit manually
+# import shared CTE persists into local namespace 
+import _internal_cached_intermediates;
+
+import generic as generic;
+
+PERSIST dim_splits INTO dim_splits FROM SELECT
+    generic.split,
+    _trilogyt._created_at,;

@@ -1,25 +1,26 @@
 ## Simple Declarative Data Pipelines
 
-Combine the simplicity of Trilogy with the modern data stack. 
+Combine the simplicity of Trilogy with the modern data stack such as DBT.
+
+> [!TIP]
+> Pitch: don't worry about optimizing your ETL staging tables ever again - write your final tables and let TrilogyT handle the rest. 
+
 
 Compile your models to ETL scripts to run on demand. Rebuild, run, and test easily.
 
 Translates 'Persist' statements in Trilogy to scheduled ETL jobs. 
 
 Currently supported backends:
+- Native (optimize a PreQL model)
 - DBT
 
 > [!WARNING]
-> This is a work in progress. Please report any issues or feature requests.
+> This is an experimental library. The API is subject to change.
 
 
 ## Flags
 
 --optimize=X - Any CTE used at least X times in calculating final model outputs will be materialized for reuse.
-
-
-> [!TIP]
-> Don't worry about optimizing your temp table graph ever again - write your final tables and let TrilogyT handle the rest.
 
 
 ## Install
@@ -28,7 +29,13 @@ Currently supported backends:
 
 ## How to Run
 
-preqlt <preql_path> <dbt_project_root_path> <backend> --run
+preqlt <preql_path> <output_path> <backend> --run
+
+
+## DBT
+
+For dbt, the output_path should be the root of the dbt project, where the dbt_project.yml file exists.
+
 
 ```bash
 trilogyt dbt/models/core/ ./dbt bigquery --run
