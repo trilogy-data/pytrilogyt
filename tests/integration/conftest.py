@@ -1,6 +1,7 @@
 from pytest import fixture
-from logging import StreamHandler, INFO
+from logging import INFO
 from trilogyt.constants import logger as root_logger
+
 
 @fixture(scope="session")
 def logger():

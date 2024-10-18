@@ -9,15 +9,15 @@ SELECT
 ),
 highfalutin as (
 SELECT
-    avalues."int_array" as "generic_int_array",
-    avalues."scalar" as "generic_scalar"
+    avalues."scalar" as "generic_scalar",
+    avalues."int_array" as "generic_int_array"
 FROM
     (
 select [1,2,3,4] as int_array, 2 as scalar
 ) as avalues)
 SELECT
-    highfalutin."generic_int_array" as "generic_int_array",
     highfalutin."generic_scalar" as "generic_scalar",
+    highfalutin."generic_int_array" as "generic_int_array",
     quizzical."_trilogyt__created_at" as "_trilogyt__created_at"
 FROM
     highfalutin

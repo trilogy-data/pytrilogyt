@@ -1,4 +1,3 @@
-from click import command, Path, argument, option, group
 from trilogy.dialect.enums import Dialects  # noqa
 from pathlib import Path as PathlibPath  # noqa
 import os
@@ -12,10 +11,11 @@ from trilogy.core.models import (
     PersistStatement,
     SelectStatement,
     RowsetDerivationStatement,
-    ConceptDeclarationStatement
+    ConceptDeclarationStatement,
 )
 from dataclasses import dataclass
 from trilogyt.core import ENVIRONMENT_CONCEPTS
+
 # handles development cases
 nb_path = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
 sys_path.insert(0, nb_path)
@@ -42,7 +42,12 @@ def print_tabulate(q, tabulate):
     print(tabulate(result, headers=q.keys(), tablefmt="psql"))
 
 
-def optimize_multiple(base: PathlibPath, paths: list[PathlibPath], output_path:PathlibPath, dialect: Dialects):
+def optimize_multiple(
+    base: PathlibPath,
+    paths: list[PathlibPath],
+    output_path: PathlibPath,
+    dialect: Dialects,
+) -> OptimizationResult:
 
     optimize_env = Environment(working_path=base.stem, namespace="optimize")
     exec = Executor(
@@ -100,7 +105,9 @@ def optimize_multiple(base: PathlibPath, paths: list[PathlibPath], output_path:P
         for k, nimport in imports.items():
             f.write(renderer.to_string(nimport) + "\n")
         for concept in ENVIRONMENT_CONCEPTS:
-            f.write(renderer.to_string(ConceptDeclarationStatement(concept=concept)) + "\n")
+            f.write(
+                renderer.to_string(ConceptDeclarationStatement(concept=concept)) + "\n"
+            )
         for cte in ctes:
             f.write(renderer.to_string(cte) + "\n")
         for x in new_persists:

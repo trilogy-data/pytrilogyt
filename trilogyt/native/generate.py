@@ -1,11 +1,8 @@
 from pathlib import Path
 from trilogy import Environment
-from trilogy.dialect.enums import Dialects
 from trilogy.core.models import (
-    ProcessedQueryPersist,
     PersistStatement,
     ImportStatement,
-    Datasource,
     SelectItem,
     Concept,
     ConceptTransform,
@@ -16,15 +13,14 @@ from trilogyt.core import enrich_environment
 from trilogy.parser import parse_text
 import os
 from trilogy.core.query_processor import process_persist
-from collections import defaultdict
 from collections import Counter
 from trilogy.parsing.render import Renderer
 
 
 def generate_model(
     preql_body: str,
-    preql_path: Path | None,
-    output_path: Path | None,
+    preql_path: Path,
+    output_path: Path,
     environment: Environment | None = None,
     extra_imports: list[ImportStatement] | None = None,
     optimize: bool = True,
@@ -38,7 +34,7 @@ def generate_model(
         # namespace=config.namespace,
     )
 
-    environment = enrich_environment(env)
+    env = enrich_environment(env)
     possible_dependencies = {}
     persist_override = {}
     for extra_import in extra_imports or []:
@@ -64,52 +60,46 @@ def generate_model(
                     local_env,
                     q,
                 )
-                environment.add_datasource(processed.datasource)
+                env.add_datasource(processed.datasource)
                 possible_dependencies[processed.datasource.identifier] = (
                     processed.datasource
                 )
                 for oc in processed.datasource.output_concepts:
                     persist_override[oc.address] = oc
 
-
     logger.info(f"Reparsing post optimization for {preql_path}.")
     try:
-        _, statements = parse_text(preql_body, environment)
+        _, statements = parse_text(preql_body, env)
     except Exception as e:
         raise SyntaxError(f"Unable to parse {preql_body}" + str(e))
 
     logger.info(Counter([type(c) for c in statements]))
-    for k, v in persist_override.items():
-        environment.add_concept(v, force=True)
+    for _, v in persist_override.items():
+        env.add_concept(v, force=True)
 
-
-    outputs: list[str] = ['# import shared CTE persists into local namespace \nimport _internal_cached_intermediates;']
+    outputs: list[str] = [
+        "# import shared CTE persists into local namespace \nimport _internal_cached_intermediates;"
+    ]
     for _, query in enumerate(statements):
         # get our names to label the model
         if isinstance(query, PersistStatement):
             query.select.selection.append(
-            SelectItem(
-                content=environment.concepts[
-                    f"{TRILOGY_NAMESPACE}.{PreqltMetrics.CREATED_AT.value}"
-                ]
+                SelectItem(
+                    content=env.concepts[
+                        f"{TRILOGY_NAMESPACE}.{PreqltMetrics.CREATED_AT.value}"
+                    ]
+                )
             )
-        )
         outputs.append(renderer.to_string(query))
     logger.info("Writing queries to output files")
 
-
     should_exist = set()
     write_path = output_path / f"{preql_path.stem}.preql"
-    logger.info('Writing to %s', write_path )
+    logger.info("Writing to %s", write_path)
     write_path.parent.mkdir(parents=True, exist_ok=True)
     should_exist.add(write_path)
-    with open(write_path , "w") as f:
+    with open(write_path, "w") as f:
         f.write(
             f"# Generated from preql source: {preql_path}\n# Do not edit manually\n"
         )
-        f.write('\n\n'.join(outputs))
-
-    # for path in existing:
-    #     if path not in should_exist:
-    #         logger.info("Removing old file: %s", path)
-    #         os.remove(path)
+        f.write("\n\n".join(outputs))

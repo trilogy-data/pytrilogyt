@@ -1,13 +1,13 @@
 models:
 - columns:
   - description: No description provided
-    name: generic_int_array
-    tests: []
-  - description: No description provided
     name: generic_scalar
     tests: []
+  - description: No description provided
+    name: generic_int_array
+    tests: []
   description: Automatically generated model from preql
-  name: scalar_445831a9e9e484d7f90c672304367319328b5fd8d8093cc8a12c9d788f4e4bd7_gen_model
+  name: scalar_468923000b97d5b0db2bb370330ecc5cd61b405faa608403939ee059ca5a0325_gen_model
 - columns:
   - description: No description provided
     name: generic_split

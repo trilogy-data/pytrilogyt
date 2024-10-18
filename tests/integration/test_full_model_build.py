@@ -36,7 +36,7 @@ def test_full_model_build_dbt(logger):
 
 
 def test_full_model_build_native(logger):
-    fake = root.parent / "native" 
+    fake = root.parent / "native"
     os.makedirs(fake, exist_ok=True)
     assert fake.exists()
     native_wrapper(
@@ -65,7 +65,7 @@ def test_cli_string_dbt():
     runner = CliRunner()
     result = runner.invoke(
         cli,
-        [   
+        [
             "dbt",
             "persist static_one into static_one from select 1-> test;",
             str(root.parent / "dbt/"),
@@ -76,14 +76,31 @@ def test_cli_string_dbt():
         raise result.exception
     assert result.exit_code == 0
 
+
 def test_cli_string_native():
     runner = CliRunner()
     result = runner.invoke(
         cli,
-        [   
+        [
             "trilogy",
             "persist static_one into static_one from select 1-> test;",
             str(root.parent / "native/"),
+            "duck_db",
+        ],
+    )
+    if result.exception:
+        raise result.exception
+    assert result.exit_code == 0
+
+
+def test_file_build_native():
+    runner = CliRunner()
+    result = runner.invoke(
+        cli,
+        [
+            "trilogy",
+            "tests\integration\preql\customer_one.preql",
+            str(root.parent / "native_single_file"),
             "duck_db",
         ],
     )
