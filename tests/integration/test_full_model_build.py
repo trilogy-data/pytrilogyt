@@ -95,11 +95,12 @@ def test_cli_string_native():
 
 def test_file_build_native():
     runner = CliRunner()
+    path = Path(__file__).parent / "preql" / "customer_one.preql"
     result = runner.invoke(
         cli,
         [
             "trilogy",
-            "tests\integration\preql\customer_one.preql",
+            str(path),
             str(root.parent / "native_single_file"),
             "duck_db",
         ],
