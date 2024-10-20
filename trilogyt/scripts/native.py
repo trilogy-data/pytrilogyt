@@ -36,7 +36,7 @@ def native_wrapper(
             x for x in list(preql.glob("*.preql")) if not x.stem.startswith("_internal")
         ]
         logger.info(f"optimizing across {children}")
-        root = optimize_multiple(preql, children, output_path, dialect=dialect)
+        env_to_optimization = optimize_multiple(preql, children, output_path, dialect=dialect)
         for file in children:
             # don't build hidden files
             if file.stem.startswith("_internal"):
@@ -47,8 +47,8 @@ def native_wrapper(
                     f.read(),
                     file,
                     output_path=output_path,
-                    extra_imports=[root.new_import],
-                    # environment = env  # type: ignore
+                    extra_imports=[],
+                    optimization = env_to_optimization[file]
                 )
 
     if run:
