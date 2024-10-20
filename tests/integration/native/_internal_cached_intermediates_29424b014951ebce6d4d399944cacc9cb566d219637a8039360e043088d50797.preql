@@ -1,0 +1,6 @@
+const _trilogyt._created_at <- current_datetime();
+import generic as generic;
+rowset cte <- SELECT
+    generic.split,
+WHERE
+    generic.split in (1, 2, 3);
