@@ -32,12 +32,12 @@ renderer = Renderer()
 
 
 @group()
-def cli():
+def main():
     """A CLI with two subcommands: dbt and trilogy"""
     pass
 
 
-@cli.command()
+@main.command()
 @argument("preql", type=Path())
 @argument("output_path", type=Path(exists=True))
 # @argument("write_path", type=Path(exists=True))
@@ -55,7 +55,7 @@ def dbt(preql: str | Path, output_path: Path, dialect: str, debug: bool, run: bo
     )
 
 
-@cli.command()
+@main.command()
 @argument("preql", type=Path())
 @argument("output_path", type=Path(exists=True))
 # @argument("write_path", type=Path(exists=True))
@@ -76,4 +76,4 @@ def trilogy(preql: str | Path, output_path: Path, dialect: str, debug: bool, run
 
 
 if __name__ == "__main__":
-    cli()
+    main()
