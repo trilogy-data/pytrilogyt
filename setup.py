@@ -22,7 +22,7 @@ setuptools.setup(
     url="",
     author="",
     author_email="preql-community@gmail.com",
-    description="Enhanced PreQL for common ETL needs.",
+    description="Enhanced Trilogy for common ETL needs.",
     long_description=open("README.md").read(),
     long_description_content_type="text/markdown",
     packages=setuptools.find_packages(
@@ -48,7 +48,9 @@ setuptools.setup(
         "duckdb": ["dbt-duckdb"],
     },
     entry_points={
-        "console_scripts": ["trilogyt=trilogyt.scripts.main:main"],
+        "console_scripts": [
+            "trilogyt=trilogyt.scripts.main:main",
+        ],
     },
     classifiers=[
         "Programming Language :: Python",
