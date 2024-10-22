@@ -13,13 +13,14 @@ def native_wrapper(
     dialect: Dialects,
     debug: bool,
     run: bool,
-) -> OptimizationResult | None:
+) -> dict[PathlibPath, OptimizationResult]:
     logger.info(f"Running native wrapper with {preql} and {output_path}")
 
     existing = output_path.glob("**/*.preql")
     for item in existing:
         logger.debug(f"Removing existing {item}")
         os.remove(item)
+    
     if preql.is_file():
         with open(preql) as f:
             generate_model(
@@ -28,7 +29,6 @@ def native_wrapper(
                 output_path=output_path,
                 # environment = env  # type: ignore
             )
-        root = None
     else:
         # with multiple files, we can attempt to optimize dependency
         logger.info(f"checking path {preql}")
@@ -36,25 +36,26 @@ def native_wrapper(
             x for x in list(preql.glob("*.preql")) if not x.stem.startswith("_internal")
         ]
         logger.info(f"optimizing across {children}")
-        root = optimize_multiple(preql, children, output_path, dialect=dialect)
-        for file in children:
-            # don't build hidden files
-            if file.stem.startswith("_internal"):
-                logger.info(f"skipping {file}")
-                continue
+        env_to_optimization = optimize_multiple(preql, children, output_path, dialect=dialect)
+        relevant = [file for file in children if not file.stem.startswith("_internal")]
+        for file in relevant:
+            with open(file) as f:
+                with open(output_path / file.name, 'w') as f2:
+                    f2.write(f.read())
+        for file in relevant:
             with open(file) as f:
                 generate_model(
                     f.read(),
                     file,
                     output_path=output_path,
-                    extra_imports=[root.new_import],
-                    # environment = env  # type: ignore
+                    extra_imports=[],
+                    optimization = env_to_optimization.get(file, None)
                 )
 
     if run:
         print("Executing generated models")
         run_path(output_path, dialect=dialect)
-    return root
+    return env_to_optimization
 
 
 def native_string_command_wrapper(

@@ -15,15 +15,17 @@ import os
 from trilogy.core.query_processor import process_persist
 from collections import Counter
 from trilogy.parsing.render import Renderer
+from trilogyt.scripts.core import OptimizationResult
 
 
 def generate_model(
     preql_body: str,
     preql_path: Path,
     output_path: Path,
+    optimization: OptimizationResult | None = None,
     environment: Environment | None = None,
     extra_imports: list[ImportStatement] | None = None,
-    optimize: bool = True,
+
 ):
     logger.info(f"Parsing file {preql_path} with output path {output_path}")
 
@@ -37,11 +39,11 @@ def generate_model(
     env = enrich_environment(env)
     possible_dependencies = {}
     persist_override = {}
-    for extra_import in extra_imports or []:
-        with open(extra_import.path) as f:
+    if optimization:
+        with open(optimization.path) as f:
             local_env, queries = parse_text(
                 f.read(),
-                environment=Environment(working_path=Path(extra_import.path).parent),
+                environment=Environment(working_path=Path(optimization.path).parent),
             )
         persists = [x for x in queries if isinstance(x, PersistStatement)]
         output_cs: list[Concept] = []
@@ -78,8 +80,9 @@ def generate_model(
         env.add_concept(v, force=True)
 
     outputs: list[str] = [
-        "# import shared CTE persists into local namespace \nimport _internal_cached_intermediates;"
-    ]
+        # f"# import trilogyt concepts \nimport {TRILOGY_NAMESPACE};",
+        f"# import shared CTE persists into local namespace \nimport {optimization.path.stem};"
+    ] if optimization else []
     for _, query in enumerate(statements):
         # get our names to label the model
         if isinstance(query, PersistStatement):

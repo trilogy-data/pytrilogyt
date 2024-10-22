@@ -1,7 +1,7 @@
 # Generated from preql source: c:\Users\ethan\coding_projects\pypreql-etl\tests\integration\preql\customer_three.preql
 # Do not edit manually
 # import shared CTE persists into local namespace 
-import _internal_cached_intermediates;
+import _internal_cached_intermediates_7d15abe526e0d0d7b96cb658888f0006aac45ab01d5bb07bd1009eb788487a25;
 
 import generic as generic;
 
