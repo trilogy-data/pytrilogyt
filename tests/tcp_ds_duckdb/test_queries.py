@@ -143,7 +143,7 @@ SELECT * FROM dsdgen(sf=1);"""
 def run_adhoc_compiled(number: int):
     from trilogy import Environment, Dialects
     from trilogy.hooks.query_debugger import DebuggingHook
-
+    parent = Path(__file__).parent
     env = Environment(working_path=Path(__file__).parent)
     engine: Executor = Dialects.DUCK_DB.default_executor(
         environment=env, hooks=[DebuggingHook()]
@@ -153,8 +153,8 @@ def run_adhoc_compiled(number: int):
 LOAD tpcds;
 SELECT * FROM dsdgen(sf=1);"""
     )
-    run_query(engine, number, profile=False)
+    run_query(engine, number, optimized_path = parent / 'preql_staging', profile=False)
     print("passed!")
 
 if __name__ == "__main__":
-    run_adhoc(6)
+    run_adhoc(1)
