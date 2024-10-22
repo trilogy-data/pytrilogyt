@@ -48,7 +48,7 @@ setuptools.setup(
         "duckdb": ["dbt-duckdb"],
     },
     entry_points={
-        "console_scripts": ["trilogyt=trilogyt.scripts.main:cli"],
+        "console_scripts": ["trilogyt=trilogyt.scripts.main:main"],
     },
     classifiers=[
         "Programming Language :: Python",
