@@ -1,0 +1,28 @@
+# Generated from preql source: c:\Users\ethan\coding_projects\pypreql-etl\tests\tcp_ds_duckdb\query07.preql
+# Do not edit manually
+# import shared CTE persists into local namespace 
+import _internal_cached_intermediates_982745170bd416a8b03b11d737b1077dafdbf19511575a18842b1073eaac6250;
+
+import store_sales as store_sales;
+
+rowset filtered_sales <- SELECT
+    store_sales.ticket_number,
+    store_sales.item.id,
+    store_sales.item.name,
+    store_sales.quantity,
+    store_sales.list_price,
+    store_sales.coupon_amt,
+    store_sales.sales_price,
+WHERE
+    store_sales.customer_demographic.gender = 'M' and (store_sales.customer_demographic.marital_status = 'S' and (store_sales.customer_demographic.education_status = 'College' and (((store_sales.promotion.channel_email = 'N' or store_sales.promotion.channel_event = 'N')) and store_sales.date.year = 2000)));
+
+SELECT
+    filtered_sales.store_sales.item.name,
+    avg(filtered_sales.store_sales.quantity) -> avg_quantity,
+    avg(filtered_sales.store_sales.list_price) -> avg_list_price,
+    avg(filtered_sales.store_sales.coupon_amt) -> avg_coupon_amt,
+    avg(filtered_sales.store_sales.sales_price) -> avg_sales_price,
+ORDER BY
+    filtered_sales.store_sales.item.name asc
+
+LIMIT 100;

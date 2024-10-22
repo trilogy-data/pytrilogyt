@@ -10,7 +10,7 @@ from pathlib import Path
 from trilogyt.constants import OPTIMIZATION_FILE
 working_path = Path(__file__).parent
 
-SCALE_FACTOR = 2
+SCALE_FACTOR = 1
 
 
 @pytest.fixture(scope="session")
@@ -46,14 +46,20 @@ def engine():
 @pytest.fixture(scope="session")
 def optimized_env(engine:Executor):
     temp_dir = working_path / 'preql_staging'
-    native_wrapper(
+    wrapper = native_wrapper(
         preql = working_path,
         output_path = Path(temp_dir),
         dialect = Dialects.DUCK_DB,
         debug= False,
         run = False
     )
-    engine.execute_file(temp_dir / OPTIMIZATION_FILE )
-    raise SyntaxError("This is a syntax error")
+    # build all our optimizations
+
+    # for k, v in wrapper.items():
+    #     if not 'test_one' in str(k):
+    #         continue
+    #     engine.execute_file(v.path)
+
+    engine.execute_file(wrapper[working_path / 'query01.preql'].path, non_interactive=True)
     yield temp_dir
     

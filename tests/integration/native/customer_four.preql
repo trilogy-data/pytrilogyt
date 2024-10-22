@@ -1,0 +1,15 @@
+# Generated from preql source: c:\Users\ethan\coding_projects\pypreql-etl\tests\integration\preql\customer_four.preql
+# Do not edit manually
+# import shared CTE persists into local namespace 
+import _internal_cached_intermediates_29424b014951ebce6d4d399944cacc9cb566d219637a8039360e043088d50797;
+
+import generic as generic;
+
+rowset cte <- SELECT
+    generic.split,
+WHERE
+    generic.split in (1, 2, 3);
+
+PERSIST dim_splits_four INTO dim_splits_four FROM SELECT
+    cte.generic.split,
+    _trilogyt._created_at,;

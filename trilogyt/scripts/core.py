@@ -13,6 +13,9 @@ from trilogy.core.models import (
     RowsetDerivationStatement,
     ConceptDeclarationStatement,
     MergeStatementV2,
+    ConceptTransform,
+    CopyStatement,
+    HasUUID
 )
 from dataclasses import dataclass
 from trilogyt.core import ENVIRONMENT_CONCEPTS, fingerprint_environment
@@ -40,6 +43,7 @@ class OptimizationInput:
 class OptimizationResult:
     path: PathlibPath
     new_import: ImportStatement
+    fingerprint: str
 
 
 renderer = Renderer()
@@ -55,7 +59,7 @@ def optimize_multiple(
     paths: list[PathlibPath],
     output_path: PathlibPath,
     dialect: Dialects,
-) -> OptimizationResult:
+) -> dict[PathlibPath, OptimizationResult]:
 
     optimize_env = Environment(working_path=base.stem, namespace="optimize")
     exec = Executor(
@@ -65,7 +69,7 @@ def optimize_multiple(
     env_to_statements: dict[str, OptimizationInput] = defaultdict(list)
     file_to_fingerprint = {}
     for path in paths:
-        if path.name == OPTIMIZATION_FILE:
+        if path.name.startswith(OPTIMIZATION_FILE):
             continue
         with open(path) as f:
             local_env = Environment(
@@ -75,6 +79,8 @@ def optimize_multiple(
                 new_env, statements = parse_text(f.read(), environment=local_env)
             except Exception as e:
                 raise SyntaxError(f"Unable to parse {path} due to {e}")
+            if not any(isinstance(statement, (SelectStatement, PersistStatement, CopyStatement)) for statement in statements):
+                continue
             fingerprint = fingerprint_environment(new_env)
             file_to_fingerprint[path] = fingerprint
             if fingerprint in env_to_statements:
@@ -95,33 +101,39 @@ def optimize_multiple(
             generator=exec.generator,
             threshold=2,
         )
-        ctes: list[RowsetDerivationStatement] = unique(
+        # if not new_persists:
+        #     continue
+        concept_modifying_statements: list[RowsetDerivationStatement | ImportStatement | MergeStatementV2 ] = unique(
             [
                 x
                 for x in v.statements
                 if isinstance(
-                    x, (RowsetDerivationStatement, ImportStatement, MergeStatementV2)
+                    x, (RowsetDerivationStatement, ImportStatement, MergeStatementV2, SelectStatement)
                 )
+                or (isinstance(x, SelectStatement) and any(isinstance(y.content, ConceptTransform) for y in x.selection))
             ],
             "name",
         )
+        others: [x for x in v.statements if isinstance(x, HasUUID) and x.uuid not in [y.uuid for y in concept_modifying_statements if isinstance(y, HasUUID)]]
+        concept_modifying_statements = unique([x for x in v.statements if isinstance(x, HasUUID)], 'uuid')
         # inject those
         output_file = output_path / f"{OPTIMIZATION_FILE}_{k}.preql"
         with open(output_file, "w") as f:
             for concept in ENVIRONMENT_CONCEPTS:
                 f.write(
                     renderer.to_string(ConceptDeclarationStatement(concept=concept))
-                    + "\n"
+                    + "\n\n"
                 )
-            for cte in ctes:
-                f.write(renderer.to_string(cte) + "\n")
+            for cte in concept_modifying_statements:
+                f.write(renderer.to_string(cte) + "\n\n")
             for x in new_persists:
-                f.write(renderer.to_string(x) + "\n")
+                f.write(renderer.to_string(x) + "\n\n")
         outputs[k] = OptimizationResult(
             path=output_file,
             new_import=ImportStatement(
                 alias=OPTIMIZATION_NAMESPACE,
                 path=output_file,
             ),
+            fingerprint = k
         )
     return {k: outputs[v] for k, v in file_to_fingerprint.items()}
