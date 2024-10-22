@@ -2,16 +2,16 @@ const _trilogyt._created_at <- current_datetime();
 
 import store_sales as store_sales;
 
-rowset filtered_sales <- SELECT
+rowset filtered_sales <- WHERE
+    store_sales.customer_demographic.gender = 'M' and (store_sales.customer_demographic.marital_status = 'S' and (store_sales.customer_demographic.education_status = 'College' and (((store_sales.promotion.channel_email = 'N' or store_sales.promotion.channel_event = 'N')) and store_sales.date.year = 2000)))
+SELECT
     store_sales.ticket_number,
     store_sales.item.id,
     store_sales.item.name,
     store_sales.quantity,
     store_sales.list_price,
     store_sales.coupon_amt,
-    store_sales.sales_price,
-WHERE
-    store_sales.customer_demographic.gender = 'M' and (store_sales.customer_demographic.marital_status = 'S' and (store_sales.customer_demographic.education_status = 'College' and (((store_sales.promotion.channel_email = 'N' or store_sales.promotion.channel_event = 'N')) and store_sales.date.year = 2000)));
+    store_sales.sales_price,;
 
 SELECT
     filtered_sales.store_sales.item.name,
