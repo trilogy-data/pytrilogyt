@@ -22,7 +22,7 @@ def generate_model(
     preql_body: str,
     preql_path: Path,
     output_path: Path,
-    optimization: OptimizationResult,
+    optimization: OptimizationResult | None = None,
     environment: Environment | None = None,
     extra_imports: list[ImportStatement] | None = None,
 
@@ -39,34 +39,35 @@ def generate_model(
     env = enrich_environment(env)
     possible_dependencies = {}
     persist_override = {}
-    with open(optimization.path) as f:
-        local_env, queries = parse_text(
-            f.read(),
-            environment=Environment(working_path=Path(optimization.path).parent),
+    if optimization:
+        with open(optimization.path) as f:
+            local_env, queries = parse_text(
+                f.read(),
+                environment=Environment(working_path=Path(optimization.path).parent),
+            )
+        persists = [x for x in queries if isinstance(x, PersistStatement)]
+        output_cs: list[Concept] = []
+        for persist in persists:
+            for x in persist.select.selection:
+                if isinstance(x.content, ConceptTransform):
+                    output_cs.append(x.content.output)
+                else:
+                    output_cs.append(x.content)
+        logger.info(
+            f"Extra dependencies parsed, have {len(persists)} persists adding {[x.address for x in output_cs]}."
         )
-    persists = [x for x in queries if isinstance(x, PersistStatement)]
-    output_cs: list[Concept] = []
-    for persist in persists:
-        for x in persist.select.selection:
-            if isinstance(x.content, ConceptTransform):
-                output_cs.append(x.content.output)
-            else:
-                output_cs.append(x.content)
-    logger.info(
-        f"Extra dependencies parsed, have {len(persists)} persists adding {[x.address for x in output_cs]}."
-    )
-    for q in persists:
-        if isinstance(q, PersistStatement):
-            processed = process_persist(
-                local_env,
-                q,
-            )
-            env.add_datasource(processed.datasource)
-            possible_dependencies[processed.datasource.identifier] = (
-                processed.datasource
-            )
-            for oc in processed.datasource.output_concepts:
-                persist_override[oc.address] = oc
+        for q in persists:
+            if isinstance(q, PersistStatement):
+                processed = process_persist(
+                    local_env,
+                    q,
+                )
+                env.add_datasource(processed.datasource)
+                possible_dependencies[processed.datasource.identifier] = (
+                    processed.datasource
+                )
+                for oc in processed.datasource.output_concepts:
+                    persist_override[oc.address] = oc
 
     logger.info(f"Reparsing post optimization for {preql_path}.")
     try:
@@ -79,8 +80,9 @@ def generate_model(
         env.add_concept(v, force=True)
 
     outputs: list[str] = [
-        "# import shared CTE persists into local namespace \nimport _internal_cached_intermediates;"
-    ]
+        # f"# import trilogyt concepts \nimport {TRILOGY_NAMESPACE};",
+        f"# import shared CTE persists into local namespace \nimport {optimization.path.stem};"
+    ] if optimization else []
     for _, query in enumerate(statements):
         # get our names to label the model
         if isinstance(query, PersistStatement):

@@ -4,11 +4,6 @@ from pathlib import Path as PathlibPath
 import os
 from sys import path as sys_path
 from trilogy.parsing.render import Renderer
-from trilogy.core.models import (
-    ImportStatement,
-)
-from dataclasses import dataclass
-
 # handles development cases
 nb_path = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
 sys_path.insert(0, nb_path)
@@ -19,17 +14,7 @@ from trilogyt.scripts.native import (  # noqa
     native_string_command_wrapper,
 )
 
-OPTIMIZATION_FILE = "_internal_cached_intermediates.preql"
-
-
-@dataclass
-class OptimizationResult:
-    path: PathlibPath
-    new_import: ImportStatement
-
-
 renderer = Renderer()
-
 
 @group()
 def main():

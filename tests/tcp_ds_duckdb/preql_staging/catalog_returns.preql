@@ -1,0 +1,26 @@
+# Generated from preql source: c:\Users\ethan\coding_projects\pypreql-etl\tests\tcp_ds_duckdb\catalog_returns.preql
+# Do not edit manually
+import catalog_sales as sales;
+
+import item as item;
+
+import date as date;
+
+import time as time;
+
+key order_number int;
+
+property <order_number,item.id>.net_loss float;
+
+property <order_number,item.id>.had_return bool;
+
+datasource catalog_returns (
+    CR_RETURNED_DATE_SK: date.id,
+    CR_RETURNED_TIME_SK: time.id,
+    CR_ITEM_SK: item.id,
+    CR_ORDER_NUMBER: sales.order_number,
+    CR_ORDER_NUMBER: order_number,
+    CR_NET_LOSS: net_loss
+    )
+grain (item.id,order_number)
+address memory.catalog_returns;

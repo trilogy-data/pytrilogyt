@@ -1,0 +1,41 @@
+const _trilogyt._created_at <- current_datetime();
+
+import store_returns as returns;
+
+SELECT
+    returns.customer.text_id,
+    --sum(returns.return_amount) -> total_returns,
+    --returns.store.id,
+    --avg(total_returns) by returns.store.id -> avg_store_returns,
+WHERE
+    returns.store.state = 'TN' and returns.return_date.year = 2000
+ORDER BY
+    returns.customer.text_id asc
+
+LIMIT 100;
+
+PERSIST id_id_text_id_ticket_number_year_89f0b8d713089ca2e55d9cd2b6b95850e1993d319eeffff7af06fb57ab6fa8bd_filtered_on_state_year INTO id_id_text_id_ticket_number_year_89f0b8d713089ca2e55d9cd2b6b95850e1993d319eeffff7af06fb57ab6fa8bd_filtered_on_state_year FROM SELECT
+    returns.return_amount,
+    returns.store.state,
+    returns.return_date.year,
+    returns.store.id,
+    returns.customer.text_id,
+    returns.store_sales.ticket_number,
+    returns.item.id,
+WHERE
+    returns.store.state = 'TN' and returns.return_date.year = 2000;
+
+PERSIST id_text_id_686a5f17ccf83dbc51af0bf382c9b726c3a62dfe587eb7774c1be5656b46818d INTO id_text_id_686a5f17ccf83dbc51af0bf382c9b726c3a62dfe587eb7774c1be5656b46818d FROM SELECT
+    total_returns,
+    returns.store.id,
+    returns.customer.text_id,;
+
+PERSIST id_54404a332ea8db7d5077c55e8dfb983a19e81172a43fe2d05f56910f96fbd12f INTO id_54404a332ea8db7d5077c55e8dfb983a19e81172a43fe2d05f56910f96fbd12f FROM SELECT
+    avg_store_returns,
+    returns.store.id,;
+
+PERSIST text_id_d11c526f5c8762146e32a65c3fe8777d18b1c6fcacac7e646a7740a1315b72cf_filtered_on_total_returns_avg_store_returns INTO text_id_d11c526f5c8762146e32a65c3fe8777d18b1c6fcacac7e646a7740a1315b72cf_filtered_on_total_returns_avg_store_returns FROM SELECT
+    returns.customer.text_id,
+WHERE
+    total_returns > (multiply(1.2,avg_store_returns));
+

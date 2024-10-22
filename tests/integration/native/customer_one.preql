@@ -1,0 +1,10 @@
+# Generated from preql source: c:\Users\ethan\coding_projects\pypreql-etl\tests\integration\preql\customer_one.preql
+# Do not edit manually
+# import shared CTE persists into local namespace 
+import _internal_cached_intermediates_498b2d20ac0aeedac6fceb8efc30f13fc2109432edf99d1bbfb2c4a93ec3ca67;
+
+import generic as generic;
+
+PERSIST dim_splits INTO dim_splits FROM SELECT
+    generic.split,
+    _trilogyt._created_at,;

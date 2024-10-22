@@ -25,6 +25,7 @@ def run_test_case(
         queries = engine.parse_text(text)
 
         generated_sql = engine.generate_sql(queries[-1])
+        raise SyntaxError
         generated = datetime.now()
         results = engine.execute_raw_sql(generated_sql[-1])
         execed = datetime.now()
@@ -137,6 +138,23 @@ SELECT * FROM dsdgen(sf=1);"""
     run_query(engine, number, profile=False)
     print("passed!")
 
+
+
+def run_adhoc_compiled(number: int):
+    from trilogy import Environment, Dialects
+    from trilogy.hooks.query_debugger import DebuggingHook
+
+    env = Environment(working_path=Path(__file__).parent)
+    engine: Executor = Dialects.DUCK_DB.default_executor(
+        environment=env, hooks=[DebuggingHook()]
+    )
+    engine.execute_raw_sql(
+        """INSTALL tpcds;
+LOAD tpcds;
+SELECT * FROM dsdgen(sf=1);"""
+    )
+    run_query(engine, number, profile=False)
+    print("passed!")
 
 if __name__ == "__main__":
     run_adhoc(6)
