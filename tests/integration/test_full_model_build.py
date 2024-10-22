@@ -1,4 +1,4 @@
-from trilogyt.scripts.main import dbt_wrapper, cli, native_wrapper
+from trilogyt.scripts.main import dbt_wrapper, main, native_wrapper
 from trilogy import Dialects
 from pathlib import Path
 from click.testing import CliRunner
@@ -64,7 +64,7 @@ def test_full_model_build_native(logger):
 def test_cli_string_dbt():
     runner = CliRunner()
     result = runner.invoke(
-        cli,
+        main,
         [
             "dbt",
             "persist static_one into static_one from select 1-> test;",
@@ -80,7 +80,7 @@ def test_cli_string_dbt():
 def test_cli_string_native():
     runner = CliRunner()
     result = runner.invoke(
-        cli,
+        main,
         [
             "trilogy",
             "persist static_one into static_one from select 1-> test;",
@@ -97,7 +97,7 @@ def test_file_build_native():
     runner = CliRunner()
     path = Path(__file__).parent / "preql" / "customer_one.preql"
     result = runner.invoke(
-        cli,
+        main,
         [
             "trilogy",
             str(path),
@@ -108,3 +108,14 @@ def test_file_build_native():
     if result.exception:
         raise result.exception
     assert result.exit_code == 0
+
+
+def test_entrypoint(script_runner):
+    result = script_runner.run(
+        [
+            "trilogyt",
+            '"""constant x <-5; persist into static as static select x;"""',
+            "duckdb",
+        ]
+    )
+    assert result.returncode == 0
