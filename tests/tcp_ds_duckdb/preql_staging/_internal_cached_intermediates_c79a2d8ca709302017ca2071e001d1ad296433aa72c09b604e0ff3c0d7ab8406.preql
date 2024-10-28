@@ -1,0 +1,23 @@
+const _trilogyt._created_at <- current_datetime();
+
+import web_sales as web_sales;
+
+WHERE
+    (web_sales.date.date >= CAST('1999-02-22' AS date) and web_sales.date.date <= CAST('1999-03-24' AS date)) and web_sales.item.category in ('Sports', 'Books', 'Home')
+SELECT
+    web_sales.item.name,
+    web_sales.item.desc,
+    web_sales.item.category,
+    web_sales.item.class,
+    web_sales.item.current_price,
+    sum(web_sales.external_sales_price) -> itemrevenue,
+    divide(multiply(itemrevenue,100.0),sum itemrevenue over web_sales.item.class) -> revenueratio,
+ORDER BY
+    web_sales.item.category asc,
+    web_sales.item.class asc,
+    web_sales.item.name asc,
+    web_sales.item.desc asc,
+    revenueratio asc
+
+LIMIT 100;
+

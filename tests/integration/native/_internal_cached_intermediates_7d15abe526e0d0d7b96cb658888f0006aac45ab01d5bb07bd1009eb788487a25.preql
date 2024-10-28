@@ -1,7 +1,13 @@
 const _trilogyt._created_at <- current_datetime();
+
 import generic as generic;
-rowset cte <- SELECT
+
+rowset cte <- WHERE
+    generic.split in (1, 2, 3)
+SELECT
     generic.split,
-    generic.scalar,
-WHERE
-    generic.split in (1, 2, 3);
+    generic.scalar,;
+
+PERSIST dim_splits_three INTO dim_splits_three FROM SELECT
+    cte.generic.split,;
+

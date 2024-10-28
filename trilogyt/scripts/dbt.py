@@ -34,24 +34,26 @@ def dbt_wrapper(
                 dialect=dialect,
                 debug=debug,
                 run=False,
-            )
-            # root may not be set
-            if root:
-                config = DBTConfig(
-                    root=PathlibPath(dbt_path), namespace=OPTIMIZATION_NAMESPACE
-                )
-                with open(root.path) as f:
-                    generate_model(
-                        f.read(),
-                        root.path,
-                        dialect=dialect,
-                        config=config,
-                        # environment = env  # type: ignore
-                    )
+            ) or {}
+
+            logger.info("Generating dbt models...")
             for file in children:
+                logger.info(f"Generating dbt model for {file} into dbt_path {dbt_path}")
                 # don't build hidden files
                 if file.stem.startswith("_"):
                     continue
+                
+                optimization = root.get(file, None)
+                if optimization:
+                    with open(optimization.path) as opt:
+                        opt_config = DBTConfig(root=PathlibPath(dbt_path), namespace=optimization.path.stem)
+                        generate_model(
+                            opt.read(),
+                            optimization.path,
+                            dialect=dialect,
+                            config=opt_config,
+                            # environment = env  # type: ignore
+                        )
                 config = DBTConfig(root=PathlibPath(dbt_path), namespace=file.stem)
                 with open(file) as f:
                     generate_model(
@@ -59,7 +61,7 @@ def dbt_wrapper(
                         file,
                         dialect=dialect,
                         config=config,
-                        extra_imports=[root.new_import] if root else [],
+                        extra_imports=[optimization.new_import] if optimization else [],
                         # environment = env  # type: ignore
                     )
     if run:

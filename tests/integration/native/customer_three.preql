@@ -3,13 +3,16 @@
 # import shared CTE persists into local namespace 
 import _internal_cached_intermediates_7d15abe526e0d0d7b96cb658888f0006aac45ab01d5bb07bd1009eb788487a25;
 
+
 import generic as generic;
 
-rowset cte <- SELECT
+
+rowset cte <- WHERE
+    generic.split in (1, 2, 3)
+SELECT
     generic.split,
-    generic.scalar,
-WHERE
-    generic.split in (1, 2, 3);
+    generic.scalar,;
+
 
 PERSIST dim_splits_three INTO dim_splits_three FROM SELECT
     cte.generic.split,

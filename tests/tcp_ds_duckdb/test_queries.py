@@ -1,10 +1,11 @@
 from pathlib import Path
 
-from trilogy import Executor
+from trilogy import Executor, Environment
 from dotenv import load_dotenv
 from datetime import datetime
 import pytest
 import json
+from tests.tcp_ds_duckdb.conftest import OptimizedEnv, OptimizationResult
 
 load_dotenv()
 
@@ -12,7 +13,12 @@ working_path = Path(__file__).parent
 
 
 def run_test_case(
-    path: Path, optimized_path: Path, idx: int, engine: Executor, base_results
+    path: Path,
+    optimized_path: Path,
+    idx: int,
+    engine: Executor,
+    base_results,
+    mappings: dict[Path, OptimizationResult],
 ):
     output_timers = {}
     for label, preql_path in [
@@ -21,11 +27,18 @@ def run_test_case(
     ]:
         with open(preql_path) as f:
             text = f.read()
+        prep_time = datetime.now()
+        engine.environment = Environment(working_path=preql_path.parent)
+        if label == "optimized":
+            engine.execute_file(
+                mappings[working_path / "query01.preql"].path, non_interactive=True
+            )
+        end_prep = datetime.now()
         parsed = datetime.now()
-        queries = engine.parse_text(text)
 
+        queries = engine.parse_text(text)
+        post_parsed = datetime.now()
         generated_sql = engine.generate_sql(queries[-1])
-        raise SyntaxError
         generated = datetime.now()
         results = engine.execute_raw_sql(generated_sql[-1])
         execed = datetime.now()
@@ -38,17 +51,26 @@ def run_test_case(
                 False
             ), f"Row count mismatch: {len(base_results)} != {len(comp_results)}"
         for ridx, row in enumerate(base_results):
-            assert (
-                row == comp_results[ridx]
-            ), f"Row mismatch (expected v actual): {row} != {comp_results[ridx]}"
-        output_timers[f"{label}_parse_time"] = (parsed - datetime.now()).total_seconds()
-        output_timers[f"{label}_generation_time"] = (generated - parsed).total_seconds()
+            assert row == comp_results[ridx], (
+                f"{label} row mismatch (expected v actual) for row {ridx} : {row} != {comp_results[ridx]}"
+                + "\nquery:"
+                + generated_sql[-1]
+            )
+        output_timers[f"{label}_prep_time"] = (end_prep - prep_time).total_seconds()
+        output_timers[f"{label}_parse_time"] = (post_parsed - parsed).total_seconds()
+        output_timers[f"{label}_generation_time"] = (
+            generated - post_parsed
+        ).total_seconds()
         output_timers[f"{label}_exec_time"] = exec_time.total_seconds()
         output_timers[f"{label}_generated_sql"] = generated_sql[-1]
     return output_timers
 
 
-def run_query(engine: Executor, idx: int, optimized_path: Path, profile: bool = False):
+def run_query(
+    engine: Executor, idx: int, optimized_env: OptimizedEnv, profile: bool = False
+):
+
+    optimized_path = optimized_env.temp_dir
 
     start = datetime.now()
     base = engine.execute_raw_sql(f"PRAGMA tpcds({idx});")
@@ -57,7 +79,7 @@ def run_query(engine: Executor, idx: int, optimized_path: Path, profile: bool = 
     base_results = list(base.fetchall())
 
     test_results = run_test_case(
-        working_path, optimized_path, idx, engine, base_results
+        working_path, optimized_path, idx, engine, base_results, optimized_env.mappings
     )
     base_output = {
         "query_id": idx,
@@ -122,27 +144,27 @@ def test_sixteen(engine):
     run_query(engine, 16)
 
 
-def run_adhoc(number: int):
-    from trilogy import Environment, Dialects
-    from trilogy.hooks.query_debugger import DebuggingHook
+# def run_adhoc(number: int):
+#     from trilogy import Environment, Dialects
+#     from trilogy.hooks.query_debugger import DebuggingHook
 
-    env = Environment(working_path=Path(__file__).parent)
-    engine: Executor = Dialects.DUCK_DB.default_executor(
-        environment=env, hooks=[DebuggingHook()]
-    )
-    engine.execute_raw_sql(
-        """INSTALL tpcds;
-LOAD tpcds;
-SELECT * FROM dsdgen(sf=1);"""
-    )
-    run_query(engine, number, profile=False)
-    print("passed!")
-
+#     env = Environment(working_path=Path(__file__).parent)
+#     engine: Executor = Dialects.DUCK_DB.default_executor(
+#         environment=env, hooks=[DebuggingHook()]
+#     )
+#     engine.execute_raw_sql(
+#         """INSTALL tpcds;
+# LOAD tpcds;
+# SELECT * FROM dsdgen(sf=1);"""
+#     )
+#     run_query(engine, number, profile=False)
+#     print("passed!")
 
 
 def run_adhoc_compiled(number: int):
     from trilogy import Environment, Dialects
     from trilogy.hooks.query_debugger import DebuggingHook
+
     parent = Path(__file__).parent
     env = Environment(working_path=Path(__file__).parent)
     engine: Executor = Dialects.DUCK_DB.default_executor(
@@ -153,8 +175,9 @@ def run_adhoc_compiled(number: int):
 LOAD tpcds;
 SELECT * FROM dsdgen(sf=1);"""
     )
-    run_query(engine, number, optimized_path = parent / 'preql_staging', profile=False)
+    run_query(engine, number, optimized_path=parent / "preql_staging", profile=False)
     print("passed!")
 
+
 if __name__ == "__main__":
-    run_adhoc(1)
+    run_adhoc_compiled(1)

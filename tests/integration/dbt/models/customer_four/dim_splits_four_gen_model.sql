@@ -9,11 +9,11 @@ SELECT
 ),
 dynamic as (
 SELECT
-    split_4a0c66eaa9bd766e209f4290311d8aaa8f79548618dc80e573bc787a6dd476e4."cte_generic_split" as "cte_generic_split"
+    dim_splits_four."cte_generic_split" as "cte_generic_split"
 FROM
-    {{ ref('split_4a0c66eaa9bd766e209f4290311d8aaa8f79548618dc80e573bc787a6dd476e4_gen_model') }} as split_4a0c66eaa9bd766e209f4290311d8aaa8f79548618dc80e573bc787a6dd476e4
+    {{ ref('dim_splits_four_gen_model') }} as dim_splits_four
 GROUP BY 
-    split_4a0c66eaa9bd766e209f4290311d8aaa8f79548618dc80e573bc787a6dd476e4."cte_generic_split")
+    dim_splits_four."cte_generic_split")
 SELECT
     dynamic."cte_generic_split" as "cte_generic_split",
     quizzical."_trilogyt__created_at" as "_trilogyt__created_at"

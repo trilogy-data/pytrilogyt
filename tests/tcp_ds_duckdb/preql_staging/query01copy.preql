@@ -1,0 +1,23 @@
+# Generated from preql source: c:\Users\ethan\coding_projects\pypreql-etl\tests\tcp_ds_duckdb\query01copy.preql
+# Do not edit manually
+# import shared CTE persists into local namespace 
+import _internal_cached_intermediates_91a22e90d8aadb299907e98e2867dd1eabe2338608f2dbe3c4973cb2acad173d;
+
+
+import store_returns as returns;
+
+
+WHERE
+    returns.store.state = 'TN' and returns.return_date.year = 2000
+SELECT
+    returns.customer.text_id,
+    --sum(returns.return_amount) -> total_returns,
+    --returns.store.id,
+    --avg(total_returns) by returns.store.id -> avg_store_returns,
+HAVING
+    total_returns > (multiply(1.2,avg_store_returns))
+
+ORDER BY
+    returns.customer.text_id asc
+
+LIMIT 100;

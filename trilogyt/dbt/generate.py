@@ -47,12 +47,7 @@ def generate_model(
     config: DBTConfig,
     environment: Environment | None = None,
     extra_imports: list[ImportStatement] | None = None,
-    optimize: bool = True,
 ):
-    logger.info(
-        f"Parsing file {preql_path} with dialect {dialect} and base namespace {config.namespace}"
-    )
-
     env: Environment = environment or Environment(
         working_path=preql_path.parent if preql_path else os.getcwd(),
         # namespace=config.namespace,
@@ -96,7 +91,7 @@ def generate_model(
 
     outputs: dict[str, str] = {}
     output_data: dict[str, Datasource] = {}
-    logger.info(f"Reparsing post optimization for {preql_path}.")
+    logger.info(f"Reparsing post import materialization for {preql_path}.")
     try:
         _, statements = parse_text(preql_body, executor.environment)
     except Exception as e:
@@ -169,7 +164,9 @@ def generate_model(
     existing = defaultdict(set)
     should_exist = defaultdict(set)
     for key, value in outputs.items():
+
         output_path = config.get_model_path(key)
+        logger.info(f'writing {key} to {output_path} ')
         parent = str(output_path.parent)
         output_path.parent.mkdir(parents=True, exist_ok=True)
         for subf in output_path.parent.iterdir():

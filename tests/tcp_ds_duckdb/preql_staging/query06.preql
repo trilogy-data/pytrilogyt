@@ -1,0 +1,25 @@
+# Generated from preql source: c:\Users\ethan\coding_projects\pypreql-etl\tests\tcp_ds_duckdb\query06.preql
+# Do not edit manually
+# import shared CTE persists into local namespace 
+import _internal_cached_intermediates_d1e675408e8d3aade1013726df9d648512b1d09cb4523b8d2b6148ea50162816;
+
+
+import store_sales as store_sales;
+import item as item;
+
+
+MERGE store_sales.item.id into item.id;
+
+
+WHERE
+    store_sales.date.year = 2001 and (store_sales.date.month_of_year = 1 and (store_sales.item.current_price > multiply(1.2,avg(item.current_price) by item.category) and item.category is not null))
+SELECT
+    store_sales.customer.state,
+    count(store_sales.customer.id) -> customer_count,
+HAVING
+    customer_count >= 10
+
+ORDER BY
+    customer_count asc nulls first,
+    store_sales.customer.state asc nulls first
+;

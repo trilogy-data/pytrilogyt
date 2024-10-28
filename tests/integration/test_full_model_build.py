@@ -50,7 +50,7 @@ def test_full_model_build_native(logger):
 
     results = root.parent / "native"
     output = list(results.glob("**/*.preql"))
-    assert len(output) == 10, [f for f in output]
+    assert len(output) == 9, [f for f in output]
     for f in output:
         # our generated file
         if "dim_splits" not in str(f):

@@ -186,9 +186,7 @@ def analyze(
         c for c in inputs if isinstance(c, (ProcessedQuery, ProcessedQueryPersist))
     ]
     if not valid:
-        return AnalyzeResult(
-            {},{}
-        )
+        return AnalyzeResult({}, {})
     for x in valid:
         for cte in x.ctes:
             fingerprint = fingerprint_cte(cte)

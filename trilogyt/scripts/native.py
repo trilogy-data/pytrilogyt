@@ -20,7 +20,7 @@ def native_wrapper(
     for item in existing:
         logger.debug(f"Removing existing {item}")
         os.remove(item)
-    
+
     if preql.is_file():
         with open(preql) as f:
             generate_model(
@@ -36,11 +36,13 @@ def native_wrapper(
             x for x in list(preql.glob("*.preql")) if not x.stem.startswith("_internal")
         ]
         logger.info(f"optimizing across {children}")
-        env_to_optimization = optimize_multiple(preql, children, output_path, dialect=dialect)
+        env_to_optimization = optimize_multiple(
+            preql, children, output_path, dialect=dialect
+        )
         relevant = [file for file in children if not file.stem.startswith("_internal")]
         for file in relevant:
             with open(file) as f:
-                with open(output_path / file.name, 'w') as f2:
+                with open(output_path / file.name, "w") as f2:
                     f2.write(f.read())
         for file in relevant:
             with open(file) as f:
@@ -49,7 +51,7 @@ def native_wrapper(
                     file,
                     output_path=output_path,
                     extra_imports=[],
-                    optimization = env_to_optimization.get(file, None)
+                    optimization=env_to_optimization.get(file, None),
                 )
 
     if run:

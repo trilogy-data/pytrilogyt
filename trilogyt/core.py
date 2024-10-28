@@ -26,7 +26,7 @@ def enrich_environment(env: Environment):
     return env
 
 
-def fingerprint_environment(env:Environment)->str:
+def fingerprint_environment(env: Environment) -> str:
     graph = generate_graph(env)
-    edges = '-'.join([str(x) for x in sorted(list(graph.edges))])
+    edges = "-".join([str(x) for x in sorted(list(graph.edges))])
     return sha256(edges.encode()).hexdigest()

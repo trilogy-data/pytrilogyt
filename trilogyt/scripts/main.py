@@ -4,6 +4,7 @@ from pathlib import Path as PathlibPath
 import os
 from sys import path as sys_path
 from trilogy.parsing.render import Renderer
+
 # handles development cases
 nb_path = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
 sys_path.insert(0, nb_path)
@@ -15,6 +16,7 @@ from trilogyt.scripts.native import (  # noqa
 )
 
 renderer = Renderer()
+
 
 @group()
 def main():

@@ -4,10 +4,9 @@ import pytest
 from trilogy.hooks.query_debugger import DebuggingHook
 from pathlib import Path
 from logging import INFO
-from trilogyt.scripts.native import native_wrapper
-from tempfile import TemporaryDirectory
-from pathlib import Path
-from trilogyt.constants import OPTIMIZATION_FILE
+from trilogyt.scripts.native import native_wrapper, OptimizationResult
+from dataclasses import dataclass
+
 working_path = Path(__file__).parent
 
 SCALE_FACTOR = 1
@@ -43,15 +42,21 @@ def engine():
     yield engine
 
 
+@dataclass
+class OptimizedEnv:
+    temp_dir: Path
+    mappings: dict[Path, OptimizationResult]
+
+
 @pytest.fixture(scope="session")
-def optimized_env(engine:Executor):
-    temp_dir = working_path / 'preql_staging'
+def optimized_env(engine: Executor):
+    temp_dir = working_path / "preql_staging"
     wrapper = native_wrapper(
-        preql = working_path,
-        output_path = Path(temp_dir),
-        dialect = Dialects.DUCK_DB,
-        debug= False,
-        run = False
+        preql=working_path,
+        output_path=Path(temp_dir),
+        dialect=Dialects.DUCK_DB,
+        debug=False,
+        run=False,
     )
     # build all our optimizations
 
@@ -60,6 +65,4 @@ def optimized_env(engine:Executor):
     #         continue
     #     engine.execute_file(v.path)
 
-    engine.execute_file(wrapper[working_path / 'query01.preql'].path, non_interactive=True)
-    yield temp_dir
-    
+    yield OptimizedEnv(temp_dir, wrapper)

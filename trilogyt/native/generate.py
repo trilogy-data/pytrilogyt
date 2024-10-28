@@ -6,6 +6,7 @@ from trilogy.core.models import (
     SelectItem,
     Concept,
     ConceptTransform,
+    ConceptDeclarationStatement,
 )
 from trilogyt.constants import logger, TRILOGY_NAMESPACE
 from trilogyt.enums import PreqltMetrics
@@ -25,7 +26,6 @@ def generate_model(
     optimization: OptimizationResult | None = None,
     environment: Environment | None = None,
     extra_imports: list[ImportStatement] | None = None,
-
 ):
     logger.info(f"Parsing file {preql_path} with output path {output_path}")
 
@@ -79,11 +79,15 @@ def generate_model(
     for _, v in persist_override.items():
         env.add_concept(v, force=True)
 
-    outputs: list[str] = [
-        # f"# import trilogyt concepts \nimport {TRILOGY_NAMESPACE};",
-        f"# import shared CTE persists into local namespace \nimport {optimization.path.stem};"
-    ] if optimization else []
-    for _, query in enumerate(statements):
+    outputs: list[str] = (
+        [
+            # f"# import trilogyt concepts \nimport {TRILOGY_NAMESPACE};",
+            f"# import shared CTE persists into local namespace \nimport {optimization.path.stem};"
+        ]
+        if optimization
+        else []
+    )
+    for idx, query in enumerate(statements):
         # get our names to label the model
         if isinstance(query, PersistStatement):
             query.select.selection.append(
@@ -93,6 +97,11 @@ def generate_model(
                     ]
                 )
             )
+        last_stmt = statements[idx - 1]
+        if type(last_stmt) != type(query) or not isinstance(
+            query, (ImportStatement, ConceptDeclarationStatement)
+        ):
+            outputs.append("\n")
         outputs.append(renderer.to_string(query))
     logger.info("Writing queries to output files")
 
@@ -105,4 +114,4 @@ def generate_model(
         f.write(
             f"# Generated from preql source: {preql_path}\n# Do not edit manually\n"
         )
-        f.write("\n\n".join(outputs))
+        f.write("\n".join(outputs))
