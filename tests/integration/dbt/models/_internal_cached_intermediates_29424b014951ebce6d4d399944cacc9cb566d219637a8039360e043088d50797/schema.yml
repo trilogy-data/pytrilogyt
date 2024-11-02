@@ -1,8 +1,0 @@
-models:
-- columns:
-  - description: No description provided
-    name: cte_generic_split
-    tests: []
-  description: Automatically generated model from preql
-  name: dim_splits_four_gen_model
-version: 2

@@ -1,10 +1,10 @@
 from pathlib import Path
-
+import tomllib
+import os
 
 if __name__ == "__main__":
-    import os
+
     import pandas as pd
-    import json
     import matplotlib.pyplot as plt
 
     results = []
@@ -12,7 +12,7 @@ if __name__ == "__main__":
     for filename in os.listdir(root):
         if filename.endswith(".log"):
             with open(root / filename, "r") as f:
-                loaded = json.loads(f.read())
+                loaded = tomllib.loads(f.read())
                 results.append(loaded)
                 print(f"----{filename}----")
                 print(loaded["optimized_generated_sql"])

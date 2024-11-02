@@ -21,6 +21,7 @@ def native_wrapper(
         logger.debug(f"Removing existing {item}")
         os.remove(item)
 
+    env_to_optimization = {}
     if preql.is_file():
         with open(preql) as f:
             generate_model(
@@ -39,24 +40,22 @@ def native_wrapper(
         env_to_optimization = optimize_multiple(
             preql, children, output_path, dialect=dialect
         )
-        relevant = [file for file in children if not file.stem.startswith("_internal")]
-        for file in relevant:
+        for file in children:
             with open(file) as f:
                 with open(output_path / file.name, "w") as f2:
                     f2.write(f.read())
-        for file in relevant:
+        for file in children:
             with open(file) as f:
                 generate_model(
                     f.read(),
                     file,
                     output_path=output_path,
-                    extra_imports=[],
                     optimization=env_to_optimization.get(file, None),
                 )
 
     if run:
         print("Executing generated models")
-        run_path(output_path, dialect=dialect)
+        run_path(output_path, dialect=dialect, env_to_optimization=env_to_optimization)
     return env_to_optimization
 
 
@@ -73,5 +72,8 @@ def native_string_command_wrapper(
     )
     if run:
         print("Executing generated models")
-        run_path(output_path, dialect=dialect)
+        run_path(
+            output_path,
+            dialect=dialect,
+        )
     return 0

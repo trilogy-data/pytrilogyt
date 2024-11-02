@@ -18,7 +18,10 @@ def run_path(path: Path):
     # run the command
     res: dbtRunnerResult = dbt.invoke(cli_args)
     if not res.success:
-        raise RuntimeError(res.exception)
+        if res.exception:
+            raise RuntimeError(res.exception)
+        # else:
+        #     raise RuntimeError("\n".join([f"{r.node.name}: {r.status}" for r in res.result]))
     # inspect the results
     if not isinstance(res.result, RunExecutionResult):
         return

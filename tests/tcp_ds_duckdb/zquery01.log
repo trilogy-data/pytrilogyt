@@ -1,13 +1,92 @@
-{
-    "base_parse_time": 1.976526,
-    "base_generation_time": 0.015643,
-    "base_exec_time": 0.094352,
-    "base_generated_sql": "\nWITH \ncheerful as (\nSELECT\n    store_returns.\"SR_RETURN_AMT\" as \"returns_return_amount\",\n    store.\"S_STATE\" as \"returns_store_state\",\n    cast(\"D_YEAR\" as int) as \"returns_return_date_year\",\n    store.\"S_STORE_SK\" as \"returns_store_id\",\n    customers.\"C_CUSTOMER_ID\" as \"returns_customer_text_id\",\n    store_returns.\"SR_TICKET_NUMBER\" as \"returns_store_sales_ticket_number\",\n    store_returns.\"SR_ITEM_SK\" as \"returns_item_id\"\nFROM\n    memory.customer as customers\n    INNER JOIN memory.store_returns as store_returns on customers.\"C_CUSTOMER_SK\" = store_returns.\"SR_CUSTOMER_SK\"\n    INNER JOIN memory.date_dim as date on store_returns.\"SR_RETURNED_DATE_SK\" = date.\"D_DATE_SK\"\n    INNER JOIN memory.store as store on store_returns.\"SR_STORE_SK\" = store.\"S_STORE_SK\"\nWHERE\n    store.\"S_STATE\" = 'TN' and cast(\"D_YEAR\" as int) = 2000\n),\nthoughtful as (\nSELECT\n    sum(cheerful.\"returns_return_amount\") as \"total_returns\",\n    cheerful.\"returns_store_id\" as \"returns_store_id\",\n    cheerful.\"returns_customer_text_id\" as \"returns_customer_text_id\"\nFROM\n    cheerful\nGROUP BY \n    cheerful.\"returns_customer_text_id\",\n    cheerful.\"returns_store_id\"),\ncooperative as (\nSELECT\n    avg(thoughtful.\"total_returns\") as \"avg_store_returns\",\n    thoughtful.\"returns_store_id\" as \"returns_store_id\"\nFROM\n    thoughtful\nGROUP BY \n    thoughtful.\"returns_store_id\")\nSELECT\n    thoughtful.\"returns_customer_text_id\" as \"returns_customer_text_id\"\nFROM\n    cooperative\n    INNER JOIN thoughtful on cooperative.\"returns_store_id\" = thoughtful.\"returns_store_id\"\nWHERE\n    thoughtful.\"total_returns\" > ( 1.2 * cooperative.\"avg_store_returns\" )\n\nORDER BY \n    thoughtful.\"returns_customer_text_id\" asc\nLIMIT (100)",
-    "optimized_parse_time": 17.562532,
-    "optimized_generation_time": 0.006984,
-    "optimized_exec_time": 0.14459,
-    "optimized_generated_sql": "\nWITH \nscrawny as (\nSELECT\n    sum(id_id_text_id_ticket_number_year_89f0b8d713089ca2e55d9cd2b6b95850e1993d319eeffff7af06fb57ab6fa8bd_filtered_on_state_year.\"returns_return_amount\") as \"total_returns\",\n    id_id_text_id_ticket_number_year_89f0b8d713089ca2e55d9cd2b6b95850e1993d319eeffff7af06fb57ab6fa8bd_filtered_on_state_year.\"returns_store_id\" as \"returns_store_id\",\n    id_id_text_id_ticket_number_year_89f0b8d713089ca2e55d9cd2b6b95850e1993d319eeffff7af06fb57ab6fa8bd_filtered_on_state_year.\"returns_customer_text_id\" as \"returns_customer_text_id\"\nFROM\n    id_id_text_id_ticket_number_year_89f0b8d713089ca2e55d9cd2b6b95850e1993d319eeffff7af06fb57ab6fa8bd_filtered_on_state_year\nGROUP BY \n    id_id_text_id_ticket_number_year_89f0b8d713089ca2e55d9cd2b6b95850e1993d319eeffff7af06fb57ab6fa8bd_filtered_on_state_year.\"returns_store_id\",\n    id_id_text_id_ticket_number_year_89f0b8d713089ca2e55d9cd2b6b95850e1993d319eeffff7af06fb57ab6fa8bd_filtered_on_state_year.\"returns_customer_text_id\"),\nfriendly as (\nSELECT\n    avg(scrawny.\"total_returns\") as \"avg_store_returns\",\n    scrawny.\"returns_store_id\" as \"returns_store_id\"\nFROM\n    scrawny\nGROUP BY \n    scrawny.\"returns_store_id\")\nSELECT\n    scrawny.\"returns_customer_text_id\" as \"returns_customer_text_id\"\nFROM\n    friendly\n    INNER JOIN scrawny on friendly.\"returns_store_id\" = scrawny.\"returns_store_id\"\nWHERE\n    scrawny.\"total_returns\" > ( 1.2 * friendly.\"avg_store_returns\" )\n\nORDER BY \n    scrawny.\"returns_customer_text_id\" asc\nLIMIT (100)",
-    "query_id": 1,
-    "sql_comp_time": 2.610496,
-    "total_time": 22.428253
-}
+base_prep_time = 0.0
+base_parse_time = 1.932719
+base_generation_time = 0.015108
+base_exec_time = 0.08518
+base_generated_sql = """
+
+WITH 
+cheerful as (
+SELECT
+    returns_store_returns.\"SR_RETURN_AMT\" as \"returns_return_amount\",
+    returns_store_store.\"S_STATE\" as \"returns_store_state\",
+    cast(\"D_YEAR\" as int) as \"returns_return_date_year\",
+    returns_store_store.\"S_STORE_SK\" as \"returns_store_id\",
+    returns_customer_customers.\"C_CUSTOMER_ID\" as \"returns_customer_text_id\",
+    returns_store_returns.\"SR_TICKET_NUMBER\" as \"returns_store_sales_ticket_number\",
+    returns_store_returns.\"SR_ITEM_SK\" as \"returns_item_id\"
+FROM
+    memory.store_returns as returns_store_returns
+    INNER JOIN memory.date_dim as returns_return_date_date on returns_store_returns.\"SR_RETURNED_DATE_SK\" = returns_return_date_date.\"D_DATE_SK\"
+    INNER JOIN memory.store as returns_store_store on returns_store_returns.\"SR_STORE_SK\" = returns_store_store.\"S_STORE_SK\"
+    INNER JOIN memory.customer as returns_customer_customers on returns_store_returns.\"SR_CUSTOMER_SK\" = returns_customer_customers.\"C_CUSTOMER_SK\"
+WHERE
+    returns_store_store.\"S_STATE\" = 'TN' and cast(\"D_YEAR\" as int) = 2000
+),
+thoughtful as (
+SELECT
+    sum(cheerful.\"returns_return_amount\") as \"total_returns\",
+    cheerful.\"returns_store_id\" as \"returns_store_id\",
+    cheerful.\"returns_customer_text_id\" as \"returns_customer_text_id\"
+FROM
+    cheerful
+GROUP BY 
+    cheerful.\"returns_store_id\",
+    cheerful.\"returns_customer_text_id\"),
+cooperative as (
+SELECT
+    avg(thoughtful.\"total_returns\") as \"avg_store_returns\",
+    thoughtful.\"returns_store_id\" as \"returns_store_id\"
+FROM
+    thoughtful
+GROUP BY 
+    thoughtful.\"returns_store_id\")
+SELECT
+    thoughtful.\"returns_customer_text_id\" as \"returns_customer_text_id\"
+FROM
+    cooperative
+    INNER JOIN thoughtful on cooperative.\"returns_store_id\" = thoughtful.\"returns_store_id\"
+WHERE
+    thoughtful.\"total_returns\" > ( 1.2 * cooperative.\"avg_store_returns\" )
+
+ORDER BY 
+    thoughtful.\"returns_customer_text_id\" asc
+LIMIT (100)"""
+optimized_prep_time = 2.911955
+optimized_parse_time = 3.066699
+optimized_generation_time = 0.015532
+optimized_exec_time = 0.04748
+optimized_generated_sql = """
+
+WITH 
+sparkling as (
+SELECT
+    sum(default_id_id_text_id_ticket_number_year_89f0b8d713089ca2e55d9cd2b6b95850e1993d319eeffff7af06fb57ab6fa8bd_filtered_on_state_year.\"returns_return_amount\") as \"total_returns\",
+    default_id_id_text_id_ticket_number_year_89f0b8d713089ca2e55d9cd2b6b95850e1993d319eeffff7af06fb57ab6fa8bd_filtered_on_state_year.\"returns_store_id\" as \"returns_store_id\",
+    default_id_id_text_id_ticket_number_year_89f0b8d713089ca2e55d9cd2b6b95850e1993d319eeffff7af06fb57ab6fa8bd_filtered_on_state_year.\"returns_customer_text_id\" as \"returns_customer_text_id\"
+FROM
+    id_id_text_id_ticket_number_year_89f0b8d713089ca2e55d9cd2b6b95850e1993d319eeffff7af06fb57ab6fa8bd_filtered_on_state_year as default_id_id_text_id_ticket_number_year_89f0b8d713089ca2e55d9cd2b6b95850e1993d319eeffff7af06fb57ab6fa8bd_filtered_on_state_year
+GROUP BY 
+    default_id_id_text_id_ticket_number_year_89f0b8d713089ca2e55d9cd2b6b95850e1993d319eeffff7af06fb57ab6fa8bd_filtered_on_state_year.\"returns_customer_text_id\",
+    default_id_id_text_id_ticket_number_year_89f0b8d713089ca2e55d9cd2b6b95850e1993d319eeffff7af06fb57ab6fa8bd_filtered_on_state_year.\"returns_store_id\"),
+abhorrent as (
+SELECT
+    avg(sparkling.\"total_returns\") as \"avg_store_returns\",
+    sparkling.\"returns_store_id\" as \"returns_store_id\"
+FROM
+    sparkling
+GROUP BY 
+    sparkling.\"returns_store_id\")
+SELECT
+    sparkling.\"returns_customer_text_id\" as \"returns_customer_text_id\"
+FROM
+    abhorrent
+    INNER JOIN sparkling on abhorrent.\"returns_store_id\" = sparkling.\"returns_store_id\"
+WHERE
+    sparkling.\"total_returns\" > ( 1.2 * abhorrent.\"avg_store_returns\" )
+
+ORDER BY 
+    sparkling.\"returns_customer_text_id\" asc
+LIMIT (100)"""
+query_id = 1
+sql_comp_time = 1.820059
+total_time = 9.910359

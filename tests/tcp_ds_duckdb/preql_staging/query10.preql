@@ -1,7 +1,7 @@
 # Generated from preql source: c:\Users\ethan\coding_projects\pypreql-etl\tests\tcp_ds_duckdb\query10.preql
 # Do not edit manually
 # import shared CTE persists into local namespace 
-import _internal_cached_intermediates_354dc1ff0086db3b3cad06810f36933b8b4083e5ac0ba8d6f24c3ae94c847bac;
+import _internal_cached_intermediates_0c75afb59caa2bf6c8f3779989be5f64df0320dbcb29dffa122999511a7c6b9e_datasources;
 
 
 import customer as customer;

@@ -4,8 +4,8 @@ from trilogy import Executor, Environment
 from dotenv import load_dotenv
 from datetime import datetime
 import pytest
-import json
 from tests.tcp_ds_duckdb.conftest import OptimizedEnv, OptimizationResult
+import tomli_w
 
 load_dotenv()
 
@@ -89,9 +89,9 @@ def run_query(
     test_results.update(base_output)
     with open(working_path / f"zquery{idx:02d}.log", "w") as f:
         f.write(
-            json.dumps(
+            tomli_w.dumps(
                 test_results,
-                indent=4,
+                multiline_strings=True,
             )
         )
 

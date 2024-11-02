@@ -89,7 +89,7 @@ def cte_to_persist(input: CTE, name: str, generator: BaseDialect) -> PersistStat
         )
     datasource = select.to_datasource(
         namespace="default",
-        identifier=generate_datasource_name(select, name),
+        name=generate_datasource_name(select, name),
         address=Address(location=generate_datasource_name(select, name)),
     )
     persist = PersistStatement(datasource=datasource, select=select)
@@ -128,19 +128,18 @@ def fingerprint_filter(filter: Conditional | Comparison | Parenthetical) -> str:
     return str(filter)
 
 
-def fingerprint_cte(cte: CTE) -> str:
-    if cte.condition:
-        return (
-            fingerprint_source(cte.source)
-            + "-".join([fingerprint_cte(x) for x in cte.parent_ctes])
-            + fingerprint_grain(cte.grain)
-            + fingerprint_filter(cte.condition)
-        )
-    return (
+def fingerprint_cte(cte: CTE, select_condition) -> str:
+    base = (
         fingerprint_source(cte.source)
-        + "-".join([fingerprint_cte(x) for x in cte.parent_ctes])
+        + "-".join([fingerprint_cte(x, select_condition) for x in cte.parent_ctes])
         + fingerprint_grain(cte.grain)
     )
+
+    if cte.condition:
+        base += fingerprint_filter(cte.condition)
+    if select_condition:
+        base += fingerprint_filter(select_condition)
+    return base
 
 
 def process_raw(
@@ -189,7 +188,15 @@ def analyze(
         return AnalyzeResult({}, {})
     for x in valid:
         for cte in x.ctes:
-            fingerprint = fingerprint_cte(cte)
+            # if the CTE is being generated as part of a larger query with a filter condition
+            # and it itself doesn't have a filter condition; this might be post filtering
+            # and irrelevant to global graph.
+            # TODO: figure out if it's pre-filtering or post-filtering
+            if x.where_clause and not cte.condition:
+                continue
+            fingerprint = fingerprint_cte(
+                cte, x.where_clause.conditional if x.where_clause else None
+            )
             counts[fingerprint] = counts.get(fingerprint, 0) + 1
             lookup[fingerprint] = lookup.get(fingerprint, cte) + cte
     for k, v in counts.items():
@@ -224,6 +231,31 @@ def has_anon_concepts(cte: CTE) -> bool:
     return False
 
 
+def reorder_ctes(
+    input: list[CTE],
+):
+    import networkx as nx
+
+    # Create a directed graph
+    G = nx.DiGraph()
+    mapping: dict[str, CTE] = {}
+    for cte in input:
+        mapping[cte.name] = cte
+        for parent in cte.parent_ctes:
+            G.add_edge(parent.name, cte.name)
+    # Perform topological sort (only works for DAGs)
+    try:
+        topological_order = list(nx.topological_sort(G))
+        if not topological_order:
+            return input
+        return [mapping[x] for x in topological_order]
+    except nx.NetworkXUnfeasible as e:
+        print(
+            "The graph is not a DAG (contains cycles) and cannot be topologically sorted."
+        )
+        raise e
+
+
 def process_loop(
     inputs: List[
         ProcessedQuery
@@ -254,4 +286,4 @@ def process_loop(
             )
             new_persist.append(cte_to_persist(cte, k, generator=generator))
 
-    return ProcessLoopResult(new=new_persist)
+    return ProcessLoopResult(new=reversed(new_persist))

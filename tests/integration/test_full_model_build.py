@@ -4,12 +4,17 @@ from pathlib import Path
 from click.testing import CliRunner
 import pytest
 import os
+from trilogy.hooks.query_debugger import DebuggingHook
 
 root = Path(__file__)
 
 
 def test_full_model_build_dbt(logger):
+    DebuggingHook()
     fake = root.parent / "dbt" / "models" / "customer_two" / "fake_gen_model.sql"
+    staging_path = root.parent / "preql_dbt_staging/"
+    os.makedirs(fake.parent, exist_ok=True)
+    os.makedirs(staging_path, exist_ok=True)
     with open(fake, "w") as f:
         f.write("SELECT 1")
     assert fake.exists()
@@ -19,6 +24,7 @@ def test_full_model_build_dbt(logger):
         Dialects.DUCK_DB,
         run=True,
         debug=False,
+        staging_path=root.parent / "preql_dbt_staging/",
     )
 
     results = root.parent / "dbt/models"
@@ -50,7 +56,7 @@ def test_full_model_build_native(logger):
 
     results = root.parent / "native"
     output = list(results.glob("**/*.preql"))
-    assert len(output) == 9, [f for f in output]
+    assert len(output) == 10, [f for f in output]
     for f in output:
         # our generated file
         if "dim_splits" not in str(f):

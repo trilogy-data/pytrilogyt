@@ -1,8 +1,8 @@
 models:
 - columns:
   - description: No description provided
-    name: local_test
+    name: test
     tests: []
-  description: Automatically generated model from preql
+  description: Automatically generated model from trilogy
   name: static_one_gen_model
 version: 2

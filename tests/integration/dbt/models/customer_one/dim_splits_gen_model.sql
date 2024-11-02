@@ -1,4 +1,4 @@
--- Generated from preql source: c:\Users\ethan\coding_projects\pypreql-etl\tests\integration\preql\customer_one.preql
+-- Generated from preql source: customer_one
 -- Do not edit manually
 {{ config(materialized='table') }}
 
@@ -9,16 +9,14 @@ SELECT
 ),
 dynamic as (
 SELECT
-    dim_splits_new."generic_split" as "generic_split",
-    quizzical."_trilogyt__created_at" as "_trilogyt__created_at"
+    scalar_split_dd968c4c1215b184ec36e1ed881d193d3e8e2ad062dd6750257f78115dccdfd7."generic_split" as "generic_split"
 FROM
-    {{ ref('dim_splits_new_gen_model') }} as dim_splits_new
-    FULL JOIN quizzical on 1=1)
+    {{ ref('scalar_split_dd968c4c1215b184ec36e1ed881d193d3e8e2ad062dd6750257f78115dccdfd7_gen_model') }} as scalar_split_dd968c4c1215b184ec36e1ed881d193d3e8e2ad062dd6750257f78115dccdfd7
+GROUP BY 
+    scalar_split_dd968c4c1215b184ec36e1ed881d193d3e8e2ad062dd6750257f78115dccdfd7."generic_split")
 SELECT
     dynamic."generic_split" as "generic_split",
-    dynamic."_trilogyt__created_at" as "_trilogyt__created_at"
+    quizzical."_trilogyt__created_at" as "_trilogyt__created_at"
 FROM
     dynamic
-GROUP BY 
-    dynamic."generic_split",
-    dynamic."_trilogyt__created_at"
+    FULL JOIN quizzical on 1=1

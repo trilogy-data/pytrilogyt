@@ -10,10 +10,7 @@ from trilogy.core.models import (
     ImportStatement,
     PersistStatement,
     SelectStatement,
-    RowsetDerivationStatement,
     ConceptDeclarationStatement,
-    MergeStatementV2,
-    ConceptTransform,
     CopyStatement,
     HasUUID,
 )
@@ -40,6 +37,7 @@ class OptimizationInput:
 @dataclass
 class OptimizationResult:
     path: PathlibPath
+    datasource_path: PathlibPath
     new_import: ImportStatement
     fingerprint: str
 
@@ -104,44 +102,17 @@ def optimize_multiple(
             generator=exec.generator,
             threshold=2,
         )
-        # if not new_persists:
-        #     continue
-        concept_modifying_statements: list[
-            RowsetDerivationStatement | ImportStatement | MergeStatementV2
-        ] = unique(
-            [
-                x
-                for x in v.statements
-                if isinstance(
-                    x,
-                    (
-                        RowsetDerivationStatement,
-                        ImportStatement,
-                        MergeStatementV2,
-                        SelectStatement,
-                    ),
-                )
-                or (
-                    isinstance(x, SelectStatement)
-                    and any(
-                        isinstance(y.content, ConceptTransform) for y in x.selection
-                    )
-                )
-            ],
-            "name",
-        )
-        # others: [
-        #     x
-        #     for x in v.statements
-        #     if isinstance(x, HasUUID)
-        #     and x.uuid
-        #     not in [
-        #         y.uuid for y in concept_modifying_statements if isinstance(y, HasUUID)
-        #     ]
-        # ]
+
         concept_modifying_statements = unique(
             [x for x in v.statements if isinstance(x, HasUUID)], "uuid"
         )
+        final = []
+        # we should transform a persist into a select for optimization purposes
+        for x in concept_modifying_statements:
+            if isinstance(x, PersistStatement):
+                final.append(x.select)
+            else:
+                final.append(x)
         # inject those
         output_file = output_path / f"{OPTIMIZATION_FILE}_{k}.preql"
         with open(output_file, "w") as f:
@@ -150,12 +121,20 @@ def optimize_multiple(
                     renderer.to_string(ConceptDeclarationStatement(concept=concept))
                     + "\n\n"
                 )
-            for cte in concept_modifying_statements:
+            for cte in final:
                 f.write(renderer.to_string(cte) + "\n\n")
             for x in new_persists:
                 f.write(renderer.to_string(x) + "\n\n")
+                # f.write(renderer.to_string(x.datasource) + "\n\n")
+
+        datasource_file = output_path / f"{OPTIMIZATION_FILE}_{k}_datasources.preql"
+        with open(datasource_file, "w") as f:
+            f.write(f"import {OPTIMIZATION_FILE}_{k};\n\n")
+            for x in new_persists:
+                f.write(renderer.to_string(x.datasource) + "\n\n")
         outputs[k] = OptimizationResult(
             path=output_file,
+            datasource_path=datasource_file,
             new_import=ImportStatement(
                 alias=OPTIMIZATION_NAMESPACE,
                 path=output_file,

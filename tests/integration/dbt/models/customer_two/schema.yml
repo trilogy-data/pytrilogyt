@@ -6,6 +6,9 @@ models:
   - description: No description provided
     name: generic_scalar
     tests: []
-  description: Automatically generated model from preql
+  - description: No description provided
+    name: _trilogyt__created_at
+    tests: []
+  description: Automatically generated model from trilogy
   name: dim_splits_new_gen_model
 version: 2
