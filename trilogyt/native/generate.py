@@ -81,7 +81,7 @@ def generate_model(
                 )
             )
         last_stmt = statements[idx - 1]
-        if type(last_stmt) != type(query) or not isinstance(
+        if last_stmt.__class__ != query.__class__ or not isinstance(
             query, (ImportStatement, ConceptDeclarationStatement)
         ):
             outputs.append("\n")
