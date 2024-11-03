@@ -1,7 +1,7 @@
 base_prep_time = 0.0
-base_parse_time = 11.226396
-base_generation_time = 0.008998
-base_exec_time = 0.504276
+base_parse_time = 10.768218
+base_generation_time = 0.011438
+base_exec_time = 0.361295
 base_generated_sql = """
 
 WITH 
@@ -25,8 +25,8 @@ GROUP BY
     web_sales_web_sales.\"WS_BILL_CUSTOMER_SK\"),
 juicy as (
 SELECT
-    catalog_sales_catalog_sales.\"CS_SOLD_DATE_SK\" as \"catalog_sales_date_id\",
-    catalog_sales_catalog_sales.\"CS_SHIP_CUSTOMER_SK\" as \"customer_id\"
+    catalog_sales_catalog_sales.\"CS_SHIP_CUSTOMER_SK\" as \"customer_id\",
+    catalog_sales_catalog_sales.\"CS_SOLD_DATE_SK\" as \"catalog_sales_date_id\"
 FROM
     memory.catalog_sales as catalog_sales_catalog_sales
 GROUP BY 
@@ -90,14 +90,14 @@ SELECT
 FROM
     young
 GROUP BY 
-    young.\"base_customer_demographics_marital_status\",
     young.\"base_customer_demographics_purchase_estimate\",
-    young.\"base_customer_demographics_employed_dependent_count\",
-    young.\"base_customer_demographics_dependent_count\",
     young.\"base_customer_demographics_college_dependent_count\",
-    young.\"base_customer_demographics_education_status\",
+    young.\"base_customer_demographics_marital_status\",
+    young.\"base_customer_demographics_dependent_count\",
     young.\"base_customer_demographics_gender\",
-    young.\"base_customer_demographics_credit_rating\"
+    young.\"base_customer_demographics_employed_dependent_count\",
+    young.\"base_customer_demographics_credit_rating\",
+    young.\"base_customer_demographics_education_status\"
 ORDER BY 
     young.\"base_customer_demographics_gender\" asc,
     young.\"base_customer_demographics_marital_status\" asc,
@@ -107,14 +107,14 @@ ORDER BY
     young.\"base_customer_demographics_dependent_count\" asc,
     young.\"base_customer_demographics_employed_dependent_count\" asc,
     young.\"base_customer_demographics_college_dependent_count\" asc"""
-optimized_prep_time = 2.522236
-optimized_parse_time = 84.867736
-optimized_generation_time = 0.015561
-optimized_exec_time = 0.564988
+optimized_prep_time = 2.470759
+optimized_parse_time = 66.426705
+optimized_generation_time = 0.010101
+optimized_exec_time = 0.445479
 optimized_generated_sql = """
 
 WITH 
-macho as (
+divergent as (
 SELECT
     store_sales_store_sales.\"SS_SOLD_DATE_SK\" as \"store_sales_date_id\",
     store_sales_store_sales.\"SS_CUSTOMER_SK\" as \"customer_id\"
@@ -123,7 +123,7 @@ FROM
 GROUP BY 
     store_sales_store_sales.\"SS_SOLD_DATE_SK\",
     store_sales_store_sales.\"SS_CUSTOMER_SK\"),
-kaput as (
+protective as (
 SELECT
     web_sales_web_sales.\"WS_SOLD_DATE_SK\" as \"web_sales_date_id\",
     web_sales_web_sales.\"WS_BILL_CUSTOMER_SK\" as \"customer_id\"
@@ -132,38 +132,38 @@ FROM
 GROUP BY 
     web_sales_web_sales.\"WS_SOLD_DATE_SK\",
     web_sales_web_sales.\"WS_BILL_CUSTOMER_SK\"),
-charming as (
+waggish as (
 SELECT
-    catalog_sales_catalog_sales.\"CS_SOLD_DATE_SK\" as \"catalog_sales_date_id\",
-    catalog_sales_catalog_sales.\"CS_SHIP_CUSTOMER_SK\" as \"customer_id\"
+    catalog_sales_catalog_sales.\"CS_SHIP_CUSTOMER_SK\" as \"customer_id\",
+    catalog_sales_catalog_sales.\"CS_SOLD_DATE_SK\" as \"catalog_sales_date_id\"
 FROM
     memory.catalog_sales as catalog_sales_catalog_sales
 GROUP BY 
     catalog_sales_catalog_sales.\"CS_SOLD_DATE_SK\",
     catalog_sales_catalog_sales.\"CS_SHIP_CUSTOMER_SK\"),
-protective as (
+rambunctious as (
 SELECT
     customer_customers.\"C_CUSTOMER_SK\" as \"relevant_customers\"
 FROM
     memory.customer as customer_customers
-    LEFT OUTER JOIN charming on customer_customers.\"C_CUSTOMER_SK\" = charming.\"customer_id\"
-    LEFT OUTER JOIN macho on customer_customers.\"C_CUSTOMER_SK\" = macho.\"customer_id\"
-    LEFT OUTER JOIN kaput on customer_customers.\"C_CUSTOMER_SK\" = kaput.\"customer_id\"
-    LEFT OUTER JOIN memory.date_dim as web_sales_date_date on kaput.\"web_sales_date_id\" = web_sales_date_date.\"D_DATE_SK\"
+    LEFT OUTER JOIN waggish on customer_customers.\"C_CUSTOMER_SK\" = waggish.\"customer_id\"
+    LEFT OUTER JOIN divergent on customer_customers.\"C_CUSTOMER_SK\" = divergent.\"customer_id\"
+    LEFT OUTER JOIN protective on customer_customers.\"C_CUSTOMER_SK\" = protective.\"customer_id\"
+    LEFT OUTER JOIN memory.date_dim as web_sales_date_date on protective.\"web_sales_date_id\" = web_sales_date_date.\"D_DATE_SK\"
     INNER JOIN memory.customer_address as customer_customer_address on customer_customers.\"C_CURRENT_ADDR_SK\" = customer_customer_address.\"CA_ADDRESS_SK\"
-    LEFT OUTER JOIN memory.date_dim as store_sales_date_date on macho.\"store_sales_date_id\" = store_sales_date_date.\"D_DATE_SK\"
-    LEFT OUTER JOIN memory.date_dim as catalog_sales_date_date on charming.\"catalog_sales_date_id\" = catalog_sales_date_date.\"D_DATE_SK\"
+    LEFT OUTER JOIN memory.date_dim as store_sales_date_date on divergent.\"store_sales_date_id\" = store_sales_date_date.\"D_DATE_SK\"
+    LEFT OUTER JOIN memory.date_dim as catalog_sales_date_date on waggish.\"catalog_sales_date_id\" = catalog_sales_date_date.\"D_DATE_SK\"
 WHERE
     cast(store_sales_date_date.\"D_YEAR\" as int) = 2002 and ( store_sales_date_date.\"D_MOY\" in (1,2,3,4) and ( ( ( ( ( cast(web_sales_date_date.\"D_YEAR\" as int) = 2002 and web_sales_date_date.\"D_MOY\" in (1,2,3,4) ) ) or ( ( cast(catalog_sales_date_date.\"D_YEAR\" as int) = 2002 and catalog_sales_date_date.\"D_MOY\" in (1,2,3,4) ) ) ) ) and customer_customer_address.\"CA_COUNTY\" in ('Rush County','Toole County','Jefferson County','Dona Ana County','La Porte County') ) )
 ),
-premium as (
+puffy as (
 SELECT
-    protective.\"relevant_customers\" as \"relevant_customers\"
+    rambunctious.\"relevant_customers\" as \"relevant_customers\"
 FROM
-    protective
+    rambunctious
 GROUP BY 
-    protective.\"relevant_customers\"),
-puzzled as (
+    rambunctious.\"relevant_customers\"),
+hard as (
 SELECT
     customer_customers.\"C_CUSTOMER_SK\" as \"base_customer_id\",
     customer_demographics_customer_demographics.\"CD_DEMO_SK\" as \"base_customer_demographics_id\",
@@ -179,43 +179,43 @@ FROM
     memory.customer_demographics as customer_demographics_customer_demographics
     INNER JOIN memory.customer as customer_customers on customer_demographics_customer_demographics.\"CD_DEMO_SK\" = customer_customers.\"C_CURRENT_CDEMO_SK\"
 WHERE
-    customer_customers.\"C_CUSTOMER_SK\" in (select premium.\"relevant_customers\" from premium where premium.\"relevant_customers\" is not null) and customer_demographics_customer_demographics.\"CD_GENDER\" is not null
+    customer_customers.\"C_CUSTOMER_SK\" in (select puffy.\"relevant_customers\" from puffy where puffy.\"relevant_customers\" is not null) and customer_demographics_customer_demographics.\"CD_GENDER\" is not null
 )
 SELECT
-    puzzled.\"base_customer_demographics_gender\" as \"base_customer_demographics_gender\",
-    puzzled.\"base_customer_demographics_marital_status\" as \"base_customer_demographics_marital_status\",
-    puzzled.\"base_customer_demographics_education_status\" as \"base_customer_demographics_education_status\",
-    count(puzzled.\"base_customer_id\") as \"cnt1\",
-    puzzled.\"base_customer_demographics_purchase_estimate\" as \"base_customer_demographics_purchase_estimate\",
-    count(puzzled.\"base_customer_id\") as \"cnt2\",
-    puzzled.\"base_customer_demographics_credit_rating\" as \"base_customer_demographics_credit_rating\",
-    count(puzzled.\"base_customer_id\") as \"cnt3\",
-    puzzled.\"base_customer_demographics_dependent_count\" as \"base_customer_demographics_dependent_count\",
-    count(puzzled.\"base_customer_id\") as \"cnt4\",
-    puzzled.\"base_customer_demographics_employed_dependent_count\" as \"base_customer_demographics_employed_dependent_count\",
-    count(puzzled.\"base_customer_id\") as \"cnt5\",
-    puzzled.\"base_customer_demographics_college_dependent_count\" as \"base_customer_demographics_college_dependent_count\",
-    count(puzzled.\"base_customer_id\") as \"cnt6\"
+    hard.\"base_customer_demographics_gender\" as \"base_customer_demographics_gender\",
+    hard.\"base_customer_demographics_marital_status\" as \"base_customer_demographics_marital_status\",
+    hard.\"base_customer_demographics_education_status\" as \"base_customer_demographics_education_status\",
+    count(hard.\"base_customer_id\") as \"cnt1\",
+    hard.\"base_customer_demographics_purchase_estimate\" as \"base_customer_demographics_purchase_estimate\",
+    count(hard.\"base_customer_id\") as \"cnt2\",
+    hard.\"base_customer_demographics_credit_rating\" as \"base_customer_demographics_credit_rating\",
+    count(hard.\"base_customer_id\") as \"cnt3\",
+    hard.\"base_customer_demographics_dependent_count\" as \"base_customer_demographics_dependent_count\",
+    count(hard.\"base_customer_id\") as \"cnt4\",
+    hard.\"base_customer_demographics_employed_dependent_count\" as \"base_customer_demographics_employed_dependent_count\",
+    count(hard.\"base_customer_id\") as \"cnt5\",
+    hard.\"base_customer_demographics_college_dependent_count\" as \"base_customer_demographics_college_dependent_count\",
+    count(hard.\"base_customer_id\") as \"cnt6\"
 FROM
-    puzzled
+    hard
 GROUP BY 
-    puzzled.\"base_customer_demographics_marital_status\",
-    puzzled.\"base_customer_demographics_college_dependent_count\",
-    puzzled.\"base_customer_demographics_gender\",
-    puzzled.\"base_customer_demographics_education_status\",
-    puzzled.\"base_customer_demographics_purchase_estimate\",
-    puzzled.\"base_customer_demographics_dependent_count\",
-    puzzled.\"base_customer_demographics_employed_dependent_count\",
-    puzzled.\"base_customer_demographics_credit_rating\"
+    hard.\"base_customer_demographics_credit_rating\",
+    hard.\"base_customer_demographics_gender\",
+    hard.\"base_customer_demographics_dependent_count\",
+    hard.\"base_customer_demographics_employed_dependent_count\",
+    hard.\"base_customer_demographics_purchase_estimate\",
+    hard.\"base_customer_demographics_college_dependent_count\",
+    hard.\"base_customer_demographics_education_status\",
+    hard.\"base_customer_demographics_marital_status\"
 ORDER BY 
-    puzzled.\"base_customer_demographics_gender\" asc,
-    puzzled.\"base_customer_demographics_marital_status\" asc,
-    puzzled.\"base_customer_demographics_education_status\" asc,
-    puzzled.\"base_customer_demographics_purchase_estimate\" asc,
-    puzzled.\"base_customer_demographics_credit_rating\" asc,
-    puzzled.\"base_customer_demographics_dependent_count\" asc,
-    puzzled.\"base_customer_demographics_employed_dependent_count\" asc,
-    puzzled.\"base_customer_demographics_college_dependent_count\" asc"""
+    hard.\"base_customer_demographics_gender\" asc,
+    hard.\"base_customer_demographics_marital_status\" asc,
+    hard.\"base_customer_demographics_education_status\" asc,
+    hard.\"base_customer_demographics_purchase_estimate\" asc,
+    hard.\"base_customer_demographics_credit_rating\" asc,
+    hard.\"base_customer_demographics_dependent_count\" asc,
+    hard.\"base_customer_demographics_employed_dependent_count\" asc,
+    hard.\"base_customer_demographics_college_dependent_count\" asc"""
 query_id = 10
-sql_comp_time = 1.990332
-total_time = 101.71616
+sql_comp_time = 0.592443
+total_time = 81.089476

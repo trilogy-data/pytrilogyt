@@ -1,7 +1,7 @@
 base_prep_time = 0.0
-base_parse_time = 1.932719
-base_generation_time = 0.015108
-base_exec_time = 0.08518
+base_parse_time = 1.536604
+base_generation_time = 0.005001
+base_exec_time = 0.057475
 base_generated_sql = """
 
 WITH 
@@ -9,7 +9,7 @@ cheerful as (
 SELECT
     returns_store_returns.\"SR_RETURN_AMT\" as \"returns_return_amount\",
     returns_store_store.\"S_STATE\" as \"returns_store_state\",
-    cast(\"D_YEAR\" as int) as \"returns_return_date_year\",
+    cast(returns_return_date_date.\"D_YEAR\" as int) as \"returns_return_date_year\",
     returns_store_store.\"S_STORE_SK\" as \"returns_store_id\",
     returns_customer_customers.\"C_CUSTOMER_ID\" as \"returns_customer_text_id\",
     returns_store_returns.\"SR_TICKET_NUMBER\" as \"returns_store_sales_ticket_number\",
@@ -20,7 +20,7 @@ FROM
     INNER JOIN memory.store as returns_store_store on returns_store_returns.\"SR_STORE_SK\" = returns_store_store.\"S_STORE_SK\"
     INNER JOIN memory.customer as returns_customer_customers on returns_store_returns.\"SR_CUSTOMER_SK\" = returns_customer_customers.\"C_CUSTOMER_SK\"
 WHERE
-    returns_store_store.\"S_STATE\" = 'TN' and cast(\"D_YEAR\" as int) = 2000
+    returns_store_store.\"S_STATE\" = 'TN' and cast(returns_return_date_date.\"D_YEAR\" as int) = 2000
 ),
 thoughtful as (
 SELECT
@@ -51,14 +51,14 @@ WHERE
 ORDER BY 
     thoughtful.\"returns_customer_text_id\" asc
 LIMIT (100)"""
-optimized_prep_time = 2.911955
-optimized_parse_time = 3.066699
-optimized_generation_time = 0.015532
-optimized_exec_time = 0.04748
+optimized_prep_time = 2.452862
+optimized_parse_time = 2.194822
+optimized_generation_time = 0.002241
+optimized_exec_time = 0.036539
 optimized_generated_sql = """
 
 WITH 
-sparkling as (
+late as (
 SELECT
     sum(default_id_id_text_id_ticket_number_year_89f0b8d713089ca2e55d9cd2b6b95850e1993d319eeffff7af06fb57ab6fa8bd_filtered_on_state_year.\"returns_return_amount\") as \"total_returns\",
     default_id_id_text_id_ticket_number_year_89f0b8d713089ca2e55d9cd2b6b95850e1993d319eeffff7af06fb57ab6fa8bd_filtered_on_state_year.\"returns_store_id\" as \"returns_store_id\",
@@ -66,27 +66,27 @@ SELECT
 FROM
     id_id_text_id_ticket_number_year_89f0b8d713089ca2e55d9cd2b6b95850e1993d319eeffff7af06fb57ab6fa8bd_filtered_on_state_year as default_id_id_text_id_ticket_number_year_89f0b8d713089ca2e55d9cd2b6b95850e1993d319eeffff7af06fb57ab6fa8bd_filtered_on_state_year
 GROUP BY 
-    default_id_id_text_id_ticket_number_year_89f0b8d713089ca2e55d9cd2b6b95850e1993d319eeffff7af06fb57ab6fa8bd_filtered_on_state_year.\"returns_customer_text_id\",
-    default_id_id_text_id_ticket_number_year_89f0b8d713089ca2e55d9cd2b6b95850e1993d319eeffff7af06fb57ab6fa8bd_filtered_on_state_year.\"returns_store_id\"),
-abhorrent as (
+    default_id_id_text_id_ticket_number_year_89f0b8d713089ca2e55d9cd2b6b95850e1993d319eeffff7af06fb57ab6fa8bd_filtered_on_state_year.\"returns_store_id\",
+    default_id_id_text_id_ticket_number_year_89f0b8d713089ca2e55d9cd2b6b95850e1993d319eeffff7af06fb57ab6fa8bd_filtered_on_state_year.\"returns_customer_text_id\"),
+macho as (
 SELECT
-    avg(sparkling.\"total_returns\") as \"avg_store_returns\",
-    sparkling.\"returns_store_id\" as \"returns_store_id\"
+    avg(late.\"total_returns\") as \"avg_store_returns\",
+    late.\"returns_store_id\" as \"returns_store_id\"
 FROM
-    sparkling
+    late
 GROUP BY 
-    sparkling.\"returns_store_id\")
+    late.\"returns_store_id\")
 SELECT
-    sparkling.\"returns_customer_text_id\" as \"returns_customer_text_id\"
+    late.\"returns_customer_text_id\" as \"returns_customer_text_id\"
 FROM
-    abhorrent
-    INNER JOIN sparkling on abhorrent.\"returns_store_id\" = sparkling.\"returns_store_id\"
+    macho
+    INNER JOIN late on macho.\"returns_store_id\" = late.\"returns_store_id\"
 WHERE
-    sparkling.\"total_returns\" > ( 1.2 * abhorrent.\"avg_store_returns\" )
+    late.\"total_returns\" > ( 1.2 * macho.\"avg_store_returns\" )
 
 ORDER BY 
-    sparkling.\"returns_customer_text_id\" asc
+    late.\"returns_customer_text_id\" asc
 LIMIT (100)"""
 query_id = 1
-sql_comp_time = 1.820059
-total_time = 9.910359
+sql_comp_time = 1.636998
+total_time = 7.933336

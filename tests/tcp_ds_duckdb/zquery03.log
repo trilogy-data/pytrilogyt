@@ -1,7 +1,7 @@
 base_prep_time = 0.0
-base_parse_time = 1.211386
-base_generation_time = 0.015669
-base_exec_time = 0.062572
+base_parse_time = 1.002453
+base_generation_time = 0.01306
+base_exec_time = 0.040995
 base_generated_sql = """
 
 WITH 
@@ -12,7 +12,7 @@ SELECT
     store_sales_item_items.\"I_MANUFACT_ID\" as \"store_sales_item_manufacturer_id\",
     store_sales_item_items.\"I_BRAND_ID\" as \"store_sales_item_brand_id\",
     store_sales_item_items.\"I_BRAND\" as \"store_sales_item_brand_name\",
-    cast(\"D_YEAR\" as int) as \"store_sales_date_year\",
+    cast(store_sales_date_date.\"D_YEAR\" as int) as \"store_sales_date_year\",
     store_sales_store_sales.\"SS_TICKET_NUMBER\" as \"store_sales_ticket_number\",
     store_sales_item_items.\"I_ITEM_SK\" as \"store_sales_item_id\"
 FROM
@@ -30,29 +30,29 @@ SELECT
 FROM
     wakeful
 GROUP BY 
-    wakeful.\"store_sales_item_brand_name\",
     wakeful.\"store_sales_date_year\",
+    wakeful.\"store_sales_item_brand_name\",
     wakeful.\"store_sales_item_brand_id\"
 ORDER BY 
     wakeful.\"store_sales_date_year\" asc,
     sum(wakeful.\"store_sales_ext_sales_price\") desc,
     wakeful.\"store_sales_item_brand_id\" asc
 LIMIT (100)"""
-optimized_prep_time = 2.938345
-optimized_parse_time = 14.386084
-optimized_generation_time = 0.0
-optimized_exec_time = 0.078252
+optimized_prep_time = 2.41421
+optimized_parse_time = 11.616161
+optimized_generation_time = 0.003997
+optimized_exec_time = 0.04283
 optimized_generated_sql = """
 
 WITH 
-sweltering as (
+friendly as (
 SELECT
     store_sales_store_sales.\"SS_EXT_SALES_PRICE\" as \"store_sales_ext_sales_price\",
     store_sales_date_date.\"D_MOY\" as \"store_sales_date_month_of_year\",
     store_sales_item_items.\"I_MANUFACT_ID\" as \"store_sales_item_manufacturer_id\",
     store_sales_item_items.\"I_BRAND_ID\" as \"store_sales_item_brand_id\",
     store_sales_item_items.\"I_BRAND\" as \"store_sales_item_brand_name\",
-    cast(\"D_YEAR\" as int) as \"store_sales_date_year\",
+    cast(store_sales_date_date.\"D_YEAR\" as int) as \"store_sales_date_year\",
     store_sales_store_sales.\"SS_TICKET_NUMBER\" as \"store_sales_ticket_number\",
     store_sales_item_items.\"I_ITEM_SK\" as \"store_sales_item_id\"
 FROM
@@ -63,21 +63,21 @@ WHERE
     store_sales_date_date.\"D_MOY\" = 11 and store_sales_item_items.\"I_MANUFACT_ID\" = 128
 )
 SELECT
-    sweltering.\"store_sales_date_year\" as \"store_sales_date_year\",
-    sweltering.\"store_sales_item_brand_id\" as \"store_sales_item_brand_id\",
-    sweltering.\"store_sales_item_brand_name\" as \"store_sales_item_brand_name\",
-    sum(sweltering.\"store_sales_ext_sales_price\") as \"sum_agg\"
+    friendly.\"store_sales_date_year\" as \"store_sales_date_year\",
+    friendly.\"store_sales_item_brand_id\" as \"store_sales_item_brand_id\",
+    friendly.\"store_sales_item_brand_name\" as \"store_sales_item_brand_name\",
+    sum(friendly.\"store_sales_ext_sales_price\") as \"sum_agg\"
 FROM
-    sweltering
+    friendly
 GROUP BY 
-    sweltering.\"store_sales_date_year\",
-    sweltering.\"store_sales_item_brand_name\",
-    sweltering.\"store_sales_item_brand_id\"
+    friendly.\"store_sales_item_brand_name\",
+    friendly.\"store_sales_item_brand_id\",
+    friendly.\"store_sales_date_year\"
 ORDER BY 
-    sweltering.\"store_sales_date_year\" asc,
-    sum(sweltering.\"store_sales_ext_sales_price\") desc,
-    sweltering.\"store_sales_item_brand_id\" asc
+    friendly.\"store_sales_date_year\" asc,
+    sum(friendly.\"store_sales_ext_sales_price\") desc,
+    friendly.\"store_sales_item_brand_id\" asc
 LIMIT (100)"""
 query_id = 3
-sql_comp_time = 0.157633
-total_time = 18.849941
+sql_comp_time = 0.047237
+total_time = 15.195587

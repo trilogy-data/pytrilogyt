@@ -1,7 +1,7 @@
 base_prep_time = 0.0
-base_parse_time = 1.492591
-base_generation_time = 0.015582
-base_exec_time = 0.053511
+base_parse_time = 1.207855
+base_generation_time = 0.008965
+base_exec_time = 0.061675
 base_generated_sql = """
 
 WITH 
@@ -9,7 +9,7 @@ cooperative as (
 SELECT
     item_items.\"I_CATEGORY\" as \"item_category\",
     store_sales_customer_customers.\"C_CUSTOMER_SK\" as \"store_sales_customer_id\",
-    cast(\"D_YEAR\" as int) as \"store_sales_date_year\",
+    cast(store_sales_date_date.\"D_YEAR\" as int) as \"store_sales_date_year\",
     store_sales_date_date.\"D_MOY\" as \"store_sales_date_month_of_year\",
     store_sales_item_items.\"I_CURRENT_PRICE\" as \"store_sales_item_current_price\",
     store_sales_customer_customer_address.\"CA_STATE\" as \"store_sales_customer_state\"
@@ -21,7 +21,7 @@ FROM
     INNER JOIN memory.customer as store_sales_customer_customers on store_sales_store_sales.\"SS_CUSTOMER_SK\" = store_sales_customer_customers.\"C_CUSTOMER_SK\"
     INNER JOIN memory.customer_address as store_sales_customer_customer_address on store_sales_customer_customers.\"C_CURRENT_ADDR_SK\" = store_sales_customer_customer_address.\"CA_ADDRESS_SK\"
 WHERE
-    cast(\"D_YEAR\" as int) = 2001 and store_sales_date_date.\"D_MOY\" = 1 and item_items.\"I_CATEGORY\" is not null
+    cast(store_sales_date_date.\"D_YEAR\" as int) = 2001 and store_sales_date_date.\"D_MOY\" = 1 and item_items.\"I_CATEGORY\" is not null
 ),
 questionable as (
 SELECT
@@ -62,18 +62,18 @@ HAVING
 ORDER BY 
     count(abundant.\"store_sales_customer_id\") asc nulls first,
     abundant.\"store_sales_customer_state\" asc nulls first"""
-optimized_prep_time = 2.541485
-optimized_parse_time = 16.261317
-optimized_generation_time = 0.005005
-optimized_exec_time = 0.038224
+optimized_prep_time = 2.23514
+optimized_parse_time = 12.495216
+optimized_generation_time = 0.007096
+optimized_exec_time = 0.046553
 optimized_generated_sql = """
 
 WITH 
-scrawny as (
+busy as (
 SELECT
     item_items.\"I_CATEGORY\" as \"item_category\",
     store_sales_customer_customers.\"C_CUSTOMER_SK\" as \"store_sales_customer_id\",
-    cast(\"D_YEAR\" as int) as \"store_sales_date_year\",
+    cast(store_sales_date_date.\"D_YEAR\" as int) as \"store_sales_date_year\",
     store_sales_date_date.\"D_MOY\" as \"store_sales_date_month_of_year\",
     store_sales_item_items.\"I_CURRENT_PRICE\" as \"store_sales_item_current_price\",
     store_sales_customer_customer_address.\"CA_STATE\" as \"store_sales_customer_state\"
@@ -85,9 +85,9 @@ FROM
     INNER JOIN memory.customer as store_sales_customer_customers on store_sales_store_sales.\"SS_CUSTOMER_SK\" = store_sales_customer_customers.\"C_CUSTOMER_SK\"
     INNER JOIN memory.customer_address as store_sales_customer_customer_address on store_sales_customer_customers.\"C_CURRENT_ADDR_SK\" = store_sales_customer_customer_address.\"CA_ADDRESS_SK\"
 WHERE
-    cast(\"D_YEAR\" as int) = 2001
+    cast(store_sales_date_date.\"D_YEAR\" as int) = 2001
 ),
-friendly as (
+charming as (
 SELECT
     avg(item_items.\"I_CURRENT_PRICE\") as \"_virt_6264207893106521\",
     item_items.\"I_CATEGORY\" as \"item_category\"
@@ -95,34 +95,34 @@ FROM
     memory.item as item_items
 GROUP BY 
     item_items.\"I_CATEGORY\"),
-kaput as (
+protective as (
 SELECT
-    scrawny.\"item_category\" as \"item_category\",
-    scrawny.\"store_sales_customer_id\" as \"store_sales_customer_id\",
-    scrawny.\"store_sales_date_year\" as \"store_sales_date_year\",
-    scrawny.\"store_sales_date_month_of_year\" as \"store_sales_date_month_of_year\",
-    scrawny.\"store_sales_item_current_price\" as \"store_sales_item_current_price\",
-    scrawny.\"store_sales_customer_state\" as \"store_sales_customer_state\",
-    friendly.\"_virt_6264207893106521\" as \"_virt_6264207893106521\"
+    busy.\"item_category\" as \"item_category\",
+    busy.\"store_sales_customer_id\" as \"store_sales_customer_id\",
+    busy.\"store_sales_date_year\" as \"store_sales_date_year\",
+    busy.\"store_sales_date_month_of_year\" as \"store_sales_date_month_of_year\",
+    busy.\"store_sales_item_current_price\" as \"store_sales_item_current_price\",
+    busy.\"store_sales_customer_state\" as \"store_sales_customer_state\",
+    charming.\"_virt_6264207893106521\" as \"_virt_6264207893106521\"
 FROM
-    scrawny
-    INNER JOIN friendly on scrawny.\"item_category\" = friendly.\"item_category\"
+    busy
+    INNER JOIN charming on busy.\"item_category\" = charming.\"item_category\"
 WHERE
-    scrawny.\"store_sales_date_year\" = 2001 and ( scrawny.\"store_sales_date_month_of_year\" = 1 and ( scrawny.\"store_sales_item_current_price\" > 1.2 * friendly.\"_virt_6264207893106521\" and scrawny.\"item_category\" is not null ) )
+    busy.\"store_sales_date_year\" = 2001 and ( busy.\"store_sales_date_month_of_year\" = 1 and ( busy.\"store_sales_item_current_price\" > 1.2 * charming.\"_virt_6264207893106521\" and busy.\"item_category\" is not null ) )
 )
 SELECT
-    kaput.\"store_sales_customer_state\" as \"store_sales_customer_state\",
-    count(kaput.\"store_sales_customer_id\") as \"customer_count\"
+    protective.\"store_sales_customer_state\" as \"store_sales_customer_state\",
+    count(protective.\"store_sales_customer_id\") as \"customer_count\"
 FROM
-    kaput
+    protective
 GROUP BY 
-    kaput.\"store_sales_customer_state\"
+    protective.\"store_sales_customer_state\"
 HAVING
-    count(kaput.\"store_sales_customer_id\") >= 10
+    count(protective.\"store_sales_customer_id\") >= 10
 
 ORDER BY 
-    count(kaput.\"store_sales_customer_id\") asc nulls first,
-    kaput.\"store_sales_customer_state\" asc nulls first"""
+    count(protective.\"store_sales_customer_id\") asc nulls first,
+    protective.\"store_sales_customer_state\" asc nulls first"""
 query_id = 6
-sql_comp_time = 0.078909
-total_time = 20.486624
+sql_comp_time = 0.072752
+total_time = 16.138281
