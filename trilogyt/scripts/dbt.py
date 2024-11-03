@@ -47,15 +47,15 @@ def dbt_handler(
         if file.stem.startswith("_"):
             continue
 
-        optimization: OptimizationResult = root.get(orig_file, None)
+        optimization: OptimizationResult | None = root.get(orig_file)
 
         if optimization:
-            with open(optimization.path) as opt:
+            with open(optimization.path) as opt_file:
                 opt_config = DBTConfig(
                     root=PathlibPath(dbt_path), namespace=OPTIMIZATION_NAMESPACE
                 )
                 generate_model(
-                    opt.read(),
+                    opt_file.read(),
                     optimization.path,
                     dialect=dialect,
                     config=opt_config,

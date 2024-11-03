@@ -131,9 +131,10 @@ def generate_model(
                 existing[parent].add(subf)
         should_exist[parent].add(output_path)
         with open(output_path, "w") as f:
-            f.write(
-                f"-- Generated from preql source: {preql_path.stem}\n-- Do not edit manually\n"
-            )
+            if preql_path:
+                f.write(
+                    f"-- Generated from preql source: {preql_path.stem}\n-- Do not edit manually\n"
+                )
             # set materialization here
             # TODO: make configurable
             f.write("{{ config(materialized='table') }}\n")

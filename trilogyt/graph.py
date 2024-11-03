@@ -237,7 +237,7 @@ def reorder_ctes(
     import networkx as nx
 
     # Create a directed graph
-    G = nx.DiGraph()
+    G: nx.DiGraph = nx.DiGraph()
     mapping: dict[str, CTE] = {}
     for cte in input:
         mapping[cte.name] = cte
@@ -286,4 +286,4 @@ def process_loop(
             )
             new_persist.append(cte_to_persist(cte, k, generator=generator))
 
-    return ProcessLoopResult(new=reversed(new_persist))
+    return ProcessLoopResult(new=new_persist)

@@ -12,7 +12,10 @@ if __name__ == "__main__":
     for filename in os.listdir(root):
         if filename.endswith(".log"):
             with open(root / filename, "r") as f:
-                loaded = tomllib.loads(f.read())
+                try:
+                    loaded = tomllib.loads(f.read())
+                except tomllib.TOMLDecodeError:
+                    continue
                 results.append(loaded)
                 print(f"----{filename}----")
                 print(loaded["optimized_generated_sql"])
@@ -34,7 +37,7 @@ if __name__ == "__main__":
     df = df.sort_values("query_id")
 
     ax.boxplot(
-        [df["optimized_exec_time"], df["base_exec_time"], df["comp_time"]],
+        [df["optimized_exec_time"], df["base_exec_time"], df["sql_comp_time"]],
         tick_labels=["Base", "Optimized", "Non_trilogy"],
     )
 

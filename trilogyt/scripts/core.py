@@ -16,7 +16,6 @@ from trilogy.core.models import (
 )
 from dataclasses import dataclass
 from trilogyt.core import ENVIRONMENT_CONCEPTS, fingerprint_environment
-from collections import defaultdict
 
 # handles development cases
 nb_path = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
@@ -62,7 +61,7 @@ def optimize_multiple(
         dialect=dialect, engine=dialect.default_engine(), environment=optimize_env
     )
 
-    env_to_statements: dict[str, OptimizationInput] = defaultdict(list)
+    env_to_statements: dict[str, OptimizationInput] = {}
     file_to_fingerprint = {}
     for path in paths:
         if path.name.startswith(OPTIMIZATION_FILE):

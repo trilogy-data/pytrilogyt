@@ -9,3 +9,4 @@ dbt-duckdb
 python-dotenv
 pytest-console-scripts
 tomli-w
+types-networkx

@@ -15,7 +15,7 @@ def generate_execution_order(edges):
 def run_path(
     path: Path,
     dialect: Dialects,
-    env_to_optimization: dict[str, OptimizationResult] | None = None,
+    env_to_optimization: dict[Path, OptimizationResult] | None = None,
 ):
     # initialize
     files = path.glob("*.preql")
