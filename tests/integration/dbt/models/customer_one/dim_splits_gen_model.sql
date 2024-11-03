@@ -1,4 +1,4 @@
--- Generated from preql source: c:\Users\ethan\coding_projects\pypreql-etl\tests\integration\preql\customer_one.preql
+-- Generated from preql source: customer_one
 -- Do not edit manually
 {{ config(materialized='table') }}
 

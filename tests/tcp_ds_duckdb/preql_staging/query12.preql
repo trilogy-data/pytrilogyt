@@ -1,0 +1,27 @@
+# Generated from preql source: c:\Users\ethan\coding_projects\pypreql-etl\tests\tcp_ds_duckdb\query12.preql
+# Do not edit manually
+# import shared CTE persists into local namespace 
+import _internal_cached_intermediates_0af50d95b08b4155294cd66a1e431860ade6635f326f7ba30314b2a67e37d5b7_datasources;
+
+
+import web_sales as web_sales;
+
+
+WHERE
+    (web_sales.date.date >= CAST('1999-02-22' AS date) and web_sales.date.date <= CAST('1999-03-24' AS date)) and web_sales.item.category in ('Sports', 'Books', 'Home')
+SELECT
+    web_sales.item.name,
+    web_sales.item.desc,
+    web_sales.item.category,
+    web_sales.item.class,
+    web_sales.item.current_price,
+    sum(web_sales.external_sales_price) -> itemrevenue,
+    divide(multiply(itemrevenue,100.0),sum itemrevenue over web_sales.item.class) -> revenueratio,
+ORDER BY
+    web_sales.item.category asc,
+    web_sales.item.class asc,
+    web_sales.item.name asc,
+    web_sales.item.desc asc,
+    revenueratio asc
+
+LIMIT 100;

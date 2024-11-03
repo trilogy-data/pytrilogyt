@@ -1,10 +1,141 @@
-{
-    "query_id": 7,
-    "parse_time": 3.547621,
-    "generation_time": 0.015622,
-    "exec_time": 1.57454,
-    "comp_time": 0.784924,
-    "total_time": 10.003806,
-    "sql_comp_time": 0.894516,
-    "generated_sql": "\nWITH \nprotective as (\nSELECT\n    store_sales.\"SS_TICKET_NUMBER\" as \"store_sales_ticket_number\",\n    customer_demographics.\"CD_GENDER\" as \"store_sales_customer_demographic_gender\",\n    customer_demographics.\"CD_MARITAL_STATUS\" as \"store_sales_customer_demographic_marital_status\",\n    customer_demographics.\"CD_EDUCATION_STATUS\" as \"store_sales_customer_demographic_education_status\",\n    promotion.\"P_CHANNEL_EMAIL\" as \"store_sales_promotion_channel_email\",\n    promotion.\"P_CHANNEL_EVENT\" as \"store_sales_promotion_channel_event\",\n    cast(\"D_YEAR\" as int) as \"store_sales_date_year\",\n    items.\"I_ITEM_SK\" as \"store_sales_item_id\",\n    items.\"I_ITEM_ID\" as \"store_sales_item_name\",\n    store_sales.\"SS_QUANTITY\" as \"store_sales_quantity\",\n    store_sales.\"SS_LIST_PRICE\" as \"store_sales_list_price\",\n    store_sales.\"SS_COUPON_AMT\" as \"store_sales_coupon_amt\",\n    store_sales.\"SS_SALES_PRICE\" as \"store_sales_sales_price\"\nFROM\n    memory.store_sales as store_sales\n    INNER JOIN memory.customer_demographics as customer_demographics on store_sales.\"SS_CDEMO_SK\" = customer_demographics.\"CD_DEMO_SK\"\n    INNER JOIN memory.date_dim as date on store_sales.\"SS_SOLD_DATE_SK\" = date.\"D_DATE_SK\"\n    INNER JOIN memory.promotion as promotion on store_sales.\"SS_PROMO_SK\" = promotion.\"P_PROMO_SK\"\n    INNER JOIN memory.item as items on store_sales.\"SS_ITEM_SK\" = items.\"I_ITEM_SK\"\nWHERE\n    customer_demographics.\"CD_GENDER\" = 'M' and customer_demographics.\"CD_MARITAL_STATUS\" = 'S' and customer_demographics.\"CD_EDUCATION_STATUS\" = 'College' and ( promotion.\"P_CHANNEL_EMAIL\" = 'N' or promotion.\"P_CHANNEL_EVENT\" = 'N' ) and cast(\"D_YEAR\" as int) = 2000\n),\npremium as (\nSELECT\n    protective.\"store_sales_ticket_number\" as \"filtered_sales_store_sales_ticket_number\",\n    protective.\"store_sales_item_id\" as \"filtered_sales_store_sales_item_id\",\n    protective.\"store_sales_item_name\" as \"filtered_sales_store_sales_item_name\",\n    protective.\"store_sales_quantity\" as \"filtered_sales_store_sales_quantity\",\n    protective.\"store_sales_list_price\" as \"filtered_sales_store_sales_list_price\",\n    protective.\"store_sales_coupon_amt\" as \"filtered_sales_store_sales_coupon_amt\",\n    protective.\"store_sales_sales_price\" as \"filtered_sales_store_sales_sales_price\"\nFROM\n    protective\nGROUP BY \n    protective.\"store_sales_sales_price\",\n    protective.\"store_sales_coupon_amt\",\n    protective.\"store_sales_customer_demographic_marital_status\",\n    protective.\"store_sales_promotion_channel_email\",\n    protective.\"store_sales_date_year\",\n    protective.\"store_sales_item_name\",\n    protective.\"store_sales_customer_demographic_gender\",\n    protective.\"store_sales_quantity\",\n    protective.\"store_sales_customer_demographic_education_status\",\n    protective.\"store_sales_item_id\",\n    protective.\"store_sales_promotion_channel_event\",\n    protective.\"store_sales_list_price\",\n    protective.\"store_sales_ticket_number\")\nSELECT\n    premium.\"filtered_sales_store_sales_item_name\" as \"filtered_sales_store_sales_item_name\",\n    avg(premium.\"filtered_sales_store_sales_quantity\") as \"avg_quantity\",\n    avg(premium.\"filtered_sales_store_sales_list_price\") as \"avg_list_price\",\n    avg(premium.\"filtered_sales_store_sales_coupon_amt\") as \"avg_coupon_amt\",\n    avg(premium.\"filtered_sales_store_sales_sales_price\") as \"avg_sales_price\"\nFROM\n    premium\nGROUP BY \n    premium.\"filtered_sales_store_sales_item_name\"\nORDER BY \n    premium.\"filtered_sales_store_sales_item_name\" asc\nLIMIT (100)"
-}
+base_prep_time = 0.0
+base_parse_time = 1.177197
+base_generation_time = 0.019265
+base_exec_time = 0.191846
+base_generated_sql = """
+
+WITH 
+thoughtful as (
+SELECT
+    store_sales_store_sales.\"SS_TICKET_NUMBER\" as \"store_sales_ticket_number\",
+    store_sales_customer_demographic_customer_demographics.\"CD_GENDER\" as \"store_sales_customer_demographic_gender\",
+    store_sales_customer_demographic_customer_demographics.\"CD_MARITAL_STATUS\" as \"store_sales_customer_demographic_marital_status\",
+    store_sales_customer_demographic_customer_demographics.\"CD_EDUCATION_STATUS\" as \"store_sales_customer_demographic_education_status\",
+    store_sales_promotion_promotion.\"P_CHANNEL_EMAIL\" as \"store_sales_promotion_channel_email\",
+    store_sales_promotion_promotion.\"P_CHANNEL_EVENT\" as \"store_sales_promotion_channel_event\",
+    cast(store_sales_date_date.\"D_YEAR\" as int) as \"store_sales_date_year\",
+    store_sales_item_items.\"I_ITEM_SK\" as \"store_sales_item_id\",
+    store_sales_item_items.\"I_ITEM_ID\" as \"store_sales_item_name\",
+    store_sales_store_sales.\"SS_QUANTITY\" as \"store_sales_quantity\",
+    store_sales_store_sales.\"SS_LIST_PRICE\" as \"store_sales_list_price\",
+    store_sales_store_sales.\"SS_COUPON_AMT\" as \"store_sales_coupon_amt\",
+    store_sales_store_sales.\"SS_SALES_PRICE\" as \"store_sales_sales_price\"
+FROM
+    memory.customer_demographics as store_sales_customer_demographic_customer_demographics
+    INNER JOIN memory.store_sales as store_sales_store_sales on store_sales_customer_demographic_customer_demographics.\"CD_DEMO_SK\" = store_sales_store_sales.\"SS_CDEMO_SK\"
+    INNER JOIN memory.date_dim as store_sales_date_date on store_sales_store_sales.\"SS_SOLD_DATE_SK\" = store_sales_date_date.\"D_DATE_SK\"
+    INNER JOIN memory.item as store_sales_item_items on store_sales_store_sales.\"SS_ITEM_SK\" = store_sales_item_items.\"I_ITEM_SK\"
+    INNER JOIN memory.promotion as store_sales_promotion_promotion on store_sales_store_sales.\"SS_PROMO_SK\" = store_sales_promotion_promotion.\"P_PROMO_SK\"
+WHERE
+    store_sales_customer_demographic_customer_demographics.\"CD_GENDER\" = 'M' and store_sales_customer_demographic_customer_demographics.\"CD_MARITAL_STATUS\" = 'S' and store_sales_customer_demographic_customer_demographics.\"CD_EDUCATION_STATUS\" = 'College' and ( store_sales_promotion_promotion.\"P_CHANNEL_EMAIL\" = 'N' or store_sales_promotion_promotion.\"P_CHANNEL_EVENT\" = 'N' ) and cast(store_sales_date_date.\"D_YEAR\" as int) = 2000
+),
+cooperative as (
+SELECT
+    thoughtful.\"store_sales_ticket_number\" as \"filtered_sales_store_sales_ticket_number\",
+    thoughtful.\"store_sales_item_id\" as \"filtered_sales_store_sales_item_id\",
+    thoughtful.\"store_sales_item_name\" as \"filtered_sales_store_sales_item_name\",
+    thoughtful.\"store_sales_quantity\" as \"filtered_sales_store_sales_quantity\",
+    thoughtful.\"store_sales_list_price\" as \"filtered_sales_store_sales_list_price\",
+    thoughtful.\"store_sales_coupon_amt\" as \"filtered_sales_store_sales_coupon_amt\",
+    thoughtful.\"store_sales_sales_price\" as \"filtered_sales_store_sales_sales_price\"
+FROM
+    thoughtful
+GROUP BY 
+    thoughtful.\"store_sales_promotion_channel_email\",
+    thoughtful.\"store_sales_item_id\",
+    thoughtful.\"store_sales_ticket_number\",
+    thoughtful.\"store_sales_quantity\",
+    thoughtful.\"store_sales_customer_demographic_gender\",
+    thoughtful.\"store_sales_item_name\",
+    thoughtful.\"store_sales_customer_demographic_marital_status\",
+    thoughtful.\"store_sales_list_price\",
+    thoughtful.\"store_sales_sales_price\",
+    thoughtful.\"store_sales_promotion_channel_event\",
+    thoughtful.\"store_sales_customer_demographic_education_status\",
+    thoughtful.\"store_sales_coupon_amt\",
+    thoughtful.\"store_sales_date_year\")
+SELECT
+    cooperative.\"filtered_sales_store_sales_item_name\" as \"filtered_sales_store_sales_item_name\",
+    avg(cooperative.\"filtered_sales_store_sales_quantity\") as \"avg_quantity\",
+    avg(cooperative.\"filtered_sales_store_sales_list_price\") as \"avg_list_price\",
+    avg(cooperative.\"filtered_sales_store_sales_coupon_amt\") as \"avg_coupon_amt\",
+    avg(cooperative.\"filtered_sales_store_sales_sales_price\") as \"avg_sales_price\"
+FROM
+    cooperative
+GROUP BY 
+    cooperative.\"filtered_sales_store_sales_item_name\"
+ORDER BY 
+    cooperative.\"filtered_sales_store_sales_item_name\" asc
+LIMIT (100)"""
+optimized_prep_time = 2.350908
+optimized_parse_time = 12.152031
+optimized_generation_time = 0.013747
+optimized_exec_time = 0.267493
+optimized_generated_sql = """
+
+WITH 
+divergent as (
+SELECT
+    store_sales_store_sales.\"SS_TICKET_NUMBER\" as \"store_sales_ticket_number\",
+    store_sales_customer_demographic_customer_demographics.\"CD_GENDER\" as \"store_sales_customer_demographic_gender\",
+    store_sales_customer_demographic_customer_demographics.\"CD_MARITAL_STATUS\" as \"store_sales_customer_demographic_marital_status\",
+    store_sales_customer_demographic_customer_demographics.\"CD_EDUCATION_STATUS\" as \"store_sales_customer_demographic_education_status\",
+    store_sales_promotion_promotion.\"P_CHANNEL_EMAIL\" as \"store_sales_promotion_channel_email\",
+    store_sales_promotion_promotion.\"P_CHANNEL_EVENT\" as \"store_sales_promotion_channel_event\",
+    cast(store_sales_date_date.\"D_YEAR\" as int) as \"store_sales_date_year\",
+    store_sales_item_items.\"I_ITEM_SK\" as \"store_sales_item_id\",
+    store_sales_item_items.\"I_ITEM_ID\" as \"store_sales_item_name\",
+    store_sales_store_sales.\"SS_QUANTITY\" as \"store_sales_quantity\",
+    store_sales_store_sales.\"SS_LIST_PRICE\" as \"store_sales_list_price\",
+    store_sales_store_sales.\"SS_COUPON_AMT\" as \"store_sales_coupon_amt\",
+    store_sales_store_sales.\"SS_SALES_PRICE\" as \"store_sales_sales_price\"
+FROM
+    memory.customer_demographics as store_sales_customer_demographic_customer_demographics
+    INNER JOIN memory.store_sales as store_sales_store_sales on store_sales_customer_demographic_customer_demographics.\"CD_DEMO_SK\" = store_sales_store_sales.\"SS_CDEMO_SK\"
+    INNER JOIN memory.date_dim as store_sales_date_date on store_sales_store_sales.\"SS_SOLD_DATE_SK\" = store_sales_date_date.\"D_DATE_SK\"
+    INNER JOIN memory.item as store_sales_item_items on store_sales_store_sales.\"SS_ITEM_SK\" = store_sales_item_items.\"I_ITEM_SK\"
+    INNER JOIN memory.promotion as store_sales_promotion_promotion on store_sales_store_sales.\"SS_PROMO_SK\" = store_sales_promotion_promotion.\"P_PROMO_SK\"
+WHERE
+    store_sales_customer_demographic_customer_demographics.\"CD_GENDER\" = 'M' and ( store_sales_customer_demographic_customer_demographics.\"CD_MARITAL_STATUS\" = 'S' and ( store_sales_customer_demographic_customer_demographics.\"CD_EDUCATION_STATUS\" = 'College' and ( ( ( store_sales_promotion_promotion.\"P_CHANNEL_EMAIL\" = 'N' or store_sales_promotion_promotion.\"P_CHANNEL_EVENT\" = 'N' ) ) and cast(store_sales_date_date.\"D_YEAR\" as int) = 2000 ) ) )
+),
+busy as (
+SELECT
+    divergent.\"store_sales_ticket_number\" as \"filtered_sales_store_sales_ticket_number\",
+    divergent.\"store_sales_item_id\" as \"filtered_sales_store_sales_item_id\",
+    divergent.\"store_sales_item_name\" as \"filtered_sales_store_sales_item_name\",
+    divergent.\"store_sales_quantity\" as \"filtered_sales_store_sales_quantity\",
+    divergent.\"store_sales_list_price\" as \"filtered_sales_store_sales_list_price\",
+    divergent.\"store_sales_coupon_amt\" as \"filtered_sales_store_sales_coupon_amt\",
+    divergent.\"store_sales_sales_price\" as \"filtered_sales_store_sales_sales_price\"
+FROM
+    divergent
+GROUP BY 
+    divergent.\"store_sales_quantity\",
+    divergent.\"store_sales_sales_price\",
+    divergent.\"store_sales_customer_demographic_marital_status\",
+    divergent.\"store_sales_ticket_number\",
+    divergent.\"store_sales_customer_demographic_gender\",
+    divergent.\"store_sales_promotion_channel_email\",
+    divergent.\"store_sales_promotion_channel_event\",
+    divergent.\"store_sales_item_id\",
+    divergent.\"store_sales_customer_demographic_education_status\",
+    divergent.\"store_sales_item_name\",
+    divergent.\"store_sales_coupon_amt\",
+    divergent.\"store_sales_date_year\",
+    divergent.\"store_sales_list_price\")
+SELECT
+    busy.\"filtered_sales_store_sales_item_name\" as \"filtered_sales_store_sales_item_name\",
+    avg(busy.\"filtered_sales_store_sales_quantity\") as \"avg_quantity\",
+    avg(busy.\"filtered_sales_store_sales_list_price\") as \"avg_list_price\",
+    avg(busy.\"filtered_sales_store_sales_coupon_amt\") as \"avg_coupon_amt\",
+    avg(busy.\"filtered_sales_store_sales_sales_price\") as \"avg_sales_price\"
+FROM
+    busy
+GROUP BY 
+    busy.\"filtered_sales_store_sales_item_name\"
+ORDER BY 
+    busy.\"filtered_sales_store_sales_item_name\" asc
+LIMIT (100)"""
+query_id = 7
+sql_comp_time = 0.314106
+total_time = 16.499493

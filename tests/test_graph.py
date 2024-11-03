@@ -26,9 +26,9 @@ def test_fingerprint(test_environment: Environment):
         source_map={oid.address: [qds.name]},
         grain=qds.grain,
     )
-    a = fingerprint_cte(test)
+    a = fingerprint_cte(test, None)
     test.name = "test2"
-    b = fingerprint_cte(test)
+    b = fingerprint_cte(test, None)
     assert a == b
 
 

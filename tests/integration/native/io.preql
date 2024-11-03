@@ -1,8 +1,7 @@
 # Generated from preql source: c:\Users\ethan\coding_projects\pypreql-etl\tests\integration\native\io.preql
 # Do not edit manually
-# import shared CTE persists into local namespace 
-import _internal_cached_intermediates;
+
 
 PERSIST static_one INTO static_one FROM SELECT
-    1->test,
+    1 -> test,
     _trilogyt._created_at,;

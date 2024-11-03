@@ -57,7 +57,7 @@ address memory.store_sales
 
 
 
-datasource store_returns(
+datasource ss_store_returns(
     SR_RETURNED_DATE_SK: return_date.id,
     SR_RETURN_TIME_SK: return_time.id,
     SR_ITEM_SK: ~item.id,

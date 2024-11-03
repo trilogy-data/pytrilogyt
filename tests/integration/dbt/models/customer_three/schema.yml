@@ -3,6 +3,9 @@ models:
   - description: No description provided
     name: cte_generic_split
     tests: []
-  description: Automatically generated model from preql
+  - description: No description provided
+    name: _trilogyt__created_at
+    tests: []
+  description: Automatically generated model from trilogy
   name: dim_splits_three_gen_model
 version: 2

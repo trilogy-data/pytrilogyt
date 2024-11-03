@@ -10,28 +10,35 @@ from trilogy.core.models import (
     ImportStatement,
     PersistStatement,
     SelectStatement,
-    RowsetDerivationStatement,
     ConceptDeclarationStatement,
+    CopyStatement,
+    HasUUID,
 )
 from dataclasses import dataclass
-from trilogyt.core import ENVIRONMENT_CONCEPTS
+from trilogyt.core import ENVIRONMENT_CONCEPTS, fingerprint_environment
 
 # handles development cases
 nb_path = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
 sys_path.insert(0, nb_path)
 
-from trilogyt.constants import OPTIMIZATION_NAMESPACE  # noqa
+from trilogyt.constants import OPTIMIZATION_NAMESPACE, OPTIMIZATION_FILE  # noqa
 from trilogyt.graph import process_raw  # noqa
 from trilogyt.exceptions import OptimizationError  # noqa
 
 
-OPTIMIZATION_FILE = "_internal_cached_intermediates.preql"
+@dataclass
+class OptimizationInput:
+    fingerprint: str
+    environment: Environment
+    statements: list
 
 
 @dataclass
 class OptimizationResult:
     path: PathlibPath
+    datasource_path: PathlibPath
     new_import: ImportStatement
+    fingerprint: str
 
 
 renderer = Renderer()
@@ -47,18 +54,17 @@ def optimize_multiple(
     paths: list[PathlibPath],
     output_path: PathlibPath,
     dialect: Dialects,
-) -> OptimizationResult:
+) -> dict[PathlibPath, OptimizationResult]:
 
     optimize_env = Environment(working_path=base.stem, namespace="optimize")
     exec = Executor(
         dialect=dialect, engine=dialect.default_engine(), environment=optimize_env
     )
-    all_statements = []
-    # first - ingest and proecss all statements
-    imports: dict[str, ImportStatement] = {}
 
+    env_to_statements: dict[str, OptimizationInput] = {}
+    file_to_fingerprint = {}
     for path in paths:
-        if path.name == OPTIMIZATION_FILE:
+        if path.name.startswith(OPTIMIZATION_FILE):
             continue
         with open(path) as f:
             local_env = Environment(
@@ -68,55 +74,70 @@ def optimize_multiple(
                 new_env, statements = parse_text(f.read(), environment=local_env)
             except Exception as e:
                 raise SyntaxError(f"Unable to parse {path} due to {e}")
-            for k, v in new_env.imports.items():
-                if k in imports:
-                    existing = imports[k]
-                    if existing.path != v.path:
-                        raise OptimizationError("")
-                imports[k] = v
+            if not any(
+                isinstance(
+                    statement, (SelectStatement, PersistStatement, CopyStatement)
+                )
+                for statement in statements
+            ):
+                continue
+            fingerprint = fingerprint_environment(new_env)
+            file_to_fingerprint[path] = fingerprint
+            if fingerprint in env_to_statements:
+                opt: OptimizationInput = env_to_statements[fingerprint]
+                opt.statements += statements
+            else:
+                env_to_statements[fingerprint] = OptimizationInput(
+                    fingerprint=fingerprint, environment=new_env, statements=statements
+                )
 
-            optimize_env.add_import(path.stem, new_env)
-
-            for nc, ncv in new_env.concepts.items():
-                optimize_env.concepts[nc] = ncv
-            for nd, ndn in new_env.datasources.items():
-                optimize_env.datasources[nd] = ndn
-            optimize_env.gen_concept_list_caches()
-        all_statements += statements
     # determine the new persists we need to create
-    _, new_persists = process_raw(
-        inject=False,
-        inputs=[
-            x
-            for x in all_statements
-            if isinstance(
-                x, (RowsetDerivationStatement, PersistStatement, SelectStatement)
-            )
-        ],
-        env=optimize_env,
-        generator=exec.generator,
-        threshold=2,
-    )
-    ctes: list[RowsetDerivationStatement] = unique(
-        [x for x in all_statements if isinstance(x, RowsetDerivationStatement)], "name"
-    )
-    # inject those
-    with open(output_path / OPTIMIZATION_FILE, "w") as f:
-        for k, nimport in imports.items():
-            f.write(renderer.to_string(nimport) + "\n")
-        for concept in ENVIRONMENT_CONCEPTS:
-            f.write(
-                renderer.to_string(ConceptDeclarationStatement(concept=concept)) + "\n"
-            )
-        for cte in ctes:
-            f.write(renderer.to_string(cte) + "\n")
-        for x in new_persists:
-            f.write(renderer.to_string(x) + "\n")
-    # add our new import to all modules with persists
-    return OptimizationResult(
-        path=base / OPTIMIZATION_FILE,
-        new_import=ImportStatement(
-            alias=OPTIMIZATION_NAMESPACE,
-            path=base / OPTIMIZATION_FILE,
-        ),
-    )
+    outputs = {}
+    for k, v in env_to_statements.items():
+        _, new_persists = process_raw(
+            inject=False,
+            inputs=v.statements,
+            env=v.environment,
+            generator=exec.generator,
+            threshold=2,
+        )
+
+        concept_modifying_statements = unique(
+            [x for x in v.statements if isinstance(x, HasUUID)], "uuid"
+        )
+        final = []
+        # we should transform a persist into a select for optimization purposes
+        for x in concept_modifying_statements:
+            if isinstance(x, PersistStatement):
+                final.append(x.select)
+            else:
+                final.append(x)
+        # inject those
+        output_file = output_path / f"{OPTIMIZATION_FILE}_{k}.preql"
+        with open(output_file, "w") as f:
+            for concept in ENVIRONMENT_CONCEPTS:
+                f.write(
+                    renderer.to_string(ConceptDeclarationStatement(concept=concept))
+                    + "\n\n"
+                )
+            for cte in final:
+                f.write(renderer.to_string(cte) + "\n\n")
+            for x in new_persists:
+                f.write(renderer.to_string(x) + "\n\n")
+                # f.write(renderer.to_string(x.datasource) + "\n\n")
+
+        datasource_file = output_path / f"{OPTIMIZATION_FILE}_{k}_datasources.preql"
+        with open(datasource_file, "w") as f:
+            f.write(f"import {OPTIMIZATION_FILE}_{k};\n\n")
+            for x in new_persists:
+                f.write(renderer.to_string(x.datasource) + "\n\n")
+        outputs[k] = OptimizationResult(
+            path=output_file,
+            datasource_path=datasource_file,
+            new_import=ImportStatement(
+                alias=OPTIMIZATION_NAMESPACE,
+                path=output_file,
+            ),
+            fingerprint=k,
+        )
+    return {k: outputs[v] for k, v in file_to_fingerprint.items()}

@@ -41,4 +41,3 @@ datasource customer_address(
 grain (address_id)
 address memory.customer_address;
 
-
