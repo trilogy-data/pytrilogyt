@@ -1,0 +1,13 @@
+
+
+from  import c:\Users\ethan\coding_projects\pytrilogyt\tests\integration\dagster\assets\optimization
+
+
+defs = Definitions(
+    assets=[c:\Users\ethan\coding_projects\pytrilogyt\tests\integration\dagster\assets\optimization],
+    resources={
+        "": DuckDBResource(
+            database="",  # required
+        )
+    },
+)

@@ -1,0 +1,11 @@
+
+
+
+defs = Definitions(
+    assets=[],
+    resources={
+        "": DuckDBResource(
+            database="",  # required
+        )
+    },
+)
