@@ -1,17 +1,19 @@
-from trilogyt.scripts.main import dagster_wrapper, main
-from trilogy import Dialects
-from pathlib import Path
-from click.testing import CliRunner
-import pytest
 import os
+from pathlib import Path
+
+import pytest
+from click.testing import CliRunner
+from trilogy import Dialects
 from trilogy.hooks.query_debugger import DebuggingHook
+
+from trilogyt.scripts.main import dagster_wrapper, main
 
 root = Path(__file__)
 
 
 def test_full_model_build_dagster(logger):
     DebuggingHook()
-    fake = root.parent / "dagster" / "models" / "customer_two" / "fake_gen_model.sql"
+    fake = root.parent / "dagster" / "assets" / "customer_two" / "fake_gen_model.py"
     staging_path = root.parent / "preql_dagster_staging/"
     os.makedirs(fake.parent, exist_ok=True)
     os.makedirs(staging_path, exist_ok=True)
@@ -42,7 +44,6 @@ def test_full_model_build_dagster(logger):
     assert not fake.exists(), f"Fake file {fake} was not deleted"
 
 
-
 def test_cli_string_dagster():
     runner = CliRunner()
     result = runner.invoke(
@@ -52,14 +53,16 @@ def test_cli_string_dagster():
             "persist static_one into static_one from select 1-> test;",
             str(root.parent / "dagster/"),
             "duck_db",
-            '--run'
+            "--run",
         ],
     )
     if result.exception:
         raise result.exception
     assert result.exit_code == 0
 
-    with open(root.parent / "dagster" / "assets" / "io" / "static_one_gen_model.py") as f:
+    with open(
+        root.parent / "dagster" / "assets" / "io" / "static_one_gen_model.py"
+    ) as f:
         content = f.read()
         assert "def static_one(duck_db: DuckDBResource)" in content, content
 

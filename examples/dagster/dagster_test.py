@@ -1,11 +1,5 @@
-import pandas as pd
+from dagster import Definitions, asset
 from dagster_duckdb import DuckDBResource
-
-from dagster import asset
-
-from dagster_duckdb import DuckDBResource
-
-from dagster import Definitions
 
 
 @asset

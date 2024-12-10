@@ -1,31 +1,33 @@
+from dataclasses import dataclass
+from hashlib import sha256
+from random import choice
+from typing import List
+
+from trilogy import Environment
+from trilogy.constants import VIRTUAL_CONCEPT_PREFIX
+from trilogy.core.enums import PurposeLineage
+from trilogy.core.ergonomics import CTE_NAMES
 from trilogy.core.models import (
-    Address,
-    SelectStatement,
-    PersistStatement,
-    QueryDatasource,
-    Datasource,
-    ProcessedQuery,
-    Grain,
-    ProcessedQueryPersist,
-    ProcessedShowStatement,
-    ProcessedRawSQLStatement,
     CTE,
+    UnionCTE,
+    Address,
+    Comparison,
     Concept,
     Conditional,
-    WhereClause,
-    Comparison,
+    Datasource,
+    Grain,
     Parenthetical,
+    PersistStatement,
+    ProcessedQuery,
+    ProcessedQueryPersist,
+    ProcessedRawSQLStatement,
+    ProcessedShowStatement,
+    QueryDatasource,
     RowsetDerivationStatement,
+    SelectStatement,
+    WhereClause,
 )
-from typing import List
-from trilogy import Environment
-from trilogy.core.ergonomics import CTE_NAMES
-from trilogy.constants import VIRTUAL_CONCEPT_PREFIX
-from random import choice
-from dataclasses import dataclass
 from trilogy.dialect.base import BaseDialect
-from hashlib import sha256
-from trilogy.core.enums import PurposeLineage
 
 
 @dataclass
@@ -128,12 +130,15 @@ def fingerprint_filter(filter: Conditional | Comparison | Parenthetical) -> str:
     return str(filter)
 
 
-def fingerprint_cte(cte: CTE, select_condition) -> str:
-    base = (
-        fingerprint_source(cte.source)
-        + "-".join([fingerprint_cte(x, select_condition) for x in cte.parent_ctes])
-        + fingerprint_grain(cte.grain)
-    )
+def fingerprint_cte(cte: CTE | UnionCTE, select_condition) -> str:
+    if isinstance(cte, UnionCTE):
+        return "-".join([fingerprint_cte(x, select_condition) for x in cte.internal_ctes])
+    else:
+        base = (
+            fingerprint_source(cte.source)
+            + "-".join([fingerprint_cte(x, select_condition) for x in cte.parent_ctes])
+            + fingerprint_grain(cte.grain)
+        )
 
     if cte.condition:
         base += fingerprint_filter(cte.condition)

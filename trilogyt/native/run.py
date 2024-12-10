@@ -1,7 +1,9 @@
 from pathlib import Path
-from trilogy import Dialects, Environment
-from trilogyt.constants import logger
+
 from networkx import DiGraph, topological_sort
+from trilogy import Dialects, Environment
+
+from trilogyt.constants import logger
 from trilogyt.scripts.core import OptimizationResult
 
 

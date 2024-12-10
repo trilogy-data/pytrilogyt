@@ -1,23 +1,22 @@
-from jinja2 import Template
+import os
+from collections import Counter, defaultdict
+from dataclasses import dataclass
 from pathlib import Path
-from trilogy import Executor, Environment
-from trilogy.dialect.enums import Dialects
+
+from jinja2 import Template
+from trilogy import Environment, Executor
 from trilogy.core.models import (
-    ProcessedQueryPersist,
-    ProcessedQuery,
-    PersistStatement,
     Datasource,
-    Address,
+    PersistStatement,
+    ProcessedQueryPersist,
+    UnionCTE,
 )
+from trilogy.dialect.enums import Dialects
+
 from trilogyt.constants import logger
 from trilogyt.core import enrich_environment
 from trilogyt.dagster.config import DagsterConfig
 from trilogyt.dagster.constants import SUFFIX
-from yaml import safe_load, dump
-import os
-from collections import defaultdict
-from collections import Counter
-from dataclasses import dataclass
 
 DEFAULT_DESCRIPTION: str = "No description provided"
 
@@ -61,7 +60,7 @@ def {{model_name}}({{dialect.name | lower}}: DuckDBResource) -> None:
         model_type=model_type,
         model_sql=model_sql,
         dialect=dialect,
-        deps = dependencies,
+        deps=dependencies,
     )
 
 
@@ -115,7 +114,9 @@ def generate_model(
         raise SyntaxError(f"Unable to parse {preql_body}" + str(e))
 
     possible_dependencies = {
-        d.identifier: d for d in executor.environment.datasources.values() if '.' not in d.identifier
+        d.identifier: d
+        for d in executor.environment.datasources.values()
+        if "." not in d.identifier
     }
     logger.info(Counter([type(c) for c in statements]))
     parsed = [z for z in statements if isinstance(z, PersistStatement)]
@@ -129,15 +130,19 @@ def generate_model(
     logger.info(Counter([type(c) for c in pqueries]))
     dependency_map = defaultdict(list)
     for _, query in enumerate(pqueries):
-        depends_on = []
+        depends_on: list[ModelInput] = []
         if isinstance(query, ProcessedQueryPersist):
             logger.info(f"Starting on {_}")
             target = query.output_to.address.location
             eligible = {k: v for k, v in possible_dependencies.items() if k != target}
             for cte in query.ctes:
+                if isinstance(cte, UnionCTE):
+                    continue
                 # handle inlined datasources
                 logger.info(f"checking cte {cte.name} with {eligible}")
                 if cte.base_name_override in eligible:
+                    if any(x.name == cte.base_name_override for x in depends_on):
+                        continue
                     depends_on.append(
                         ModelInput(
                             cte.base_name_override,
@@ -150,26 +155,17 @@ def generate_model(
                         continue
 
                     if source.identifier in eligible:
+                        if any(x.name == source.identifier for x in depends_on):
+                            continue
                         depends_on.append(
                             ModelInput(
                                 source.identifier,
                                 config.get_asset_path(source.identifier),
                             )
                         )
-            base = ProcessedQuery(
-                output_columns=query.output_columns,
-                ctes=query.ctes,
-                base=query.base,
-                joins=query.joins,
-                grain=query.grain,
-                hidden_columns=query.hidden_columns,
-                limit=query.limit,
-                where_clause=query.where_clause,
-                order_by=query.order_by,
-            )
             # get our names to label the model
             key = query.output_to.address.location.split(".")[-1]
-            outputs[key] = executor.generator.compile_statement(base)
+            outputs[key] = executor.generator.compile_statement(query)
             output_data[key] = query.datasource
             dependency_map[key] = depends_on
     logger.info("Writing queries to output files")
@@ -189,18 +185,24 @@ def generate_model(
         should_exist[parent].add(output_path)
         with open(output_path, "w") as f:
             f.write(
-                generate_model_text(key, "sql", value, dialect=dialect, dependencies=dependency_map.get(key, []))
+                generate_model_text(
+                    key,
+                    "sql",
+                    value,
+                    dialect=dialect,
+                    dependencies=dependency_map.get(key, []),
+                )
             )
 
-    config.config_path.parent.mkdir(parents=True, exist_ok=True)
-    with open(config.config_path, "w") as f:
-        f.write(
-            generate_entry_file(
-                [ModelInput(name, path) for name, path in should_exist.items()],
-                dialect,
-                config,
-            )
-        )
+    # config.config_path.parent.mkdir(parents=True, exist_ok=True)
+    # with open(config.config_path, "w") as f:
+    #     f.write(
+    #         generate_entry_file(
+    #             [ModelInput(name, path) for name, path in should_exist.items()],
+    #             dialect,
+    #             config,
+    #         )
+    #     )
 
     if clear_target_dir:
         for key, paths in existing.items():

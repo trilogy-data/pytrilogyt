@@ -1,19 +1,21 @@
-from pathlib import Path
-from trilogy import Environment
-from trilogy.core.models import (
-    PersistStatement,
-    ImportStatement,
-    SelectItem,
-    ConceptDeclarationStatement,
-    Datasource,
-)
-from trilogyt.constants import logger, TRILOGY_NAMESPACE
-from trilogyt.enums import PreqltMetrics
-from trilogyt.core import enrich_environment
-from trilogy.parser import parse_text
 import os
 from collections import Counter
+from pathlib import Path
+
+from trilogy import Environment
+from trilogy.core.models import (
+    ConceptDeclarationStatement,
+    Datasource,
+    ImportStatement,
+    PersistStatement,
+    SelectItem,
+)
+from trilogy.parser import parse_text
 from trilogy.parsing.render import Renderer
+
+from trilogyt.constants import TRILOGY_NAMESPACE, logger
+from trilogyt.core import enrich_environment
+from trilogyt.enums import PreqltMetrics
 from trilogyt.scripts.core import OptimizationResult
 
 

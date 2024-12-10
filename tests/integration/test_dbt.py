@@ -1,10 +1,12 @@
-from trilogyt.scripts.main import dbt_wrapper, main, native_wrapper
-from trilogy import Dialects
-from pathlib import Path
-from click.testing import CliRunner
-import pytest
 import os
+from pathlib import Path
+
+import pytest
+from click.testing import CliRunner
+from trilogy import Dialects
 from trilogy.hooks.query_debugger import DebuggingHook
+
+from trilogyt.scripts.main import dbt_wrapper, main
 
 root = Path(__file__)
 
@@ -42,7 +44,6 @@ def test_full_model_build_dbt(logger):
     assert not fake.exists(), f"Fake file {fake} was not deleted"
 
 
-
 def test_cli_string_dbt():
     runner = CliRunner()
     result = runner.invoke(
@@ -52,7 +53,7 @@ def test_cli_string_dbt():
             "persist static_one into static_one from select 1-> test;",
             str(root.parent / "dbt/"),
             "duck_db",
-                      '--run'
+            "--run",
         ],
     )
     if result.exception:

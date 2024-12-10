@@ -1,12 +1,13 @@
-import os
 import importlib.util
-from typing import Any
+import os
 from pathlib import Path
-from trilogyt.dagster.constants import SUFFIX
-from trilogyt.constants import logger
+from typing import Any
+
+
 from trilogy import Dialects
-from dagster import materialize
-from dagster import define_asset_job, AssetSelection
+
+from trilogyt.constants import logger
+from trilogyt.dagster.constants import SUFFIX
 
 
 def import_asset_from_file(filepath: Path) -> Any:
@@ -36,6 +37,8 @@ def import_asset_from_file(filepath: Path) -> Any:
 
 
 def run_path(path: Path, dialect: Dialects):
+    from dagster import materialize
+
     selection = []
     logger.info(f"searching in path: {path}")
     for file in path.glob(f"**/*{SUFFIX}"):
@@ -49,11 +52,13 @@ def run_path(path: Path, dialect: Dialects):
 
         resources = {
             "duck_db": DuckDBResource(
-                database="",  # required
+                database="dagster.db",  # required
+                # tests wll error
+                connection_config={"enable_external_access": False},
             )
         }
     else:
         raise NotImplementedError(f"Unsupported dialect: {dialect}")
 
-    result = materialize(assets=selection, resources=resources)
+    result = materialize(assets=selection, resources=resources, selection=selection)
     print(f"Job result: {result}")

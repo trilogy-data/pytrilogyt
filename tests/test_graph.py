@@ -1,9 +1,10 @@
-from trilogyt.graph import fingerprint_cte, process_raw
-from trilogy.core.models import CTE, QueryDatasource, Environment, LooseConceptList
 from trilogy import Dialects, parse
+from trilogy.core.enums import SourceType
+from trilogy.core.models import CTE, Environment, LooseConceptList, QueryDatasource
 from trilogy.dialect.duckdb import DuckDBDialect
 from trilogy.parsing.render import Renderer
-from trilogy.core.enums import SourceType
+
+from trilogyt.graph import fingerprint_cte, process_raw
 
 
 def test_fingerprint(test_environment: Environment):

@@ -1,13 +1,14 @@
-from trilogy.dialect.enums import Dialects 
-from pathlib import Path as PathlibPath 
-from trilogyt.constants import OPTIMIZATION_NAMESPACE  
-from trilogyt.dagster.generate import generate_model 
-from trilogyt.dagster.run import run_path  
-from trilogyt.dagster.config import DagsterConfig  
-from trilogyt.scripts.native import native_wrapper, OptimizationResult
-from trilogyt.constants import logger
 import os
 import tempfile
+from pathlib import Path as PathlibPath
+
+from trilogy.dialect.enums import Dialects
+
+from trilogyt.constants import OPTIMIZATION_NAMESPACE, logger
+from trilogyt.dagster.config import DagsterConfig
+from trilogyt.dagster.generate import generate_model
+from trilogyt.dagster.run import run_path
+from trilogyt.scripts.native import OptimizationResult, native_wrapper
 
 
 def dagster_handler(
@@ -16,7 +17,6 @@ def dagster_handler(
     dagster_path: PathlibPath,
     dialect: Dialects,
     debug: bool,
-    run: bool,
     children: list[PathlibPath],
 ):
     logger.info("Optimizing trilogy files...")
@@ -42,7 +42,9 @@ def dagster_handler(
             os.remove(item)
     for orig_file in children:
         file = staging_path / orig_file.name
-        logger.info(f"Generating dagster model for {file} into dagster_path {dagster_path}")
+        logger.info(
+            f"Generating dagster model for {file} into dagster_path {dagster_path}"
+        )
         # don't build hidden files
         if file.stem.startswith("_"):
             continue
@@ -94,11 +96,11 @@ def dagster_wrapper(
     else:
         children = list(preql.glob("*.preql"))
         if staging_path:
-            dagster_handler(staging_path, preql, dagster_path, dialect, debug, run, children)
+            dagster_handler(staging_path, preql, dagster_path, dialect, debug, children)
         else:
             with tempfile.TemporaryDirectory() as tmpdirname:
                 new_path = PathlibPath(tmpdirname)
-                dagster_handler(new_path, preql, dagster_path, dialect, debug, run, children)
+                dagster_handler(new_path, preql, dagster_path, dialect, debug, children)
 
     if run:
         print("Executing generated models")

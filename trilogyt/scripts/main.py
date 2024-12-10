@@ -1,8 +1,9 @@
-from click import Path, argument, option, group
-from trilogy.dialect.enums import Dialects
-from pathlib import Path as PathlibPath
 import os
+from pathlib import Path as PathlibPath
 from sys import path as sys_path
+
+from click import Path, argument, group, option
+from trilogy.dialect.enums import Dialects
 from trilogy.parsing.render import Renderer
 
 # handles development cases
@@ -14,7 +15,10 @@ from trilogyt.scripts.native import (  # noqa
     native_wrapper,
     native_string_command_wrapper,
 )
-from trilogyt.scripts.dagster import dagster_wrapper, dagster_string_command_wrapper  # noqa
+from trilogyt.scripts.dagster import (  # noqa
+    dagster_wrapper,
+    dagster_string_command_wrapper,
+)  # noqa
 
 renderer = Renderer()
 

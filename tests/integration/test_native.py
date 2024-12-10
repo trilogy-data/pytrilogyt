@@ -1,10 +1,11 @@
-from trilogyt.scripts.main import dbt_wrapper, main, native_wrapper
-from trilogy import Dialects
-from pathlib import Path
-from click.testing import CliRunner
-import pytest
 import os
-from trilogy.hooks.query_debugger import DebuggingHook
+from pathlib import Path
+
+import pytest
+from click.testing import CliRunner
+from trilogy import Dialects
+
+from trilogyt.scripts.main import main, native_wrapper
 
 root = Path(__file__)
 

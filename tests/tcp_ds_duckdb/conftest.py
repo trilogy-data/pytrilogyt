@@ -1,11 +1,13 @@
+from dataclasses import dataclass
+from logging import INFO
+from pathlib import Path
+
+import pytest
 from trilogy import Dialects, Environment, Executor
 from trilogy.dialect.config import DuckDBConfig
-import pytest
 from trilogy.hooks.query_debugger import DebuggingHook
-from pathlib import Path
-from logging import INFO
-from trilogyt.scripts.native import native_wrapper, OptimizationResult
-from dataclasses import dataclass
+
+from trilogyt.scripts.native import OptimizationResult, native_wrapper
 
 working_path = Path(__file__).parent
 

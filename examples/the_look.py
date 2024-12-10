@@ -1,12 +1,14 @@
-import trilogy_public_models.bigquery.thelook_ecommerce as model
+from os.path import dirname
 
 # from trilogy_public_models import models
 from sys import path
-from os.path import dirname
+
+import trilogy_public_models.bigquery.thelook_ecommerce as model
 
 path.append(dirname(dirname(__file__)))
-from trilogyt.graph import process_raw
 from trilogy import parse
+
+from trilogyt.graph import process_raw
 
 QUERIES = [
     """

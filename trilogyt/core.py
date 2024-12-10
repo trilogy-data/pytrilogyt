@@ -1,10 +1,12 @@
-from trilogy.core.models import Environment, Concept, DataType
-from trilogy.core.enums import Purpose
-from trilogyt.enums import PreqltMetrics
-from trilogy.core.functions import CurrentDatetime
-from trilogyt.constants import TRILOGY_NAMESPACE
-from trilogy.core.env_processor import generate_graph
 from hashlib import sha256
+
+from trilogy.core.enums import Purpose
+from trilogy.core.env_processor import generate_graph
+from trilogy.core.functions import CurrentDatetime
+from trilogy.core.models import Concept, DataType, Environment
+
+from trilogyt.constants import TRILOGY_NAMESPACE
+from trilogyt.enums import PreqltMetrics
 
 ENVIRONMENT_CONCEPTS = [
     Concept(

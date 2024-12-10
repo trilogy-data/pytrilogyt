@@ -1,4 +1,4 @@
-from logging import getLogger, Logger
+from logging import Logger, getLogger
 
 TRILOGY_NAMESPACE = "_trilogyt"
 

@@ -1,11 +1,12 @@
+from datetime import datetime
 from pathlib import Path
 
-from trilogy import Executor, Environment
-from dotenv import load_dotenv
-from datetime import datetime
 import pytest
-from tests.tcp_ds_duckdb.conftest import OptimizedEnv, OptimizationResult
 import tomli_w
+from dotenv import load_dotenv
+from trilogy import Environment, Executor
+
+from tests.tcp_ds_duckdb.conftest import OptimizationResult, OptimizedEnv
 
 load_dotenv()
 
@@ -162,7 +163,7 @@ def test_sixteen(engine):
 
 
 def run_adhoc_compiled(number: int):
-    from trilogy import Environment, Dialects
+    from trilogy import Dialects, Environment
     from trilogy.hooks.query_debugger import DebuggingHook
 
     parent = Path(__file__).parent
