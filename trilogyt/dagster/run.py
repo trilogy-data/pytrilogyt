@@ -3,11 +3,9 @@ import os
 from pathlib import Path
 from typing import Any
 
-
 from trilogy import Dialects
 
 from trilogyt.constants import logger
-from trilogyt.dagster.constants import SUFFIX
 
 
 def import_asset_from_file(filepath: Path) -> Any:
@@ -36,12 +34,11 @@ def import_asset_from_file(filepath: Path) -> Any:
     return getattr(module, target_object)
 
 
-def run_path(path: Path, dialect: Dialects):
+def run_path(path: Path, imports: list[Path], dialect: Dialects):
     from dagster import materialize
 
     selection = []
-    logger.info(f"searching in path: {path}")
-    for file in path.glob(f"**/*{SUFFIX}"):
+    for file in set(imports):
         logger.info(f"found file: {file}")
         selection.append(import_asset_from_file(file))
     if not selection:

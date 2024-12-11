@@ -1,4 +1,4 @@
-# Generated from preql source: c:\Users\ethan\coding_projects\pypreql-etl\tests\tcp_ds_duckdb\store_sales.preql
+# Generated from preql source: c:\Users\ethan\coding_projects\pytrilogyt\tests\tcp_ds_duckdb\store_sales.preql
 # Do not edit manually
 
 
@@ -29,7 +29,7 @@ property <ticket_number,item.id>.is_returned bool;
 property <ticket_number,item.id>.net_paid float;
 property <ticket_number,item.id>.return_amount float;
 property <ticket_number,item.id>.return_net_loss float;
-property profit <- subtract(ext_list_price,subtract(ext_wholesale_cost,add(ext_discount_amount,ext_sales_price)));
+property profit <- ext_list_price - ext_wholesale_cost - ext_discount_amount + ext_sales_price;
 
 
 datasource store_sales (

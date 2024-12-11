@@ -4,6 +4,8 @@ from pathlib import Path
 import pytest
 from click.testing import CliRunner
 from trilogy import Dialects
+
+# core\processing\concept_strategies_v3
 from trilogy.hooks.query_debugger import DebuggingHook
 
 from trilogyt.scripts.main import dagster_wrapper, main
@@ -18,7 +20,7 @@ def test_full_model_build_dagster(logger):
     os.makedirs(fake.parent, exist_ok=True)
     os.makedirs(staging_path, exist_ok=True)
     with open(fake, "w") as f:
-        f.write("SELECT 1")
+        f.write("print(1)")
     assert fake.exists()
     dagster_wrapper(
         root.parent / "preql/",

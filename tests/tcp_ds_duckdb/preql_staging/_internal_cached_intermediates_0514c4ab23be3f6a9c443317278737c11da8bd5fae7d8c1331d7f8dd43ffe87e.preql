@@ -7,7 +7,7 @@ import item as item;
 MERGE store_sales.item.id into item.id;
 
 WHERE
-    store_sales.date.year = 2001 and (store_sales.date.month_of_year = 1 and (store_sales.item.current_price > multiply(1.2,avg(item.current_price) by item.category) and item.category is not null))
+    store_sales.date.year = 2001 and (store_sales.date.month_of_year = 1 and (store_sales.item.current_price > 1.2 * avg(item.current_price) by item.category and item.category is not null))
 SELECT
     store_sales.customer.state,
     count(store_sales.customer.id) -> customer_count,

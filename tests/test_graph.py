@@ -82,13 +82,13 @@ select split;
     instance = [
         x for x in list(env.datasources.values()) if split.address in x.output_concepts
     ][0]
-    assert split.address in [x.address for x in env.materialized_concepts]
-    assert "local.split" in [x.address for x in env.materialized_concepts]
+    assert split.address in [x for x in env.materialized_concepts]
+    assert "local.split" in [x for x in env.materialized_concepts]
     materialized_lcl = LooseConceptList(
         concepts=[
             x
             for x in reparsed[-1].output_columns
-            if x.address in [z.address for z in env.materialized_concepts]
+            if x.address in [z for z in env.materialized_concepts]
         ]
     )
     assert materialized_lcl.addresses == {"local.split"}

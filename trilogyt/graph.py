@@ -9,7 +9,6 @@ from trilogy.core.enums import PurposeLineage
 from trilogy.core.ergonomics import CTE_NAMES
 from trilogy.core.models import (
     CTE,
-    UnionCTE,
     Address,
     Comparison,
     Concept,
@@ -25,6 +24,7 @@ from trilogy.core.models import (
     QueryDatasource,
     RowsetDerivationStatement,
     SelectStatement,
+    UnionCTE,
     WhereClause,
 )
 from trilogy.dialect.base import BaseDialect
@@ -132,7 +132,9 @@ def fingerprint_filter(filter: Conditional | Comparison | Parenthetical) -> str:
 
 def fingerprint_cte(cte: CTE | UnionCTE, select_condition) -> str:
     if isinstance(cte, UnionCTE):
-        return "-".join([fingerprint_cte(x, select_condition) for x in cte.internal_ctes])
+        return "-".join(
+            [fingerprint_cte(x, select_condition) for x in cte.internal_ctes]
+        )
     else:
         base = (
             fingerprint_source(cte.source)

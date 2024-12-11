@@ -95,7 +95,7 @@ def generate_model(
     config: DagsterConfig,
     environment: Environment | None = None,
     clear_target_dir: bool = True,
-):
+) -> list[Path]:
     env: Environment = environment or Environment(
         working_path=preql_path.parent if preql_path else os.getcwd(),
         # namespace=config.namespace,
@@ -173,6 +173,7 @@ def generate_model(
 
     existing = defaultdict(set)
     should_exist = defaultdict(set)
+    import_paths = []
     for key, value in outputs.items():
 
         output_path = config.get_asset_path(key)
@@ -193,7 +194,7 @@ def generate_model(
                     dependencies=dependency_map.get(key, []),
                 )
             )
-
+        import_paths.append(output_path)
     # config.config_path.parent.mkdir(parents=True, exist_ok=True)
     # with open(config.config_path, "w") as f:
     #     f.write(
@@ -210,3 +211,4 @@ def generate_model(
                 if path not in should_exist[key]:
                     logger.info("Removing old file: %s", path)
                     os.remove(path)
+    return import_paths

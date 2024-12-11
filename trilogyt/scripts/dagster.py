@@ -40,6 +40,7 @@ def dagster_handler(
         for item in opt.glob("*.sql"):
             logger.debug(f"Removing existing {item}")
             os.remove(item)
+    import_paths = []
     for orig_file in children:
         file = staging_path / orig_file.name
         logger.info(
@@ -56,7 +57,7 @@ def dagster_handler(
                 opt_config = DagsterConfig(
                     root=PathlibPath(dagster_path), namespace=OPTIMIZATION_NAMESPACE
                 )
-                generate_model(
+                path = generate_model(
                     opt_file.read(),
                     optimization.path,
                     dialect=dialect,
@@ -64,15 +65,18 @@ def dagster_handler(
                     clear_target_dir=False,
                     # environment = env  # type: ignore
                 )
+                import_paths += path
         config = DagsterConfig(root=PathlibPath(dagster_path), namespace=file.stem)
         with open(file) as f:
-            generate_model(
+            path = generate_model(
                 f.read(),
                 file,
                 dialect=dialect,
                 config=config,
                 # environment = env  # type: ignore
             )
+            import_paths += path
+    return import_paths
 
 
 def dagster_wrapper(
@@ -83,10 +87,11 @@ def dagster_wrapper(
     run: bool,
     staging_path: PathlibPath | None = None,
 ):
+    imports: list[PathlibPath] = []
     if preql.is_file():
         config = DagsterConfig(root=dagster_path, namespace=preql.stem)
         with open(preql) as f:
-            generate_model(
+            imports += generate_model(
                 f.read(),
                 preql,
                 dialect=dialect,
@@ -96,15 +101,19 @@ def dagster_wrapper(
     else:
         children = list(preql.glob("*.preql"))
         if staging_path:
-            dagster_handler(staging_path, preql, dagster_path, dialect, debug, children)
+            imports += dagster_handler(
+                staging_path, preql, dagster_path, dialect, debug, children
+            )
         else:
             with tempfile.TemporaryDirectory() as tmpdirname:
                 new_path = PathlibPath(tmpdirname)
-                dagster_handler(new_path, preql, dagster_path, dialect, debug, children)
+                imports += dagster_handler(
+                    new_path, preql, dagster_path, dialect, debug, children
+                )
 
     if run:
         print("Executing generated models")
-        run_path(PathlibPath(dagster_path), dialect=dialect)
+        run_path(PathlibPath(dagster_path), imports=imports, dialect=dialect)
     return 0
 
 
@@ -113,7 +122,7 @@ def dagster_string_command_wrapper(
 ):
     """handle a string command line input"""
     config = DagsterConfig(root=dagster_path, namespace="io")
-    generate_model(
+    imports = generate_model(
         preql,
         dagster_path / "io.preql",
         dialect=dialect,
@@ -121,5 +130,5 @@ def dagster_string_command_wrapper(
     )
     if run:
         print("Executing generated models")
-        run_path(PathlibPath(dagster_path), dialect=dialect)
+        run_path(PathlibPath(dagster_path), imports=imports, dialect=dialect)
     return 0

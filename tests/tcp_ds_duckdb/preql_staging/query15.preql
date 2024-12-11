@@ -1,7 +1,7 @@
-# Generated from preql source: c:\Users\ethan\coding_projects\pypreql-etl\tests\tcp_ds_duckdb\query15.preql
+# Generated from preql source: c:\Users\ethan\coding_projects\pytrilogyt\tests\tcp_ds_duckdb\query15.preql
 # Do not edit manually
 # import shared CTE persists into local namespace 
-import _internal_cached_intermediates_fa9515b58039dce7736940b2a6481f00e88397e2332f6cd856b2250fd0eda540_datasources;
+import _internal_cached_intermediates_ae82e362aa21be32b764ca0150dd492198f94e9f3fc8924d1c6e15046559d569_datasources;
 
 
 import catalog_sales as catalog_sales;

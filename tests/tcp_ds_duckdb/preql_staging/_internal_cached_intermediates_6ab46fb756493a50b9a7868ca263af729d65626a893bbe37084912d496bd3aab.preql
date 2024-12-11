@@ -10,7 +10,7 @@ SELECT
     --returns.store.id,
     --avg(total_returns) by returns.store.id -> avg_store_returns,
 HAVING
-    total_returns > (multiply(1.2,avg_store_returns))
+    total_returns > (1.2 * avg_store_returns)
 
 ORDER BY
     returns.customer.text_id asc
@@ -29,7 +29,7 @@ SELECT
     returns.item.id,;
 
 PERSIST default.text_id_d11c526f5c8762146e32a65c3fe8777d18b1c6fcacac7e646a7740a1315b72cf_filtered_on_total_returns_avg_store_returns INTO text_id_d11c526f5c8762146e32a65c3fe8777d18b1c6fcacac7e646a7740a1315b72cf_filtered_on_total_returns_avg_store_returns FROM WHERE
-    total_returns > (multiply(1.2,avg_store_returns))
+    total_returns > (1.2 * avg_store_returns)
 SELECT
     returns.customer.text_id,;
 

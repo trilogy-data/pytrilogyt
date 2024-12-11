@@ -1,21 +1,21 @@
-base_prep_time = 0.0
-base_parse_time = 0.236012
-base_generation_time = 0.004051
-base_exec_time = 0.109039
+base_prep_time = 0.006729
+base_parse_time = 0.1764
+base_generation_time = 0.003586
+base_exec_time = 0.055949
 base_generated_sql = """
 
 WITH 
 wakeful as (
 SELECT
-    web_sales_web_sales.\"WS_EXT_SALES_PRICE\" as \"web_sales_external_sales_price\",
     cast(web_sales_date_date.\"D_DATE\" as date) as \"web_sales_date_date\",
     web_sales_item_items.\"I_CATEGORY\" as \"web_sales_item_category\",
     web_sales_item_items.\"I_CLASS\" as \"web_sales_item_class\",
     web_sales_item_items.\"I_CURRENT_PRICE\" as \"web_sales_item_current_price\",
     web_sales_item_items.\"I_ITEM_DESC\" as \"web_sales_item_desc\",
     web_sales_item_items.\"I_ITEM_ID\" as \"web_sales_item_name\",
-    web_sales_web_sales.\"WS_ORDER_NUMBER\" as \"web_sales_order_number\",
-    web_sales_item_items.\"I_ITEM_SK\" as \"web_sales_item_id\"
+    web_sales_item_items.\"I_ITEM_SK\" as \"web_sales_item_id\",
+    web_sales_web_sales.\"WS_EXT_SALES_PRICE\" as \"web_sales_external_sales_price\",
+    web_sales_web_sales.\"WS_ORDER_NUMBER\" as \"web_sales_order_number\"
 FROM
     memory.web_sales as web_sales_web_sales
     INNER JOIN memory.item as web_sales_item_items on web_sales_web_sales.\"WS_ITEM_SK\" = web_sales_item_items.\"I_ITEM_SK\"
@@ -35,19 +35,19 @@ FROM
     wakeful
 GROUP BY 
     wakeful.\"web_sales_item_category\",
-    wakeful.\"web_sales_item_desc\",
-    wakeful.\"web_sales_item_current_price\",
     wakeful.\"web_sales_item_class\",
+    wakeful.\"web_sales_item_current_price\",
+    wakeful.\"web_sales_item_desc\",
     wakeful.\"web_sales_item_name\"),
 thoughtful as (
 SELECT
-    sum(cheerful.\"itemrevenue\") over (partition by cheerful.\"web_sales_item_class\") as \"_virt_8498692139463401\",
     cheerful.\"itemrevenue\" as \"itemrevenue\",
-    cheerful.\"web_sales_item_class\" as \"web_sales_item_class\",
-    cheerful.\"web_sales_item_name\" as \"web_sales_item_name\",
-    cheerful.\"web_sales_item_desc\" as \"web_sales_item_desc\",
     cheerful.\"web_sales_item_category\" as \"web_sales_item_category\",
-    cheerful.\"web_sales_item_current_price\" as \"web_sales_item_current_price\"
+    cheerful.\"web_sales_item_class\" as \"web_sales_item_class\",
+    cheerful.\"web_sales_item_current_price\" as \"web_sales_item_current_price\",
+    cheerful.\"web_sales_item_desc\" as \"web_sales_item_desc\",
+    cheerful.\"web_sales_item_name\" as \"web_sales_item_name\",
+    sum(cheerful.\"itemrevenue\") over (partition by cheerful.\"web_sales_item_class\") as \"_virt_3432120997641964\"
 FROM
     cheerful)
 SELECT
@@ -57,7 +57,7 @@ SELECT
     thoughtful.\"web_sales_item_class\" as \"web_sales_item_class\",
     thoughtful.\"web_sales_item_current_price\" as \"web_sales_item_current_price\",
     thoughtful.\"itemrevenue\" as \"itemrevenue\",
-    thoughtful.\"itemrevenue\" * 100.0 / thoughtful.\"_virt_8498692139463401\" as \"revenueratio\"
+    thoughtful.\"itemrevenue\" * 100.0 / thoughtful.\"_virt_3432120997641964\" as \"revenueratio\"
 FROM
     thoughtful
 ORDER BY 
@@ -65,26 +65,26 @@ ORDER BY
     thoughtful.\"web_sales_item_class\" asc,
     thoughtful.\"web_sales_item_name\" asc,
     thoughtful.\"web_sales_item_desc\" asc,
-    thoughtful.\"itemrevenue\" * 100.0 / thoughtful.\"_virt_8498692139463401\" asc
+    thoughtful.\"itemrevenue\" * 100.0 / sum(thoughtful.\"itemrevenue\") over (partition by thoughtful.\"web_sales_item_class\") asc
 LIMIT (100)"""
-optimized_prep_time = 2.822665
-optimized_parse_time = 2.8555
-optimized_generation_time = 0.007672
-optimized_exec_time = 0.096508
+optimized_prep_time = 2.013706
+optimized_parse_time = 0.389941
+optimized_generation_time = 0.00356
+optimized_exec_time = 0.047745
 optimized_generated_sql = """
 
 WITH 
-friendly as (
+kaput as (
 SELECT
-    web_sales_web_sales.\"WS_EXT_SALES_PRICE\" as \"web_sales_external_sales_price\",
     cast(web_sales_date_date.\"D_DATE\" as date) as \"web_sales_date_date\",
     web_sales_item_items.\"I_CATEGORY\" as \"web_sales_item_category\",
     web_sales_item_items.\"I_CLASS\" as \"web_sales_item_class\",
     web_sales_item_items.\"I_CURRENT_PRICE\" as \"web_sales_item_current_price\",
     web_sales_item_items.\"I_ITEM_DESC\" as \"web_sales_item_desc\",
     web_sales_item_items.\"I_ITEM_ID\" as \"web_sales_item_name\",
-    web_sales_web_sales.\"WS_ORDER_NUMBER\" as \"web_sales_order_number\",
-    web_sales_item_items.\"I_ITEM_SK\" as \"web_sales_item_id\"
+    web_sales_item_items.\"I_ITEM_SK\" as \"web_sales_item_id\",
+    web_sales_web_sales.\"WS_EXT_SALES_PRICE\" as \"web_sales_external_sales_price\",
+    web_sales_web_sales.\"WS_ORDER_NUMBER\" as \"web_sales_order_number\"
 FROM
     memory.web_sales as web_sales_web_sales
     INNER JOIN memory.item as web_sales_item_items on web_sales_web_sales.\"WS_ITEM_SK\" = web_sales_item_items.\"I_ITEM_SK\"
@@ -92,50 +92,50 @@ FROM
 WHERE
     ( cast(web_sales_date_date.\"D_DATE\" as date) >= cast('1999-02-22' as date) and cast(web_sales_date_date.\"D_DATE\" as date) <= cast('1999-03-24' as date) ) and web_sales_item_items.\"I_CATEGORY\" in ('Sports','Books','Home')
 ),
-kaput as (
-SELECT
-    sum(friendly.\"web_sales_external_sales_price\") as \"itemrevenue\",
-    friendly.\"web_sales_item_category\" as \"web_sales_item_category\",
-    friendly.\"web_sales_item_class\" as \"web_sales_item_class\",
-    friendly.\"web_sales_item_current_price\" as \"web_sales_item_current_price\",
-    friendly.\"web_sales_item_desc\" as \"web_sales_item_desc\",
-    friendly.\"web_sales_item_name\" as \"web_sales_item_name\"
-FROM
-    friendly
-GROUP BY 
-    friendly.\"web_sales_item_class\",
-    friendly.\"web_sales_item_current_price\",
-    friendly.\"web_sales_item_category\",
-    friendly.\"web_sales_item_desc\",
-    friendly.\"web_sales_item_name\"),
 divergent as (
 SELECT
-    sum(kaput.\"itemrevenue\") over (partition by kaput.\"web_sales_item_class\") as \"_virt_7523910344683468\",
-    kaput.\"itemrevenue\" as \"itemrevenue\",
-    kaput.\"web_sales_item_class\" as \"web_sales_item_class\",
-    kaput.\"web_sales_item_name\" as \"web_sales_item_name\",
-    kaput.\"web_sales_item_desc\" as \"web_sales_item_desc\",
     kaput.\"web_sales_item_category\" as \"web_sales_item_category\",
-    kaput.\"web_sales_item_current_price\" as \"web_sales_item_current_price\"
+    kaput.\"web_sales_item_class\" as \"web_sales_item_class\",
+    kaput.\"web_sales_item_current_price\" as \"web_sales_item_current_price\",
+    kaput.\"web_sales_item_desc\" as \"web_sales_item_desc\",
+    kaput.\"web_sales_item_name\" as \"web_sales_item_name\",
+    sum(kaput.\"web_sales_external_sales_price\") as \"itemrevenue\"
 FROM
-    kaput)
+    kaput
+GROUP BY 
+    kaput.\"web_sales_item_category\",
+    kaput.\"web_sales_item_class\",
+    kaput.\"web_sales_item_current_price\",
+    kaput.\"web_sales_item_desc\",
+    kaput.\"web_sales_item_name\"),
+busy as (
 SELECT
-    divergent.\"web_sales_item_name\" as \"web_sales_item_name\",
-    divergent.\"web_sales_item_desc\" as \"web_sales_item_desc\",
+    divergent.\"itemrevenue\" as \"itemrevenue\",
     divergent.\"web_sales_item_category\" as \"web_sales_item_category\",
     divergent.\"web_sales_item_class\" as \"web_sales_item_class\",
     divergent.\"web_sales_item_current_price\" as \"web_sales_item_current_price\",
-    divergent.\"itemrevenue\" as \"itemrevenue\",
-    divergent.\"itemrevenue\" * 100.0 / divergent.\"_virt_7523910344683468\" as \"revenueratio\"
+    divergent.\"web_sales_item_desc\" as \"web_sales_item_desc\",
+    divergent.\"web_sales_item_name\" as \"web_sales_item_name\",
+    sum(divergent.\"itemrevenue\") over (partition by divergent.\"web_sales_item_class\") as \"_virt_3432120997641964\"
 FROM
-    divergent
+    divergent)
+SELECT
+    busy.\"web_sales_item_name\" as \"web_sales_item_name\",
+    busy.\"web_sales_item_desc\" as \"web_sales_item_desc\",
+    busy.\"web_sales_item_category\" as \"web_sales_item_category\",
+    busy.\"web_sales_item_class\" as \"web_sales_item_class\",
+    busy.\"web_sales_item_current_price\" as \"web_sales_item_current_price\",
+    busy.\"itemrevenue\" as \"itemrevenue\",
+    busy.\"itemrevenue\" * 100.0 / busy.\"_virt_3432120997641964\" as \"revenueratio\"
+FROM
+    busy
 ORDER BY 
-    divergent.\"web_sales_item_category\" asc,
-    divergent.\"web_sales_item_class\" asc,
-    divergent.\"web_sales_item_name\" asc,
-    divergent.\"web_sales_item_desc\" asc,
-    divergent.\"itemrevenue\" * 100.0 / divergent.\"_virt_7523910344683468\" asc
+    busy.\"web_sales_item_category\" asc,
+    busy.\"web_sales_item_class\" asc,
+    busy.\"web_sales_item_name\" asc,
+    busy.\"web_sales_item_desc\" asc,
+    busy.\"itemrevenue\" * 100.0 / busy.\"_virt_3432120997641964\" asc
 LIMIT (100)"""
 query_id = 12
-sql_comp_time = 0.11226
-total_time = 6.248533
+sql_comp_time = 0.051363
+total_time = 2.760163
