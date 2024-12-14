@@ -53,7 +53,7 @@ def test_cli_string_dagster():
         [
             "dagster",
             "persist static_one into static_one from select 1-> test;",
-            str(root.parent / "dagster/"),
+            str(root.parent / "dagster_static/"),
             "duck_db",
             "--run",
         ],

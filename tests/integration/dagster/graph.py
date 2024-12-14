@@ -34,7 +34,6 @@ defs = Definitions(
     resources={
         "duck_db": DuckDBResource(
             database="temp.db", connection_config={"enable_external_access": False}
-        ),  # required
-        # tests wll error
+        ),  
     },
 )
