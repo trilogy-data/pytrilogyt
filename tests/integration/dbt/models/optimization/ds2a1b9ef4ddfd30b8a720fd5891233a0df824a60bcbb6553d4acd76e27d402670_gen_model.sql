@@ -1,15 +1,6 @@
-from dagster import asset
-from dagster_duckdb import DuckDBResource
-
-
-@asset(deps=[])
-def scalar_scalar_split_split_2a1b9ef4ddfd30b8a720fd5891233a0df824a60bcbb6553d4acd76e27d402670(
-    duck_db: DuckDBResource,
-) -> None:
-    with duck_db.get_connection() as conn:
-        conn.execute(
-            """ 
-CREATE OR REPLACE TABLE scalar_scalar_split_split_2a1b9ef4ddfd30b8a720fd5891233a0df824a60bcbb6553d4acd76e27d402670 AS
+-- Generated from preql source: _internal_cached_intermediates_318aa3be58aecbf062e14ff6ee69c778f5f3b01959b2ebec2e5c58e27ae4b480
+-- Do not edit manually
+{{ config(materialized='table') }}
 
 WITH 
 quizzical as (
@@ -77,5 +68,4 @@ SELECT
     wakeful."cte_generic_scalar" as "cte_generic_scalar"
 FROM
     questionable
-    LEFT OUTER JOIN wakeful on questionable."cte_generic_scalar" = wakeful."cte_generic_scalar" AND questionable."generic_scalar" = wakeful."generic_scalar" AND questionable."generic_split" = wakeful."generic_split" """
-        )
+    LEFT OUTER JOIN wakeful on questionable."cte_generic_scalar" = wakeful."cte_generic_scalar" AND questionable."generic_scalar" = wakeful."generic_scalar" AND questionable."generic_split" = wakeful."generic_split"

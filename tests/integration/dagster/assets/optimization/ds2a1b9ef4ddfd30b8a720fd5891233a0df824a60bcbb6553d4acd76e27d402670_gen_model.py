@@ -1,6 +1,15 @@
--- Generated from preql source: _internal_cached_intermediates_318aa3be58aecbf062e14ff6ee69c778f5f3b01959b2ebec2e5c58e27ae4b480
--- Do not edit manually
-{{ config(materialized='table') }}
+from dagster import asset
+from dagster_duckdb import DuckDBResource
+
+
+@asset(deps=[])
+def ds2a1b9ef4ddfd30b8a720fd5891233a0df824a60bcbb6553d4acd76e27d402670(
+    duck_db: DuckDBResource,
+) -> None:
+    with duck_db.get_connection() as conn:
+        conn.execute(
+            """ 
+CREATE OR REPLACE TABLE ds2a1b9ef4ddfd30b8a720fd5891233a0df824a60bcbb6553d4acd76e27d402670 AS
 
 WITH 
 quizzical as (
@@ -41,6 +50,7 @@ WHERE
 thoughtful as (
 SELECT
     cheerful."cte_generic_scalar" as "cte_generic_scalar",
+    cheerful."cte_generic_split" as "cte_generic_split",
     quizzical."generic_int_array" as "generic_int_array",
     quizzical."generic_scalar" as "generic_scalar"
 FROM
@@ -67,4 +77,5 @@ SELECT
     wakeful."cte_generic_scalar" as "cte_generic_scalar"
 FROM
     questionable
-    LEFT OUTER JOIN wakeful on questionable."cte_generic_scalar" = wakeful."cte_generic_scalar" AND questionable."generic_scalar" = wakeful."generic_scalar" AND questionable."generic_split" = wakeful."generic_split"
+    LEFT OUTER JOIN wakeful on questionable."cte_generic_scalar" = wakeful."cte_generic_scalar" AND questionable."generic_scalar" = wakeful."generic_scalar" AND questionable."generic_split" = wakeful."generic_split" """
+        )

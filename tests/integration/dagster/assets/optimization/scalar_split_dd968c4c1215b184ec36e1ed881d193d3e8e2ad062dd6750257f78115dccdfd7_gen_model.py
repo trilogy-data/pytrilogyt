@@ -1,13 +1,14 @@
-
-from dagster_duckdb import DuckDBResource
 from dagster import asset
+from dagster_duckdb import DuckDBResource
 
 
 @asset(deps=[])
-def scalar_split_dd968c4c1215b184ec36e1ed881d193d3e8e2ad062dd6750257f78115dccdfd7(duck_db: DuckDBResource) -> None:
+def scalar_split_dd968c4c1215b184ec36e1ed881d193d3e8e2ad062dd6750257f78115dccdfd7(
+    duck_db: DuckDBResource,
+) -> None:
     with duck_db.get_connection() as conn:
         conn.execute(
-           ''' 
+            """ 
 CREATE OR REPLACE TABLE scalar_split_dd968c4c1215b184ec36e1ed881d193d3e8e2ad062dd6750257f78115dccdfd7 AS
 
 WITH 
@@ -23,6 +24,5 @@ SELECT
     unnest(quizzical."generic_int_array") as "generic_split",
     quizzical."generic_scalar" as "generic_scalar"
 FROM
-    quizzical '''
+    quizzical """
         )
-    

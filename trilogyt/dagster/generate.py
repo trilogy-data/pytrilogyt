@@ -65,7 +65,8 @@ def {{model_name}}({{dialect.name | lower}}: DuckDBResource) -> None:
 
 
 def generate_entry_file(
-    models: list[ModelInput], dialect: Dialects, config: DagsterConfig
+    models: list[ModelInput],
+    dialect: Dialects,  # config: DagsterConfig
 ):
     if dialect != Dialects.DUCK_DB:
         raise NotImplementedError(f"Unsupported dialect {dialect}")
@@ -90,9 +91,6 @@ defs = Definitions(
         models=models,
         dialect=Dialects,
     )
-
-def generate_entrypoint(models: list[Path], file:Path, dialect: Dialects, config: DagsterConfig):
-    generate_entry_file(models, dialect=Dialects.DUCK_DB, config=config)
 
 
 def generate_model(

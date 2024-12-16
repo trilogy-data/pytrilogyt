@@ -45,8 +45,10 @@ def run_path(
             env = Environment(working_path=path)
             executor.environment = env
             executor.execute_file(script)
-    sorted_files = generate_execution_order(edges)
+    sorted_files: list[Path] = generate_execution_order(edges)
     for file in sorted_files:
         env = Environment(working_path=path)
         executor.environment = env
-        executor.execute_file(file, non_interactive=True)
+        if not file.suffix == "preql":
+            file = file.with_suffix(".preql")
+        executor.execute_file(path / file, non_interactive=True)

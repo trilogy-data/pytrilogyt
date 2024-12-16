@@ -3,13 +3,13 @@ from dagster_duckdb import DuckDBResource
 
 
 @asset(deps=[])
-def scalar_445831a9e9e484d7f90c672304367319328b5fd8d8093cc8a12c9d788f4e4bd7(
+def ds445831a9e9e484d7f90c672304367319328b5fd8d8093cc8a12c9d788f4e4bd7(
     duck_db: DuckDBResource,
 ) -> None:
     with duck_db.get_connection() as conn:
         conn.execute(
             """ 
-CREATE OR REPLACE TABLE scalar_445831a9e9e484d7f90c672304367319328b5fd8d8093cc8a12c9d788f4e4bd7 AS
+CREATE OR REPLACE TABLE ds445831a9e9e484d7f90c672304367319328b5fd8d8093cc8a12c9d788f4e4bd7 AS
 
 SELECT
     generic_avalues."int_array" as "generic_int_array",

@@ -23,6 +23,7 @@ from trilogy.core.models import (
     ProcessedShowStatement,
     QueryDatasource,
     RowsetDerivationStatement,
+    SelectItem,
     SelectStatement,
     UnionCTE,
     WhereClause,
@@ -54,8 +55,8 @@ def hash_concepts(concepts: list[Concept]) -> str:
 
 def generate_datasource_name(select: SelectStatement, cte_name: str) -> str:
     """Generate a reasonable table name"""
-    base = "_".join(
-        [name_to_short_name(x.name) for x in select.grain.components]
+    base = "ds" + "_".join(
+        [name_to_short_name(x) for x in select.grain.components]
         + [hash_concepts(select.output_components)]
     )
     if select.where_clause:
@@ -80,11 +81,11 @@ def cte_to_persist(input: CTE, name: str, generator: BaseDialect) -> PersistStat
     rowset = any([x.derivation == PurposeLineage.ROWSET for x in input.output_columns])
     if rowset:
         select = SelectStatement(
-            selection=input.output_columns,
+            selection=[SelectItem(content=x) for x in input.output_columns],
         )
     else:
         select = SelectStatement(
-            selection=input.output_columns,
+            selection=[SelectItem(content=x) for x in input.output_columns],
             where_clause=(
                 WhereClause(conditional=input.condition) if input.condition else None
             ),
@@ -115,7 +116,7 @@ def fingerprint_concept(concept: Concept) -> str:
 
 
 def fingerprint_grain(grain: Grain) -> str:
-    return "-".join([fingerprint_concept(x) for x in grain.components])
+    return "-".join([x for x in grain.components])
 
 
 def fingerprint_source(source: QueryDatasource | Datasource) -> str:
@@ -146,7 +147,7 @@ def fingerprint_cte(cte: CTE | UnionCTE, select_condition) -> str:
         base += fingerprint_filter(cte.condition)
     if select_condition:
         base += fingerprint_filter(select_condition)
-    return base
+    return "ds" + base
 
 
 def process_raw(
