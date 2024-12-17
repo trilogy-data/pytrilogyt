@@ -1,5 +1,7 @@
-from pytest import fixture
 from logging import INFO
+
+from pytest import fixture
+
 from trilogyt.constants import logger as root_logger
 
 

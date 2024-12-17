@@ -10,3 +10,5 @@ python-dotenv
 pytest-console-scripts
 tomli-w
 types-networkx
+dagster
+dagster-duckdb

@@ -1,8 +1,9 @@
-from click import Path, argument, option, group
-from trilogy.dialect.enums import Dialects
-from pathlib import Path as PathlibPath
 import os
+from pathlib import Path as PathlibPath
 from sys import path as sys_path
+
+from click import Path, argument, group, option
+from trilogy.dialect.enums import Dialects
 from trilogy.parsing.render import Renderer
 
 # handles development cases
@@ -14,13 +15,17 @@ from trilogyt.scripts.native import (  # noqa
     native_wrapper,
     native_string_command_wrapper,
 )
+from trilogyt.scripts.dagster import (  # noqa
+    dagster_wrapper,
+    dagster_string_command_wrapper,
+)
 
 renderer = Renderer()
 
 
 @group()
 def main():
-    """A CLI with two subcommands: dbt and trilogy"""
+    """A CLI with three subcommands: dbt, dagster and trilogy"""
     pass
 
 
@@ -58,6 +63,26 @@ def trilogy(preql: str | Path, output_path: Path, dialect: str, debug: bool, run
             preqlt, PathlibPath(str(output_path)), edialect, debug, run
         )
     return native_string_command_wrapper(
+        str(preql), PathlibPath(str(output_path)), edialect, debug, run
+    )
+
+
+@main.command()
+@argument("preql", type=Path())
+@argument("output_path", type=Path(exists=True))
+# @argument("write_path", type=Path(exists=True))
+@argument("dialect", type=str)
+@option("--run", is_flag=True, type=bool, default=False)
+@option("--debug", type=bool, default=False)
+def dagster(preql: str | Path, output_path: Path, dialect: str, debug: bool, run: bool):
+
+    edialect = Dialects(dialect)
+    preqlt: PathlibPath = PathlibPath(str(preql))
+    if preqlt.exists():
+        return dagster_wrapper(
+            preqlt, PathlibPath(str(output_path)), edialect, debug, run
+        )
+    return dagster_string_command_wrapper(
         str(preql), PathlibPath(str(output_path)), edialect, debug, run
     )
 

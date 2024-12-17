@@ -1,0 +1,35 @@
+const _trilogyt._created_at <- current_datetime();
+
+import store_returns as returns;
+
+WHERE
+    returns.store.state = 'TN' and returns.return_date.year = 2000
+SELECT
+    returns.customer.text_id,
+    --sum(returns.return_amount) -> total_returns,
+    --returns.store.id,
+    --avg(total_returns) by returns.store.id -> avg_store_returns,
+HAVING
+    total_returns > (1.2 * avg_store_returns)
+
+ORDER BY
+    returns.customer.text_id asc
+
+LIMIT 100;
+
+PERSIST default.ds96a508abf87879c78b0d328a2ac09f165637ff8348ee54ecb24cab5208233a78_filtered_on_state_year INTO ds96a508abf87879c78b0d328a2ac09f165637ff8348ee54ecb24cab5208233a78_filtered_on_state_year FROM WHERE
+    returns.store.state = 'TN' and returns.return_date.year = 2000
+SELECT
+    returns.customer.text_id,
+    returns.item.id,
+    returns.return_amount,
+    returns.return_date.year,
+    returns.store.id,
+    returns.store.state,
+    returns.store_sales.ticket_number,;
+
+PERSIST default.dsd11c526f5c8762146e32a65c3fe8777d18b1c6fcacac7e646a7740a1315b72cf_filtered_on_total_returns_avg_store_returns INTO dsd11c526f5c8762146e32a65c3fe8777d18b1c6fcacac7e646a7740a1315b72cf_filtered_on_total_returns_avg_store_returns FROM WHERE
+    total_returns > (1.2 * avg_store_returns)
+SELECT
+    returns.customer.text_id,;
+

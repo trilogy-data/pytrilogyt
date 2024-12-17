@@ -1,21 +1,23 @@
-from jinja2 import Template
+import os
+from collections import Counter, defaultdict
 from pathlib import Path
-from trilogy import Executor, Environment
-from trilogy.dialect.enums import Dialects
+
+from jinja2 import Template
+from trilogy import Environment, Executor
 from trilogy.core.models import (
-    ProcessedQueryPersist,
-    ProcessedQuery,
-    PersistStatement,
-    Datasource,
     Address,
+    Datasource,
+    PersistStatement,
+    ProcessedQuery,
+    ProcessedQueryPersist,
+    UnionCTE,
 )
+from trilogy.dialect.enums import Dialects
+from yaml import dump, safe_load
+
 from trilogyt.constants import logger
 from trilogyt.core import enrich_environment
 from trilogyt.dbt.config import DBTConfig
-from yaml import safe_load, dump
-import os
-from collections import defaultdict
-from collections import Counter
 
 DEFAULT_DESCRIPTION: str = "No description provided"
 
@@ -79,7 +81,8 @@ def generate_model(
             for cte in query.ctes:
                 # handle inlined datasources
                 logger.info(f"checking cte {cte.name} with {eligible}")
-
+                if isinstance(cte, UnionCTE):
+                    continue
                 if cte.base_name_override in eligible:
                     cte.base_name_override = (
                         f"{{{{ ref('{cte.base_name_override}_gen_model') }}}}"

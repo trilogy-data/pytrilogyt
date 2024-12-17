@@ -1,11 +1,12 @@
-from pathlib import Path
-import tomllib
 import os
+from pathlib import Path
+
+import tomllib
 
 if __name__ == "__main__":
 
-    import pandas as pd
     import matplotlib.pyplot as plt
+    import pandas as pd
 
     results = []
     root = Path(__file__).parent

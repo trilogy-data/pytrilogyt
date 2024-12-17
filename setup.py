@@ -46,6 +46,7 @@ setuptools.setup(
     extras_require={
         "bigquery": ["dbt-bigquery"],
         "duckdb": ["dbt-duckdb"],
+        "dagster": ["dagster", "dagster-duckdb"],
     },
     entry_points={
         "console_scripts": [

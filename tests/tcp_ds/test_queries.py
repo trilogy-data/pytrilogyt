@@ -1,14 +1,12 @@
-from trilogy import parse
+import os
+from datetime import datetime
 from pathlib import Path
 
-from trilogy import Environment
-from trilogy import Dialects
-from dotenv import load_dotenv
-from datetime import datetime
-from trilogy.hooks.query_debugger import DebuggingHook
-import os
-from trilogy.dialect.config import SnowflakeConfig
 import pytest
+from dotenv import load_dotenv
+from trilogy import Dialects, Environment, parse
+from trilogy.dialect.config import SnowflakeConfig
+from trilogy.hooks.query_debugger import DebuggingHook
 
 load_dotenv()
 working_path = Path(__file__).parent

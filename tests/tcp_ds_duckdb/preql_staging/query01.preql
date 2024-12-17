@@ -1,7 +1,7 @@
-# Generated from preql source: c:\Users\ethan\coding_projects\pypreql-etl\tests\tcp_ds_duckdb\query01.preql
+# Generated from preql source: c:\Users\ethan\coding_projects\pytrilogyt\tests\tcp_ds_duckdb\query01.preql
 # Do not edit manually
 # import shared CTE persists into local namespace 
-import _internal_cached_intermediates_9e577a1e8dde198ce88a3169e1d0871c74b03b33522361aa2b3890341a364de9_datasources;
+import _internal_cached_intermediates_b19d3d1d0444de19bd386c24caaf3f0a24085f18ed77abd3ce1240123dff59d3_datasources;
 
 
 import store_returns as returns;
@@ -15,7 +15,7 @@ SELECT
     --returns.store.id,
     --avg(total_returns) by returns.store.id -> avg_store_returns,
 HAVING
-    total_returns > (multiply(1.2,avg_store_returns))
+    total_returns > (1.2 * avg_store_returns)
 
 ORDER BY
     returns.customer.text_id asc

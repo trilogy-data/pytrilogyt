@@ -1,19 +1,19 @@
-base_prep_time = 0.0
-base_parse_time = 1.536604
-base_generation_time = 0.005001
-base_exec_time = 0.057475
+base_prep_time = 0.000267
+base_parse_time = 0.456487
+base_generation_time = 0.002823
+base_exec_time = 0.046015
 base_generated_sql = """
 
 WITH 
 cheerful as (
 SELECT
-    returns_store_returns.\"SR_RETURN_AMT\" as \"returns_return_amount\",
-    returns_store_store.\"S_STATE\" as \"returns_store_state\",
     cast(returns_return_date_date.\"D_YEAR\" as int) as \"returns_return_date_year\",
-    returns_store_store.\"S_STORE_SK\" as \"returns_store_id\",
     returns_customer_customers.\"C_CUSTOMER_ID\" as \"returns_customer_text_id\",
+    returns_store_returns.\"SR_ITEM_SK\" as \"returns_item_id\",
+    returns_store_returns.\"SR_RETURN_AMT\" as \"returns_return_amount\",
     returns_store_returns.\"SR_TICKET_NUMBER\" as \"returns_store_sales_ticket_number\",
-    returns_store_returns.\"SR_ITEM_SK\" as \"returns_item_id\"
+    returns_store_store.\"S_STATE\" as \"returns_store_state\",
+    returns_store_store.\"S_STORE_SK\" as \"returns_store_id\"
 FROM
     memory.store_returns as returns_store_returns
     INNER JOIN memory.date_dim as returns_return_date_date on returns_store_returns.\"SR_RETURNED_DATE_SK\" = returns_return_date_date.\"D_DATE_SK\"
@@ -24,14 +24,14 @@ WHERE
 ),
 thoughtful as (
 SELECT
-    sum(cheerful.\"returns_return_amount\") as \"total_returns\",
+    cheerful.\"returns_customer_text_id\" as \"returns_customer_text_id\",
     cheerful.\"returns_store_id\" as \"returns_store_id\",
-    cheerful.\"returns_customer_text_id\" as \"returns_customer_text_id\"
+    sum(cheerful.\"returns_return_amount\") as \"total_returns\"
 FROM
     cheerful
 GROUP BY 
-    cheerful.\"returns_store_id\",
-    cheerful.\"returns_customer_text_id\"),
+    cheerful.\"returns_customer_text_id\",
+    cheerful.\"returns_store_id\"),
 cooperative as (
 SELECT
     avg(thoughtful.\"total_returns\") as \"avg_store_returns\",
@@ -51,42 +51,42 @@ WHERE
 ORDER BY 
     thoughtful.\"returns_customer_text_id\" asc
 LIMIT (100)"""
-optimized_prep_time = 2.452862
-optimized_parse_time = 2.194822
-optimized_generation_time = 0.002241
-optimized_exec_time = 0.036539
+optimized_prep_time = 0.810617
+optimized_parse_time = 0.446416
+optimized_generation_time = 0.000679
+optimized_exec_time = 0.019695
 optimized_generated_sql = """
 
 WITH 
-late as (
+scrawny as (
 SELECT
-    sum(default_id_id_text_id_ticket_number_year_89f0b8d713089ca2e55d9cd2b6b95850e1993d319eeffff7af06fb57ab6fa8bd_filtered_on_state_year.\"returns_return_amount\") as \"total_returns\",
-    default_id_id_text_id_ticket_number_year_89f0b8d713089ca2e55d9cd2b6b95850e1993d319eeffff7af06fb57ab6fa8bd_filtered_on_state_year.\"returns_store_id\" as \"returns_store_id\",
-    default_id_id_text_id_ticket_number_year_89f0b8d713089ca2e55d9cd2b6b95850e1993d319eeffff7af06fb57ab6fa8bd_filtered_on_state_year.\"returns_customer_text_id\" as \"returns_customer_text_id\"
+    ds96a508abf87879c78b0d328a2ac09f165637ff8348ee54ecb24cab5208233a78_filtered_on_state_year.\"returns_customer_text_id\" as \"returns_customer_text_id\",
+    ds96a508abf87879c78b0d328a2ac09f165637ff8348ee54ecb24cab5208233a78_filtered_on_state_year.\"returns_store_id\" as \"returns_store_id\",
+    sum(ds96a508abf87879c78b0d328a2ac09f165637ff8348ee54ecb24cab5208233a78_filtered_on_state_year.\"returns_return_amount\") as \"total_returns\"
 FROM
-    id_id_text_id_ticket_number_year_89f0b8d713089ca2e55d9cd2b6b95850e1993d319eeffff7af06fb57ab6fa8bd_filtered_on_state_year as default_id_id_text_id_ticket_number_year_89f0b8d713089ca2e55d9cd2b6b95850e1993d319eeffff7af06fb57ab6fa8bd_filtered_on_state_year
+    ds96a508abf87879c78b0d328a2ac09f165637ff8348ee54ecb24cab5208233a78_filtered_on_state_year
 GROUP BY 
-    default_id_id_text_id_ticket_number_year_89f0b8d713089ca2e55d9cd2b6b95850e1993d319eeffff7af06fb57ab6fa8bd_filtered_on_state_year.\"returns_store_id\",
-    default_id_id_text_id_ticket_number_year_89f0b8d713089ca2e55d9cd2b6b95850e1993d319eeffff7af06fb57ab6fa8bd_filtered_on_state_year.\"returns_customer_text_id\"),
-macho as (
+    ds96a508abf87879c78b0d328a2ac09f165637ff8348ee54ecb24cab5208233a78_filtered_on_state_year.\"returns_customer_text_id\",
+    ds96a508abf87879c78b0d328a2ac09f165637ff8348ee54ecb24cab5208233a78_filtered_on_state_year.\"returns_store_id\"),
+friendly as (
 SELECT
-    avg(late.\"total_returns\") as \"avg_store_returns\",
-    late.\"returns_store_id\" as \"returns_store_id\"
+    avg(scrawny.\"total_returns\") as \"avg_store_returns\",
+    scrawny.\"returns_store_id\" as \"returns_store_id\"
 FROM
-    late
+    scrawny
 GROUP BY 
-    late.\"returns_store_id\")
+    scrawny.\"returns_store_id\")
 SELECT
-    late.\"returns_customer_text_id\" as \"returns_customer_text_id\"
+    scrawny.\"returns_customer_text_id\" as \"returns_customer_text_id\"
 FROM
-    macho
-    INNER JOIN late on macho.\"returns_store_id\" = late.\"returns_store_id\"
+    friendly
+    INNER JOIN scrawny on friendly.\"returns_store_id\" = scrawny.\"returns_store_id\"
 WHERE
-    late.\"total_returns\" > ( 1.2 * macho.\"avg_store_returns\" )
+    scrawny.\"total_returns\" > ( 1.2 * friendly.\"avg_store_returns\" )
 
 ORDER BY 
-    late.\"returns_customer_text_id\" asc
+    scrawny.\"returns_customer_text_id\" asc
 LIMIT (100)"""
 query_id = 1
-sql_comp_time = 1.636998
-total_time = 7.933336
+sql_comp_time = 1.556156
+total_time = 3.349931
