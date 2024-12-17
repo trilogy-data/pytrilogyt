@@ -1,7 +1,7 @@
-base_prep_time = 0.006729
-base_parse_time = 0.1764
-base_generation_time = 0.003586
-base_exec_time = 0.055949
+base_prep_time = 0.002721
+base_parse_time = 0.076119
+base_generation_time = 0.003171
+base_exec_time = 0.066139
 base_generated_sql = """
 
 WITH 
@@ -21,7 +21,7 @@ FROM
     INNER JOIN memory.item as web_sales_item_items on web_sales_web_sales.\"WS_ITEM_SK\" = web_sales_item_items.\"I_ITEM_SK\"
     INNER JOIN memory.date_dim as web_sales_date_date on web_sales_web_sales.\"WS_SOLD_DATE_SK\" = web_sales_date_date.\"D_DATE_SK\"
 WHERE
-    cast(web_sales_date_date.\"D_DATE\" as date) >= cast('1999-02-22' as date) and cast(web_sales_date_date.\"D_DATE\" as date) <= cast('1999-03-24' as date) and web_sales_item_items.\"I_CATEGORY\" in ('Sports','Books','Home')
+    cast(web_sales_date_date.\"D_DATE\" as date) >= date '1999-02-22' and cast(web_sales_date_date.\"D_DATE\" as date) <= date '1999-03-24' and web_sales_item_items.\"I_CATEGORY\" in ('Sports','Books','Home')
 ),
 cheerful as (
 SELECT
@@ -47,7 +47,7 @@ SELECT
     cheerful.\"web_sales_item_current_price\" as \"web_sales_item_current_price\",
     cheerful.\"web_sales_item_desc\" as \"web_sales_item_desc\",
     cheerful.\"web_sales_item_name\" as \"web_sales_item_name\",
-    sum(cheerful.\"itemrevenue\") over (partition by cheerful.\"web_sales_item_class\") as \"_virt_3432120997641964\"
+    sum(cheerful.\"itemrevenue\") over (partition by cheerful.\"web_sales_item_class\") as \"_virt_8569433434177041\"
 FROM
     cheerful)
 SELECT
@@ -57,7 +57,7 @@ SELECT
     thoughtful.\"web_sales_item_class\" as \"web_sales_item_class\",
     thoughtful.\"web_sales_item_current_price\" as \"web_sales_item_current_price\",
     thoughtful.\"itemrevenue\" as \"itemrevenue\",
-    thoughtful.\"itemrevenue\" * 100.0 / thoughtful.\"_virt_3432120997641964\" as \"revenueratio\"
+    (thoughtful.\"itemrevenue\" * 100.0) / thoughtful.\"_virt_8569433434177041\" as \"revenueratio\"
 FROM
     thoughtful
 ORDER BY 
@@ -65,12 +65,12 @@ ORDER BY
     thoughtful.\"web_sales_item_class\" asc,
     thoughtful.\"web_sales_item_name\" asc,
     thoughtful.\"web_sales_item_desc\" asc,
-    thoughtful.\"itemrevenue\" * 100.0 / sum(thoughtful.\"itemrevenue\") over (partition by thoughtful.\"web_sales_item_class\") asc
+    (thoughtful.\"itemrevenue\" * 100.0) / sum(thoughtful.\"itemrevenue\") over (partition by thoughtful.\"web_sales_item_class\") asc
 LIMIT (100)"""
-optimized_prep_time = 2.013706
-optimized_parse_time = 0.389941
-optimized_generation_time = 0.00356
-optimized_exec_time = 0.047745
+optimized_prep_time = 0.98731
+optimized_parse_time = 0.165903
+optimized_generation_time = 0.003152
+optimized_exec_time = 0.062853
 optimized_generated_sql = """
 
 WITH 
@@ -90,7 +90,7 @@ FROM
     INNER JOIN memory.item as web_sales_item_items on web_sales_web_sales.\"WS_ITEM_SK\" = web_sales_item_items.\"I_ITEM_SK\"
     INNER JOIN memory.date_dim as web_sales_date_date on web_sales_web_sales.\"WS_SOLD_DATE_SK\" = web_sales_date_date.\"D_DATE_SK\"
 WHERE
-    ( cast(web_sales_date_date.\"D_DATE\" as date) >= cast('1999-02-22' as date) and cast(web_sales_date_date.\"D_DATE\" as date) <= cast('1999-03-24' as date) ) and web_sales_item_items.\"I_CATEGORY\" in ('Sports','Books','Home')
+    ( cast(web_sales_date_date.\"D_DATE\" as date) >= date '1999-02-22' and cast(web_sales_date_date.\"D_DATE\" as date) <= date '1999-03-24' ) and web_sales_item_items.\"I_CATEGORY\" in ('Sports','Books','Home')
 ),
 divergent as (
 SELECT
@@ -116,7 +116,7 @@ SELECT
     divergent.\"web_sales_item_current_price\" as \"web_sales_item_current_price\",
     divergent.\"web_sales_item_desc\" as \"web_sales_item_desc\",
     divergent.\"web_sales_item_name\" as \"web_sales_item_name\",
-    sum(divergent.\"itemrevenue\") over (partition by divergent.\"web_sales_item_class\") as \"_virt_3432120997641964\"
+    sum(divergent.\"itemrevenue\") over (partition by divergent.\"web_sales_item_class\") as \"_virt_8569433434177041\"
 FROM
     divergent)
 SELECT
@@ -126,7 +126,7 @@ SELECT
     busy.\"web_sales_item_class\" as \"web_sales_item_class\",
     busy.\"web_sales_item_current_price\" as \"web_sales_item_current_price\",
     busy.\"itemrevenue\" as \"itemrevenue\",
-    busy.\"itemrevenue\" * 100.0 / busy.\"_virt_3432120997641964\" as \"revenueratio\"
+    (busy.\"itemrevenue\" * 100.0) / busy.\"_virt_8569433434177041\" as \"revenueratio\"
 FROM
     busy
 ORDER BY 
@@ -134,8 +134,8 @@ ORDER BY
     busy.\"web_sales_item_class\" asc,
     busy.\"web_sales_item_name\" asc,
     busy.\"web_sales_item_desc\" asc,
-    busy.\"itemrevenue\" * 100.0 / busy.\"_virt_3432120997641964\" asc
+    (busy.\"itemrevenue\" * 100.0) / busy.\"_virt_8569433434177041\" asc
 LIMIT (100)"""
 query_id = 12
-sql_comp_time = 0.051363
-total_time = 2.760163
+sql_comp_time = 0.064131
+total_time = 1.440051

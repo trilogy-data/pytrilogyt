@@ -1,7 +1,7 @@
-base_prep_time = 0.002745
-base_parse_time = 0.397837
-base_generation_time = 0.003203
-base_exec_time = 0.032209
+base_prep_time = 0.000244
+base_parse_time = 0.147907
+base_generation_time = 0.002711
+base_exec_time = 0.031387
 base_generated_sql = """
 
 WITH 
@@ -38,10 +38,10 @@ ORDER BY
     sum(wakeful.\"store_sales_ext_sales_price\") desc,
     wakeful.\"store_sales_item_brand_id\" asc
 LIMIT (100)"""
-optimized_prep_time = 1.905192
-optimized_parse_time = 0.991123
-optimized_generation_time = 0.003496
-optimized_exec_time = 0.033122
+optimized_prep_time = 0.998855
+optimized_parse_time = 0.280421
+optimized_generation_time = 0.003188
+optimized_exec_time = 0.031148
 optimized_generated_sql = """
 
 WITH 
@@ -79,5 +79,5 @@ ORDER BY
     kaput.\"store_sales_item_brand_id\" asc
 LIMIT (100)"""
 query_id = 3
-sql_comp_time = 0.034321
-total_time = 3.45176
+sql_comp_time = 0.032473
+total_time = 1.536249

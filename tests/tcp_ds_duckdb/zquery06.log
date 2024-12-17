@@ -1,7 +1,7 @@
-base_prep_time = 0.004165
-base_parse_time = 0.47853
-base_generation_time = 0.006934
-base_exec_time = 0.066855
+base_prep_time = 0.000258
+base_parse_time = 0.20104
+base_generation_time = 0.005964
+base_exec_time = 0.030309
 base_generated_sql = """
 
 WITH 
@@ -28,7 +28,7 @@ WHERE
 ),
 abundant as (
 SELECT
-    avg(item_items.\"I_CURRENT_PRICE\") as \"_virt_6264207893106521\",
+    avg(item_items.\"I_CURRENT_PRICE\") as \"_virt_5085182914776325\",
     item_items.\"I_CATEGORY\" as \"item_category\"
 FROM
     memory.item as item_items
@@ -56,7 +56,7 @@ GROUP BY
     cooperative.\"store_sales_item_current_price\"),
 uneven as (
 SELECT
-    abundant.\"_virt_6264207893106521\" as \"_virt_6264207893106521\",
+    abundant.\"_virt_5085182914776325\" as \"_virt_5085182914776325\",
     questionable.\"item_category\" as \"item_category\",
     questionable.\"store_sales_customer_id\" as \"store_sales_customer_id\",
     questionable.\"store_sales_customer_state\" as \"store_sales_customer_state\",
@@ -67,7 +67,7 @@ FROM
     questionable
     INNER JOIN abundant on (questionable.\"item_category\" = abundant.\"item_category\" or (questionable.\"item_category\" is null and abundant.\"item_category\" is null))
 WHERE
-    questionable.\"store_sales_date_year\" = 2001 and questionable.\"store_sales_date_month_of_year\" = 1 and questionable.\"store_sales_item_current_price\" > 1.2 * abundant.\"_virt_6264207893106521\" and questionable.\"item_category\" is not null
+    questionable.\"store_sales_date_year\" = 2001 and questionable.\"store_sales_date_month_of_year\" = 1 and questionable.\"store_sales_item_current_price\" > 1.2 * abundant.\"_virt_5085182914776325\" and questionable.\"item_category\" is not null
 )
 SELECT
     uneven.\"store_sales_customer_state\" as \"store_sales_customer_state\",
@@ -82,10 +82,10 @@ HAVING
 ORDER BY 
     count(uneven.\"store_sales_customer_id\") asc nulls first,
     uneven.\"store_sales_customer_state\" asc nulls first"""
-optimized_prep_time = 1.914352
-optimized_parse_time = 1.131774
-optimized_generation_time = 0.006759
-optimized_exec_time = 0.026563
+optimized_prep_time = 0.932783
+optimized_parse_time = 0.451814
+optimized_generation_time = 0.006496
+optimized_exec_time = 0.029018
 optimized_generated_sql = """
 
 WITH 
@@ -112,7 +112,7 @@ WHERE
 ),
 premium as (
 SELECT
-    avg(item_items.\"I_CURRENT_PRICE\") as \"_virt_6264207893106521\",
+    avg(item_items.\"I_CURRENT_PRICE\") as \"_virt_5085182914776325\",
     item_items.\"I_CATEGORY\" as \"item_category\"
 FROM
     memory.item as item_items
@@ -137,7 +137,7 @@ GROUP BY
     charming.\"store_sales_item_current_price\"),
 puzzled as (
 SELECT
-    premium.\"_virt_6264207893106521\" as \"_virt_6264207893106521\",
+    premium.\"_virt_5085182914776325\" as \"_virt_5085182914776325\",
     protective.\"item_category\" as \"item_category\",
     protective.\"store_sales_customer_id\" as \"store_sales_customer_id\",
     protective.\"store_sales_customer_state\" as \"store_sales_customer_state\",
@@ -148,7 +148,7 @@ FROM
     protective
     INNER JOIN premium on protective.\"item_category\" = premium.\"item_category\"
 WHERE
-    protective.\"store_sales_date_year\" = 2001 and ( protective.\"store_sales_date_month_of_year\" = 1 and ( protective.\"store_sales_item_current_price\" > 1.2 * premium.\"_virt_6264207893106521\" and protective.\"item_category\" is not null ) )
+    protective.\"store_sales_date_year\" = 2001 and ( protective.\"store_sales_date_month_of_year\" = 1 and ( protective.\"store_sales_item_current_price\" > 1.2 * premium.\"_virt_5085182914776325\" and protective.\"item_category\" is not null ) )
 )
 SELECT
     puzzled.\"store_sales_customer_state\" as \"store_sales_customer_state\",
@@ -164,5 +164,5 @@ ORDER BY
     count(puzzled.\"store_sales_customer_id\") asc nulls first,
     puzzled.\"store_sales_customer_state\" asc nulls first"""
 query_id = 6
-sql_comp_time = 0.077605
-total_time = 3.724694
+sql_comp_time = 0.04898
+total_time = 1.713738

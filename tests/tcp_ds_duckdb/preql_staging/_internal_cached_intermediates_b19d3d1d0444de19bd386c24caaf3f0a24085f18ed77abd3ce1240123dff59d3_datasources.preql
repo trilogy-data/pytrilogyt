@@ -1,0 +1,22 @@
+import _internal_cached_intermediates_b19d3d1d0444de19bd386c24caaf3f0a24085f18ed77abd3ce1240123dff59d3;
+
+datasource ds96a508abf87879c78b0d328a2ac09f165637ff8348ee54ecb24cab5208233a78_filtered_on_state_year (
+    returns_customer_text_id: ~returns.customer.text_id,
+    returns_item_id: ~returns.item.id,
+    returns_return_amount: ~returns.return_amount,
+    returns_return_date_year: ~returns.return_date.year,
+    returns_store_id: ~returns.store.id,
+    returns_store_state: ~returns.store.state,
+    returns_store_sales_ticket_number: ~returns.store_sales.ticket_number
+    )
+grain (returns.item.id,returns.store.id,returns.store_sales.ticket_number)
+complete where returns.store.state = 'TN' and returns.return_date.year = 2000
+address ds96a508abf87879c78b0d328a2ac09f165637ff8348ee54ecb24cab5208233a78_filtered_on_state_year;
+
+datasource dsd11c526f5c8762146e32a65c3fe8777d18b1c6fcacac7e646a7740a1315b72cf_filtered_on_total_returns_avg_store_returns (
+    returns_customer_text_id: ~returns.customer.text_id
+    )
+
+complete where total_returns > (1.2 * avg_store_returns)
+address dsd11c526f5c8762146e32a65c3fe8777d18b1c6fcacac7e646a7740a1315b72cf_filtered_on_total_returns_avg_store_returns;
+

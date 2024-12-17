@@ -1,13 +1,13 @@
-base_prep_time = 0.004472
-base_parse_time = 0.639798
-base_generation_time = 0.006611
-base_exec_time = 0.087122
+base_prep_time = 0.000369
+base_parse_time = 0.220092
+base_generation_time = 0.005771
+base_exec_time = 0.050128
 base_generated_sql = """
 
 WITH 
 questionable as (
 SELECT
-    CASE WHEN customer_customers.\"C_PREFERRED_CUST_FLAG\" = 'Y' THEN customer_customers.\"C_CUSTOMER_SK\" ELSE NULL END as \"_virt_7470647693515630\",
+    CASE WHEN customer_customers.\"C_PREFERRED_CUST_FLAG\" = 'Y' THEN customer_customers.\"C_CUSTOMER_SK\" ELSE NULL END as \"_virt_221882250846823\",
     customer_customers.\"C_CUSTOMER_SK\" as \"customer_id\",
     customer_customers.\"C_PREFERRED_CUST_FLAG\" as \"customer_preferred_cust_flag\"
 FROM
@@ -27,14 +27,14 @@ SELECT
 uneven as (
 SELECT
     abundant.\"customer_zip\" as \"customer_zip\",
-    questionable.\"_virt_7470647693515630\" as \"_virt_7470647693515630\",
+    questionable.\"_virt_221882250846823\" as \"_virt_221882250846823\",
     questionable.\"customer_id\" as \"customer_id\"
 FROM
     abundant
     INNER JOIN questionable on abundant.\"customer_id\" = questionable.\"customer_id\" AND abundant.\"customer_preferred_cust_flag\" = questionable.\"customer_preferred_cust_flag\"),
 yummy as (
 SELECT
-    count(uneven.\"_virt_7470647693515630\") as \"zip_p_count\",
+    count(uneven.\"_virt_221882250846823\") as \"zip_p_count\",
     uneven.\"customer_zip\" as \"customer_zip\"
 FROM
     uneven
@@ -50,7 +50,7 @@ FROM
     INNER JOIN memory.customer_address as customer_customer_address on yummy.\"customer_zip\" = customer_customer_address.\"CA_ZIP\"),
 vacuous as (
 SELECT
-    SUBSTRING(CASE WHEN juicy.\"zip_p_count\" > 10 THEN juicy.\"customer_zip\" ELSE NULL END,1,5) as \"_virt_func_substring_1342571877656287\"
+    SUBSTRING(CASE WHEN juicy.\"zip_p_count\" > 10 THEN juicy.\"customer_zip\" ELSE NULL END,1,5) as \"_virt_func_substring_4835506132053028\"
 FROM
     juicy),
 concerned as (
@@ -59,7 +59,7 @@ SELECT
 FROM
     cheerful
 WHERE
-    SUBSTRING(cast(cheerful.\"zips_pre\" as string),1,5) in (select vacuous.\"_virt_func_substring_1342571877656287\" from vacuous where vacuous.\"_virt_func_substring_1342571877656287\" is not null)
+    SUBSTRING(cast(cheerful.\"zips_pre\" as string),1,5) in (select vacuous.\"_virt_func_substring_4835506132053028\" from vacuous where vacuous.\"_virt_func_substring_4835506132053028\" is not null)
 ),
 young as (
 SELECT
@@ -94,16 +94,16 @@ GROUP BY
 ORDER BY 
     sparkling.\"store_sales_store_name\" asc
 LIMIT (100)"""
-optimized_prep_time = 1.556947
-optimized_parse_time = 1.012217
-optimized_generation_time = 0.006698
-optimized_exec_time = 0.049199
+optimized_prep_time = 0.777022
+optimized_parse_time = 0.519691
+optimized_generation_time = 0.005653
+optimized_exec_time = 0.050262
 optimized_generated_sql = """
 
 WITH 
 protective as (
 SELECT
-    CASE WHEN customer_customers.\"C_PREFERRED_CUST_FLAG\" = 'Y' THEN customer_customers.\"C_CUSTOMER_SK\" ELSE NULL END as \"_virt_7470647693515630\",
+    CASE WHEN customer_customers.\"C_PREFERRED_CUST_FLAG\" = 'Y' THEN customer_customers.\"C_CUSTOMER_SK\" ELSE NULL END as \"_virt_221882250846823\",
     customer_customers.\"C_CUSTOMER_SK\" as \"customer_id\",
     customer_customers.\"C_PREFERRED_CUST_FLAG\" as \"customer_preferred_cust_flag\"
 FROM
@@ -123,14 +123,14 @@ SELECT
 puzzled as (
 SELECT
     premium.\"customer_zip\" as \"customer_zip\",
-    protective.\"_virt_7470647693515630\" as \"_virt_7470647693515630\",
+    protective.\"_virt_221882250846823\" as \"_virt_221882250846823\",
     protective.\"customer_id\" as \"customer_id\"
 FROM
     premium
     INNER JOIN protective on premium.\"customer_id\" = protective.\"customer_id\" AND premium.\"customer_preferred_cust_flag\" = protective.\"customer_preferred_cust_flag\"),
 waggish as (
 SELECT
-    count(puzzled.\"_virt_7470647693515630\") as \"zip_p_count\",
+    count(puzzled.\"_virt_221882250846823\") as \"zip_p_count\",
     puzzled.\"customer_zip\" as \"customer_zip\"
 FROM
     puzzled
@@ -146,7 +146,7 @@ FROM
     INNER JOIN memory.customer_address as customer_customer_address on waggish.\"customer_zip\" = customer_customer_address.\"CA_ZIP\"),
 puffy as (
 SELECT
-    SUBSTRING(CASE WHEN rambunctious.\"zip_p_count\" > 10 THEN rambunctious.\"customer_zip\" ELSE NULL END,1,5) as \"_virt_func_substring_1342571877656287\"
+    SUBSTRING(CASE WHEN rambunctious.\"zip_p_count\" > 10 THEN rambunctious.\"customer_zip\" ELSE NULL END,1,5) as \"_virt_func_substring_4835506132053028\"
 FROM
     rambunctious),
 hard as (
@@ -155,7 +155,7 @@ SELECT
 FROM
     divergent
 WHERE
-    SUBSTRING(cast(divergent.\"zips_pre\" as string),1,5) in (select puffy.\"_virt_func_substring_1342571877656287\" from puffy where puffy.\"_virt_func_substring_1342571877656287\" is not null)
+    SUBSTRING(cast(divergent.\"zips_pre\" as string),1,5) in (select puffy.\"_virt_func_substring_4835506132053028\" from puffy where puffy.\"_virt_func_substring_4835506132053028\" is not null)
 ),
 sedate as (
 SELECT
@@ -191,5 +191,5 @@ ORDER BY
     yellow.\"store_sales_store_name\" asc
 LIMIT (100)"""
 query_id = 8
-sql_comp_time = 0.037236
-total_time = 3.409488
+sql_comp_time = 0.06096
+total_time = 1.699273

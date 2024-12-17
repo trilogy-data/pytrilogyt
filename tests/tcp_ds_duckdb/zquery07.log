@@ -1,7 +1,7 @@
-base_prep_time = 0.000243
-base_parse_time = 0.888815
-base_generation_time = 0.00683
-base_exec_time = 0.13868
+base_prep_time = 0.000259
+base_parse_time = 0.255245
+base_generation_time = 0.005652
+base_exec_time = 0.142317
 base_generated_sql = """
 
 WITH 
@@ -67,10 +67,10 @@ GROUP BY
 ORDER BY 
     cooperative.\"filtered_sales_store_sales_item_name\" asc
 LIMIT (100)"""
-optimized_prep_time = 1.50454
-optimized_parse_time = 1.591881
-optimized_generation_time = 0.007566
-optimized_exec_time = 0.13795
+optimized_prep_time = 0.959591
+optimized_parse_time = 0.653878
+optimized_generation_time = 0.006462
+optimized_exec_time = 0.138145
 optimized_generated_sql = """
 
 WITH 
@@ -137,5 +137,5 @@ ORDER BY
     charming.\"filtered_sales_store_sales_item_name\" asc
 LIMIT (100)"""
 query_id = 7
-sql_comp_time = 0.103314
-total_time = 4.405711
+sql_comp_time = 0.098259
+total_time = 2.269578

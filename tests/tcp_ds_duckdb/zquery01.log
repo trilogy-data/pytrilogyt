@@ -1,7 +1,7 @@
-base_prep_time = 0.000237
-base_parse_time = 0.849082
-base_generation_time = 0.003051
-base_exec_time = 0.038902
+base_prep_time = 0.000267
+base_parse_time = 0.456487
+base_generation_time = 0.002823
+base_exec_time = 0.046015
 base_generated_sql = """
 
 WITH 
@@ -51,42 +51,42 @@ WHERE
 ORDER BY 
     thoughtful.\"returns_customer_text_id\" asc
 LIMIT (100)"""
-optimized_prep_time = 1.702529
-optimized_parse_time = 1.368819
-optimized_generation_time = 0.001053
-optimized_exec_time = 0.016414
+optimized_prep_time = 0.810617
+optimized_parse_time = 0.446416
+optimized_generation_time = 0.000679
+optimized_exec_time = 0.019695
 optimized_generated_sql = """
 
 WITH 
-macho as (
-SELECT
-    default_id_id_text_id_ticket_number_year_89f0b8d713089ca2e55d9cd2b6b95850e1993d319eeffff7af06fb57ab6fa8bd_filtered_on_state_year.\"returns_customer_text_id\" as \"returns_customer_text_id\",
-    default_id_id_text_id_ticket_number_year_89f0b8d713089ca2e55d9cd2b6b95850e1993d319eeffff7af06fb57ab6fa8bd_filtered_on_state_year.\"returns_store_id\" as \"returns_store_id\",
-    sum(default_id_id_text_id_ticket_number_year_89f0b8d713089ca2e55d9cd2b6b95850e1993d319eeffff7af06fb57ab6fa8bd_filtered_on_state_year.\"returns_return_amount\") as \"total_returns\"
-FROM
-    id_id_text_id_ticket_number_year_89f0b8d713089ca2e55d9cd2b6b95850e1993d319eeffff7af06fb57ab6fa8bd_filtered_on_state_year as default_id_id_text_id_ticket_number_year_89f0b8d713089ca2e55d9cd2b6b95850e1993d319eeffff7af06fb57ab6fa8bd_filtered_on_state_year
-GROUP BY 
-    default_id_id_text_id_ticket_number_year_89f0b8d713089ca2e55d9cd2b6b95850e1993d319eeffff7af06fb57ab6fa8bd_filtered_on_state_year.\"returns_customer_text_id\",
-    default_id_id_text_id_ticket_number_year_89f0b8d713089ca2e55d9cd2b6b95850e1993d319eeffff7af06fb57ab6fa8bd_filtered_on_state_year.\"returns_store_id\"),
 scrawny as (
 SELECT
-    avg(macho.\"total_returns\") as \"avg_store_returns\",
-    macho.\"returns_store_id\" as \"returns_store_id\"
+    ds96a508abf87879c78b0d328a2ac09f165637ff8348ee54ecb24cab5208233a78_filtered_on_state_year.\"returns_customer_text_id\" as \"returns_customer_text_id\",
+    ds96a508abf87879c78b0d328a2ac09f165637ff8348ee54ecb24cab5208233a78_filtered_on_state_year.\"returns_store_id\" as \"returns_store_id\",
+    sum(ds96a508abf87879c78b0d328a2ac09f165637ff8348ee54ecb24cab5208233a78_filtered_on_state_year.\"returns_return_amount\") as \"total_returns\"
 FROM
-    macho
+    ds96a508abf87879c78b0d328a2ac09f165637ff8348ee54ecb24cab5208233a78_filtered_on_state_year
 GROUP BY 
-    macho.\"returns_store_id\")
+    ds96a508abf87879c78b0d328a2ac09f165637ff8348ee54ecb24cab5208233a78_filtered_on_state_year.\"returns_customer_text_id\",
+    ds96a508abf87879c78b0d328a2ac09f165637ff8348ee54ecb24cab5208233a78_filtered_on_state_year.\"returns_store_id\"),
+friendly as (
 SELECT
-    macho.\"returns_customer_text_id\" as \"returns_customer_text_id\"
+    avg(scrawny.\"total_returns\") as \"avg_store_returns\",
+    scrawny.\"returns_store_id\" as \"returns_store_id\"
 FROM
     scrawny
-    INNER JOIN macho on scrawny.\"returns_store_id\" = macho.\"returns_store_id\"
+GROUP BY 
+    scrawny.\"returns_store_id\")
+SELECT
+    scrawny.\"returns_customer_text_id\" as \"returns_customer_text_id\"
+FROM
+    friendly
+    INNER JOIN scrawny on friendly.\"returns_store_id\" = scrawny.\"returns_store_id\"
 WHERE
-    macho.\"total_returns\" > ( 1.2 * scrawny.\"avg_store_returns\" )
+    scrawny.\"total_returns\" > ( 1.2 * friendly.\"avg_store_returns\" )
 
 ORDER BY 
-    macho.\"returns_customer_text_id\" asc
+    scrawny.\"returns_customer_text_id\" asc
 LIMIT (100)"""
 query_id = 1
-sql_comp_time = 0.081304
-total_time = 4.06989
+sql_comp_time = 1.556156
+total_time = 3.349931

@@ -1,7 +1,7 @@
-base_prep_time = 0.000267
-base_parse_time = 9.140972
-base_generation_time = 0.007016
-base_exec_time = 0.216905
+base_prep_time = 0.000237
+base_parse_time = 2.207096
+base_generation_time = 0.009037
+base_exec_time = 0.214298
 base_generated_sql = """
 
 WITH 
@@ -71,7 +71,18 @@ FROM
     INNER JOIN memory.customer as customer_customers on customer_demographics_customer_demographics.\"CD_DEMO_SK\" = customer_customers.\"C_CURRENT_CDEMO_SK\"
 WHERE
     customer_customers.\"C_CUSTOMER_SK\" in (select concerned.\"relevant_customers\" from concerned where concerned.\"relevant_customers\" is not null) and customer_demographics_customer_demographics.\"CD_GENDER\" is not null
-)
+
+GROUP BY 
+    customer_customers.\"C_CUSTOMER_SK\",
+    customer_demographics_customer_demographics.\"CD_CREDIT_RATING\",
+    customer_demographics_customer_demographics.\"CD_DEMO_SK\",
+    customer_demographics_customer_demographics.\"CD_DEP_COLLEGE_COUNT\",
+    customer_demographics_customer_demographics.\"CD_DEP_COUNT\",
+    customer_demographics_customer_demographics.\"CD_DEP_EMPLOYED_COUNT\",
+    customer_demographics_customer_demographics.\"CD_EDUCATION_STATUS\",
+    customer_demographics_customer_demographics.\"CD_GENDER\",
+    customer_demographics_customer_demographics.\"CD_MARITAL_STATUS\",
+    customer_demographics_customer_demographics.\"CD_PURCHASE_ESTIMATE\")
 SELECT
     young.\"base_customer_demographics_gender\" as \"base_customer_demographics_gender\",
     young.\"base_customer_demographics_marital_status\" as \"base_customer_demographics_marital_status\",
@@ -107,10 +118,10 @@ ORDER BY
     young.\"base_customer_demographics_dependent_count\" asc,
     young.\"base_customer_demographics_employed_dependent_count\" asc,
     young.\"base_customer_demographics_college_dependent_count\" asc"""
-optimized_prep_time = 1.651722
-optimized_parse_time = 29.613597
-optimized_generation_time = 0.007452
-optimized_exec_time = 0.220815
+optimized_prep_time = 0.865328
+optimized_parse_time = 11.266017
+optimized_generation_time = 0.008655
+optimized_exec_time = 0.231994
 optimized_generated_sql = """
 
 WITH 
@@ -180,7 +191,18 @@ FROM
     INNER JOIN memory.customer as customer_customers on customer_demographics_customer_demographics.\"CD_DEMO_SK\" = customer_customers.\"C_CURRENT_CDEMO_SK\"
 WHERE
     customer_customers.\"C_CUSTOMER_SK\" in (select hard.\"relevant_customers\" from hard where hard.\"relevant_customers\" is not null) and customer_demographics_customer_demographics.\"CD_GENDER\" is not null
-)
+
+GROUP BY 
+    customer_customers.\"C_CUSTOMER_SK\",
+    customer_demographics_customer_demographics.\"CD_CREDIT_RATING\",
+    customer_demographics_customer_demographics.\"CD_DEMO_SK\",
+    customer_demographics_customer_demographics.\"CD_DEP_COLLEGE_COUNT\",
+    customer_demographics_customer_demographics.\"CD_DEP_COUNT\",
+    customer_demographics_customer_demographics.\"CD_DEP_EMPLOYED_COUNT\",
+    customer_demographics_customer_demographics.\"CD_EDUCATION_STATUS\",
+    customer_demographics_customer_demographics.\"CD_GENDER\",
+    customer_demographics_customer_demographics.\"CD_MARITAL_STATUS\",
+    customer_demographics_customer_demographics.\"CD_PURCHASE_ESTIMATE\")
 SELECT
     sedate.\"base_customer_demographics_gender\" as \"base_customer_demographics_gender\",
     sedate.\"base_customer_demographics_marital_status\" as \"base_customer_demographics_marital_status\",
@@ -217,5 +239,5 @@ ORDER BY
     sedate.\"base_customer_demographics_employed_dependent_count\" asc,
     sedate.\"base_customer_demographics_college_dependent_count\" asc"""
 query_id = 10
-sql_comp_time = 0.266004
-total_time = 41.134199
+sql_comp_time = 0.276353
+total_time = 15.087324
