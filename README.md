@@ -1,27 +1,25 @@
 ## Simple Declarative Data Pipelines
 
-Combine the simplicity of Trilogy with the modern data stack such as DBT.
+Combine the simplicity of Trilogy with the tools of modern orchestration, such as DBT and Dagster.
 
 > [!TIP]
 > Pitch: don't worry about optimizing your ETL staging tables ever again - write your final tables and let TrilogyT handle the rest. 
-
 
 Compile your models to ETL scripts to run on demand. Rebuild, run, and test easily.
 
 Translates 'Persist' statements in Trilogy to scheduled ETL jobs. 
 
 Currently supported backends:
-- Native (optimize a PreQL model)
-- DBT
+- trilogy (optimize a Trilogy model, execute in memory)
+- dbt (optimize a Trilogy model, translate it to a DBT project, optionally execute with dbt CLI)
+- dagster (optimize a trilogy model, translate it to a dagster project, optionally  execute with dagster CLI)
 
 > [!WARNING]
 > This is an experimental library. The API is subject to change.
 
-
 ## Flags
 
 --optimize=X - Any CTE used at least X times in calculating final model outputs will be materialized for reuse.
-
 
 ## Install
 
@@ -29,19 +27,29 @@ Currently supported backends:
 
 ## How to Run
 
-preqlt <preql_path> <output_path> <backend> --run
+preqlt <backend> <preql_path> <output_path> <backend> --run
+
+## Trilogy
+
+Optimize and execute a trilogy script (or set of scripts)
+
+```bash
+trilogyt trilogy trilogy/scripts trilogy/build bigquery --run
+```
 
 
 ## DBT
 
-For dbt, the output_path should be the root of the dbt project, where the dbt_project.yml file exists.
+For dbt, the output_path should be the root of the dbt project, where the dbt_project.yml file exists. 
 
+An example command:
 
 ```bash
-trilogyt dbt/models/core/ ./dbt bigquery --run
+trilogyt dbt dbt/trilogy/ dbt bigquery --run
 ```
 
-Each source preql file will be built into a separate DBT sub folder with one model per persist statement.
+Each source .preql file will be built into a separate DBT sub folder with one model per persist statement. If optimization is enabled (default), there will 
+be optional "optimization" tables that can be imported and depended on.
 
 ```bash
 17:12:37  Running with dbt=1.7.4
@@ -70,9 +78,26 @@ customers_preql_preqlt_gen_model: success
 my_second_dbt_model: success
 ```
 
+> [!TIP]
+> Remember - you don't need to run the model with Trilogy. You can embed trilogy into a larger DBT project and use normal DBT tooling to manage the output. 
+
+## Dagster
+
+For Dagster, each source .preql file will be built as a model, with one entrypoint script that imports all resources.  If optimization is enabled (default), there will 
+be optional "optimization" tables that can be imported and depended on.
+
+An example command:
+
+```bash
+trilogyt dagster dbt/models/core/ ./dbt bigquery --run
+```
+
+> [!TIP]
+> Remember - you don't need to run the model with Trilogy. You can embed a portion of Trilogy generated models into a larger Dagster project. 
+
 
 ### From IO
 
 ```console
-Write-Output """constant x <-5; persist into static as static select x;""" | trilogyt <output_path> bigquery
+Write-Output native """constant x <-5; persist into static as static select x;""" | trilogyt <output_path> bigquery
 ```
