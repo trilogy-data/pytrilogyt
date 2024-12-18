@@ -29,7 +29,7 @@ class ModelInput:
     @property
     def import_path(self) -> str:
         base = self.path.stem.replace("/", ".")
-        return f"tests.integration.dagster.assets.optimization.{base}"
+        return base
 
 
 def generate_model_text(
