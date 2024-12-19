@@ -1,0 +1,1 @@
+Copy these into models\example for the "jaffle_project" DBT starter

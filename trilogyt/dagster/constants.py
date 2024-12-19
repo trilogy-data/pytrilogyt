@@ -1,3 +1,5 @@
 SUFFIX = "gen_model.py"
 
-ASSETET_NAME = "asset"
+ALL_JOB_NAME = 'all_job'
+
+ENTRYPOINT_FILE = 'entrypoint.py'
