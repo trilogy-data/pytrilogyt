@@ -42,7 +42,6 @@ def generate_model_text(model_name: str, model_type: str, model_sql: str) -> str
     )
 
 def handle_processed_query(query:ProcessedQueryPersist, possible_dependencies:dict[str, Datasource], executor:Executor)->QueryProcessingOutput:
-    logger.info(f"Starting on {_}")
     target = query.output_to.address.location
     eligible = {k: v for k, v in possible_dependencies.items() if k != target}
     for cte in query.ctes:
@@ -126,9 +125,9 @@ def generate_model(
     logger.info(Counter([type(c) for c in pqueries]))
     for _, query in enumerate(pqueries):
         if isinstance(query, ProcessedQueryPersist):
-            parsed = handle_processed_query(query, possible_dependencies, executor)
-            outputs[parsed.label] = parsed.sql
-            output_data[parsed.label] = parsed.datasource
+            parsed_query = handle_processed_query(query, possible_dependencies, executor)
+            outputs[parsed_query.label] = parsed_query.sql
+            output_data[parsed_query.label] = parsed_query.datasource
 
     logger.info("Writing queries to output files")
     existing = defaultdict(set)

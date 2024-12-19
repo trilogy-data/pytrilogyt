@@ -16,7 +16,7 @@ from trilogy.dialect.enums import Dialects
 from trilogyt.constants import logger
 from trilogyt.core import enrich_environment
 from trilogyt.dagster.config import DagsterConfig
-from trilogyt.dagster.constants import SUFFIX
+from trilogyt.dagster.constants import SUFFIX, ALL_JOB_NAME, ENTRYPOINT_FILE
 
 DEFAULT_DESCRIPTION: str = "No description provided"
 
@@ -67,16 +67,23 @@ def {{model_name}}({{dialect.name | lower}}: DuckDBResource) -> None:
 def generate_entry_file(
     models: list[ModelInput],
     dialect: Dialects,  # config: DagsterConfig
+    dagster_path: Path,
 ):
     if dialect != Dialects.DUCK_DB:
         raise NotImplementedError(f"Unsupported dialect {dialect}")
     template = Template(
         """
-from dagster import Definitions
+from dagster import Definitions, define_asset_job
 from dagster_duckdb import DuckDBResource
 {% for model in models %}
-from {{model.importpath}} import {{model.name}}
+from {{model.import_path}} import {{model.name}}{% endfor %}
+
+{{all_job_name}} = define_asset_job(name="{{all_job_name}}", selection=[{% for model in models %}{{model.name}}{% if not loop.last %}, {% endif %}{% endfor %}])
+
+{% for model in models %}
+run_{{model.name}} = define_asset_job(name="run_{{model.name}}", selection=[{{model.name}}])
 {% endfor %}
+
 
 defs = Definitions(
     assets=[{% for model in models %}{{model.name}}{% if not loop.last %}, {% endif %}{% endfor %}],
@@ -85,12 +92,17 @@ defs = Definitions(
             database="", connection_config={"enable_external_access": False}
         )
     },
+    jobs = [{{all_job_name}}{% for model in models %}, run_{{model.name}}{% endfor %}]
 )"""
     )
-    return template.render(
+    contents = template.render(
         models=models,
         dialect=Dialects,
+        all_job_name = ALL_JOB_NAME
     )
+
+    with open(dagster_path / ENTRYPOINT_FILE, "w") as f:
+        f.write(contents)
 
 
 def generate_model(
@@ -123,35 +135,32 @@ def generate_model(
         for d in executor.environment.datasources.values()
         if "." not in d.identifier
     }
-    logger.info(Counter([type(c) for c in statements]))
     parsed = [z for z in statements if isinstance(z, PersistStatement)]
 
     logger.info("generating queries")
-    logger.info(f"possible dependencies are {list(possible_dependencies.keys())}")
-    logger.info([str(c) for c in executor.environment.materialized_concepts])
+    logger.debug(f"possible dependencies are {list(possible_dependencies.keys())}")
 
     pqueries = executor.generator.generate_queries(executor.environment, parsed)
-    logger.info(f"got {len(pqueries)} queries")
-    logger.info(Counter([type(c) for c in pqueries]))
+    logger.info(f"got {len(pqueries)} queries: {Counter([type(c) for c in pqueries])}")
     dependency_map = defaultdict(list)
     for _, query in enumerate(pqueries):
         depends_on: list[ModelInput] = []
         if isinstance(query, ProcessedQueryPersist):
-            logger.info(f"Starting on {_}")
+            logger.debug(f"Starting on {_}")
             target = query.output_to.address.location
             eligible = {k: v for k, v in possible_dependencies.items() if k != target}
             for cte in query.ctes:
                 if isinstance(cte, UnionCTE):
                     continue
                 # handle inlined datasources
-                logger.info(f"checking cte {cte.name} with {eligible}")
+                logger.debug(f"checking cte {cte.name} with {eligible}")
                 if cte.base_name_override in eligible:
                     if any(x.name == cte.base_name_override for x in depends_on):
                         continue
                     depends_on.append(
                         ModelInput(
-                            cte.base_name_override,
-                            config.get_asset_path(cte.base_name_override),
+                            name=cte.base_name_override,
+                            path = config.get_asset_import_path(cte.base_name_override),
                         )
                     )
                 for source in cte.source.datasources:
@@ -164,8 +173,8 @@ def generate_model(
                             continue
                         depends_on.append(
                             ModelInput(
-                                source.identifier,
-                                config.get_asset_path(source.identifier),
+                                name=source.identifier,
+                                path=config.get_asset_import_path(source.identifier),
                             )
                         )
             # get our names to label the model
@@ -174,7 +183,7 @@ def generate_model(
             output_data[key] = query.datasource
             dependency_map[key] = depends_on
     logger.info("Writing queries to output files")
-    logger.info(dependency_map)
+    logger.debug(dependency_map)
 
     existing = defaultdict(set)
     should_exist = defaultdict(set)
@@ -185,7 +194,9 @@ def generate_model(
         logger.info(f"writing {key} to {output_path} ")
         parent = str(output_path.parent)
         output_path.parent.mkdir(parents=True, exist_ok=True)
+        logger.info(f'checking contents of {output_path.parent}')
         for subf in output_path.parent.iterdir():
+            logger.info(subf)
             if subf.is_file() and subf.name.endswith(SUFFIX):
                 existing[parent].add(subf)
         should_exist[parent].add(output_path)
@@ -200,19 +211,12 @@ def generate_model(
                 )
             )
         import_paths.append(output_path)
-    # config.config_path.parent.mkdir(parents=True, exist_ok=True)
-    # with open(config.config_path, "w") as f:
-    #     f.write(
-    #         generate_entry_file(
-    #             [ModelInput(name, path) for name, path in should_exist.items()],
-    #             dialect,
-    #             config,
-    #         )
-    #     )
-
     if clear_target_dir:
+        logger.info('clearing target directory')
         for key, paths in existing.items():
+            logger.info(key)
             for path in paths:
+                logger.info(path)
                 if path not in should_exist[key]:
                     logger.info("Removing old file: %s", path)
                     os.remove(path)

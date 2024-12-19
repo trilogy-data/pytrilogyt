@@ -6,10 +6,10 @@ from trilogy.dialect.enums import Dialects
 
 from trilogyt.constants import OPTIMIZATION_NAMESPACE, logger
 from trilogyt.dagster.config import DagsterConfig
-from trilogyt.dagster.generate import generate_model
+from trilogyt.dagster.generate import generate_model, generate_entry_file
 from trilogyt.dagster.run import run_path
 from trilogyt.scripts.native import OptimizationResult, native_wrapper
-
+from trilogy.utility import unique
 
 def dagster_handler(
     staging_path: PathlibPath,
@@ -110,7 +110,8 @@ def dagster_wrapper(
                 imports += dagster_handler(
                     new_path, preql, dagster_path, dialect, debug, children
                 )
-    # _ = generate_entry_file(imports, dialect)
+    imports = unique(imports, lambda x: x.name)
+    _ = generate_entry_file(imports, dialect, dagster_path)
     if run:
         print("Executing generated models")
         run_path(PathlibPath(dagster_path), imports=imports, dialect=dialect)
@@ -128,7 +129,7 @@ def dagster_string_command_wrapper(
         dialect=dialect,
         config=config,
     )
-    # _ = generate_entry_file(imports, dialect)
+    _ = generate_entry_file(imports, dialect, dagster_path)
     if run:
         print("Executing generated models")
         run_path(PathlibPath(dagster_path), imports=imports, dialect=dialect)
