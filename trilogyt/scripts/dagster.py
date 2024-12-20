@@ -6,7 +6,7 @@ from trilogy.dialect.enums import Dialects
 
 from trilogyt.constants import OPTIMIZATION_NAMESPACE, logger
 from trilogyt.dagster.config import DagsterConfig
-from trilogyt.dagster.generate import generate_model, generate_entry_file
+from trilogyt.dagster.generate import generate_model, generate_entry_file, ModelInput
 from trilogyt.dagster.run import run_path
 from trilogyt.scripts.native import OptimizationResult, native_wrapper
 from trilogy.utility import unique
@@ -18,7 +18,7 @@ def dagster_handler(
     dialect: Dialects,
     debug: bool,
     children: list[PathlibPath],
-):
+)->list[ModelInput]:
     logger.info("Optimizing trilogy files...")
 
     root = (
@@ -40,7 +40,7 @@ def dagster_handler(
         for item in opt.glob("*.sql"):
             logger.debug(f"Removing existing {item}")
             os.remove(item)
-    import_paths = []
+    models:list[ModelInput] = []
     for orig_file in children:
         file = staging_path / orig_file.name
         logger.info(
@@ -57,7 +57,7 @@ def dagster_handler(
                 opt_config = DagsterConfig(
                     root=PathlibPath(dagster_path), namespace=OPTIMIZATION_NAMESPACE
                 )
-                path = generate_model(
+                optimization_models = generate_model(
                     opt_file.read(),
                     optimization.path,
                     dialect=dialect,
@@ -65,18 +65,18 @@ def dagster_handler(
                     clear_target_dir=False,
                     # environment = env  # type: ignore
                 )
-                import_paths += path
+                models+=optimization_models
         config = DagsterConfig(root=PathlibPath(dagster_path), namespace=file.stem)
         with open(file) as f:
-            path = generate_model(
+            base_models = generate_model(
                 f.read(),
                 file,
                 dialect=dialect,
                 config=config,
-                # environment = env  # type: ignore
+                models=models
             )
-            import_paths += path
-    return import_paths
+            models += base_models
+    return models
 
 
 def dagster_wrapper(
@@ -87,7 +87,7 @@ def dagster_wrapper(
     run: bool,
     staging_path: PathlibPath | None = None,
 ):
-    imports: list[PathlibPath] = []
+    imports: list[ModelInput] = []
     if preql.is_file():
         config = DagsterConfig(root=dagster_path, namespace=preql.stem)
         with open(preql) as f:
@@ -111,6 +111,8 @@ def dagster_wrapper(
                     new_path, preql, dagster_path, dialect, debug, children
                 )
     imports = unique(imports, lambda x: x.name)
+    for k in imports:
+        logger.info(k)
     _ = generate_entry_file(imports, dialect, dagster_path)
     if run:
         print("Executing generated models")
