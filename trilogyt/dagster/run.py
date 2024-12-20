@@ -1,11 +1,13 @@
 import importlib.util
 import os
+import subprocess
 from pathlib import Path
 from typing import Any
 
 from trilogy import Dialects
 
 from trilogyt.constants import logger
+from trilogyt.dagster.constants import ALL_JOB_NAME, ENTRYPOINT_FILE
 
 
 def import_asset_from_file(filepath: Path) -> Any:
@@ -34,7 +36,7 @@ def import_asset_from_file(filepath: Path) -> Any:
     return getattr(module, target_object)
 
 
-def run_path(path: Path, imports: list[Path], dialect: Dialects):
+def run_in_process(path: Path, imports: list[Path], dialect: Dialects):
     from dagster import materialize
 
     selection = []
@@ -59,3 +61,42 @@ def run_path(path: Path, imports: list[Path], dialect: Dialects):
 
     result = materialize(assets=selection, resources=resources, selection=selection)
     print(f"Job result: {result}")
+
+
+def run_dagster_job(path: Path):
+    """
+    Run a Dagster job using the Dagster CLI.
+
+    Args:
+        job_name (str): The name of the Dagster job to execute.
+        repository_yaml (str): Path to the `repository.yaml` configuration file.
+        workspace_file (str, optional): Path to the Dagster workspace file, if required.
+
+    """
+    # config_yaml = path / "repository.yaml"
+    # Construct the CLI command
+    command = [
+        "dagster",
+        "job",
+        "execute",
+        "-j",
+        ALL_JOB_NAME,
+        # "--config",
+        # str(config_yaml),
+        "-f",
+        ENTRYPOINT_FILE,
+    ]
+
+    try:
+        # Run the command
+        result = subprocess.check_output(command, cwd=str(path))
+        print("Dagster executed successfully.\n")
+        print("Output:")
+        print(result)
+
+    except subprocess.CalledProcessError as e:
+        raise ValueError(e.output)
+
+
+def run_path(path: Path, dialect: Dialects):
+    run_dagster_job(path)

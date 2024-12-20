@@ -1,5 +1,6 @@
 import os
 from collections import Counter, defaultdict
+from dataclasses import dataclass
 from pathlib import Path
 
 from jinja2 import Template
@@ -22,6 +23,13 @@ from trilogyt.dbt.config import DBTConfig
 DEFAULT_DESCRIPTION: str = "No description provided"
 
 
+@dataclass
+class QueryProcessingOutput:
+    label: str
+    sql: str
+    datasource: Datasource
+
+
 def generate_model_text(model_name: str, model_type: str, model_sql: str) -> str:
     template = Template(
         """
@@ -32,6 +40,52 @@ def generate_model_text(model_name: str, model_type: str, model_sql: str) -> str
     )
     return template.render(
         model_name=model_name, model_type=model_type, model_sql=model_sql
+    )
+
+
+def handle_processed_query(
+    query: ProcessedQueryPersist,
+    possible_dependencies: dict[str, Datasource],
+    executor: Executor,
+) -> QueryProcessingOutput:
+    target = query.output_to.address.location
+    eligible = {k: v for k, v in possible_dependencies.items() if k != target}
+    for cte in query.ctes:
+        # handle inlined datasources
+        logger.info(f"checking cte {cte.name} with {eligible}")
+        if isinstance(cte, UnionCTE):
+            continue
+        if cte.base_name_override in eligible:
+            cte.base_name_override = (
+                f"{{{{ ref('{cte.base_name_override}_gen_model') }}}}"
+            )
+        for source in cte.source.datasources:
+            logger.info(source.identifier)
+            if not isinstance(source, Datasource):
+                continue
+
+            if source.identifier in eligible:
+                if isinstance(source.address, Address):
+                    source.address.location = (
+                        f"{{{{ ref('{source.identifier}_gen_model') }}}}"
+                    )
+                elif isinstance(source.address, str):
+                    source.address = f"{{{{ ref('{source.identifier}_gen_model') }}}}"
+    base = ProcessedQuery(
+        output_columns=query.output_columns,
+        ctes=query.ctes,
+        base=query.base,
+        joins=query.joins,
+        grain=query.grain,
+        hidden_columns=query.hidden_columns,
+        limit=query.limit,
+        where_clause=query.where_clause,
+        order_by=query.order_by,
+    )
+    return QueryProcessingOutput(
+        label=query.output_to.address.location.split(".")[-1],
+        sql=executor.generator.compile_statement(base),
+        datasource=query.datasource,
     )
 
 
@@ -75,52 +129,13 @@ def generate_model(
     logger.info(Counter([type(c) for c in pqueries]))
     for _, query in enumerate(pqueries):
         if isinstance(query, ProcessedQueryPersist):
-            logger.info(f"Starting on {_}")
-            target = query.output_to.address.location
-            eligible = {k: v for k, v in possible_dependencies.items() if k != target}
-            for cte in query.ctes:
-                # handle inlined datasources
-                logger.info(f"checking cte {cte.name} with {eligible}")
-                if isinstance(cte, UnionCTE):
-                    continue
-                if cte.base_name_override in eligible:
-                    cte.base_name_override = (
-                        f"{{{{ ref('{cte.base_name_override}_gen_model') }}}}"
-                    )
-                for source in cte.source.datasources:
-                    logger.info(source.identifier)
-                    if not isinstance(source, Datasource):
-                        continue
+            parsed_query = handle_processed_query(
+                query, possible_dependencies, executor
+            )
+            outputs[parsed_query.label] = parsed_query.sql
+            output_data[parsed_query.label] = parsed_query.datasource
 
-                    if source.identifier in eligible:
-                        if isinstance(source.address, Address):
-                            source.address.location = (
-                                f"{{{{ ref('{source.identifier}_gen_model') }}}}"
-                            )
-                        elif isinstance(source.address, str):
-                            source.address = (
-                                f"{{{{ ref('{source.identifier}_gen_model') }}}}"
-                            )
-            base = ProcessedQuery(
-                output_columns=query.output_columns,
-                ctes=query.ctes,
-                base=query.base,
-                joins=query.joins,
-                grain=query.grain,
-                hidden_columns=query.hidden_columns,
-                limit=query.limit,
-                where_clause=query.where_clause,
-                order_by=query.order_by,
-            )
-            # get our names to label the model
-            outputs[query.output_to.address.location.split(".")[-1]] = (
-                executor.generator.compile_statement(base)
-            )
-            output_data[query.output_to.address.location.split(".")[-1]] = (
-                query.datasource
-            )
     logger.info("Writing queries to output files")
-
     existing = defaultdict(set)
     should_exist = defaultdict(set)
     for key, value in outputs.items():

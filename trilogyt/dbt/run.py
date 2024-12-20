@@ -1,9 +1,9 @@
 from pathlib import Path
 
-from dbt.cli.main import RunExecutionResult, dbtRunner, dbtRunnerResult
-
 
 def run_path(path: Path):
+    from dbt.cli.main import RunExecutionResult, dbtRunner, dbtRunnerResult
+
     # initialize
     dbt = dbtRunner()
 

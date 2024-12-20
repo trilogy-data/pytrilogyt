@@ -13,6 +13,18 @@ class DagsterConfig(BaseModel):
     dagster_asset_path: str = "assets"
     namespace: Optional[str] = None
 
+    def get_asset_import_path(
+        self,
+        key: str,
+    ) -> Path:
+        if self.namespace:
+            output_path = (
+                Path(self.dagster_asset_path) / self.namespace / f"{key}_{SUFFIX}"
+            )
+        else:
+            output_path = Path(self.dagster_asset_path) / f"{key}_{SUFFIX}"
+        return output_path
+
     def get_asset_path(self, key: str) -> Path:
         if self.namespace:
             output_path = (
@@ -25,5 +37,5 @@ class DagsterConfig(BaseModel):
     @property
     def config_path(self) -> Path:
         if self.namespace:
-            return self.root / self.dagster_asset_path / self.namespace / "schema.yml"
-        return self.root / self.dagster_asset_path / "schema.yml"
+            return self.root / self.dagster_asset_path / self.namespace / "dagster.yaml"
+        return self.root / self.dagster_asset_path / "dagster.yaml"

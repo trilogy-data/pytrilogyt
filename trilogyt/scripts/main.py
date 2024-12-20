@@ -31,60 +31,55 @@ def main():
 
 @main.command()
 @argument("preql", type=Path())
-@argument("output_path", type=Path(exists=True))
+@argument("output_path", type=Path(exists=False))
 # @argument("write_path", type=Path(exists=True))
 @argument("dialect", type=str)
 @option("--run", is_flag=True, type=bool, default=False)
 @option("--debug", type=bool, default=False)
 def dbt(preql: str | Path, output_path: Path, dialect: str, debug: bool, run: bool):
-
+    output = PathlibPath(str(output_path))
+    if not output.exists():
+        output.mkdir()
     edialect = Dialects(dialect)
     preqlt: PathlibPath = PathlibPath(str(preql))
     if preqlt.exists():
-        return dbt_wrapper(preqlt, PathlibPath(str(output_path)), edialect, debug, run)
-    return dbt_string_command_wrapper(
-        str(preql), PathlibPath(str(output_path)), edialect, debug, run
-    )
+        return dbt_wrapper(preqlt, output, edialect, debug, run)
+    return dbt_string_command_wrapper(str(preql), output, edialect, debug, run)
 
 
 @main.command()
 @argument("preql", type=Path())
-@argument("output_path", type=Path(exists=True))
+@argument("output_path", type=Path(exists=False))
 # @argument("write_path", type=Path(exists=True))
 @argument("dialect", type=str)
 @option("--run", is_flag=True, type=bool, default=False)
 @option("--debug", type=bool, default=False)
 def trilogy(preql: str | Path, output_path: Path, dialect: str, debug: bool, run: bool):
-
+    output = PathlibPath(str(output_path))
+    if not output.exists():
+        output.mkdir()
     edialect = Dialects(dialect)
     preqlt: PathlibPath = PathlibPath(str(preql))
     if preqlt.exists():
-        return native_wrapper(
-            preqlt, PathlibPath(str(output_path)), edialect, debug, run
-        )
-    return native_string_command_wrapper(
-        str(preql), PathlibPath(str(output_path)), edialect, debug, run
-    )
+        return native_wrapper(preqlt, output, edialect, debug, run)
+    return native_string_command_wrapper(str(preql), output, edialect, debug, run)
 
 
 @main.command()
 @argument("preql", type=Path())
 @argument("output_path", type=Path(exists=True))
-# @argument("write_path", type=Path(exists=True))
 @argument("dialect", type=str)
 @option("--run", is_flag=True, type=bool, default=False)
 @option("--debug", type=bool, default=False)
 def dagster(preql: str | Path, output_path: Path, dialect: str, debug: bool, run: bool):
-
+    output = PathlibPath(str(output_path))
+    if not output.exists():
+        output.mkdir()
     edialect = Dialects(dialect)
     preqlt: PathlibPath = PathlibPath(str(preql))
     if preqlt.exists():
-        return dagster_wrapper(
-            preqlt, PathlibPath(str(output_path)), edialect, debug, run
-        )
-    return dagster_string_command_wrapper(
-        str(preql), PathlibPath(str(output_path)), edialect, debug, run
-    )
+        return dagster_wrapper(preqlt, output, edialect, debug, run)
+    return dagster_string_command_wrapper(str(preql), output, edialect, debug, run)
 
 
 if __name__ == "__main__":

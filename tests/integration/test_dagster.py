@@ -5,16 +5,12 @@ import pytest
 from click.testing import CliRunner
 from trilogy import Dialects
 
-# core\processing\concept_strategies_v3
-from trilogy.hooks.query_debugger import DebuggingHook
-
 from trilogyt.scripts.main import dagster_wrapper, main
 
 root = Path(__file__)
 
 
 def test_full_model_build_dagster(logger):
-    DebuggingHook()
     fake = root.parent / "dagster" / "assets" / "customer_two" / "fake_gen_model.py"
     staging_path = root.parent / "preql_dagster_staging/"
     os.makedirs(fake.parent, exist_ok=True)

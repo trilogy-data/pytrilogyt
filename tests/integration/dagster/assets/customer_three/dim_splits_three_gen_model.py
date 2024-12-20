@@ -1,12 +1,17 @@
 from dagster import asset
 from dagster_duckdb import DuckDBResource
 
-from tests.integration.dagster.assets.optimization.ds2a1b9ef4ddfd30b8a720fd5891233a0df824a60bcbb6553d4acd76e27d402670_gen_model import (
+from assets.optimization.ds2a1b9ef4ddfd30b8a720fd5891233a0df824a60bcbb6553d4acd76e27d402670_gen_model import (
     ds2a1b9ef4ddfd30b8a720fd5891233a0df824a60bcbb6553d4acd76e27d402670,
 )
 
 
-@asset(deps=[ds2a1b9ef4ddfd30b8a720fd5891233a0df824a60bcbb6553d4acd76e27d402670])
+@asset(
+    deps=[
+        ds2a1b9ef4ddfd30b8a720fd5891233a0df824a60bcbb6553d4acd76e27d402670,
+        ds2a1b9ef4ddfd30b8a720fd5891233a0df824a60bcbb6553d4acd76e27d402670,
+    ]
+)
 def dim_splits_three(duck_db: DuckDBResource) -> None:
     with duck_db.get_connection() as conn:
         conn.execute(

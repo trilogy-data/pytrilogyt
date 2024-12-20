@@ -66,8 +66,7 @@ def generate_model(
 
     outputs: list[str] = (
         [
-            # f"# import trilogyt concepts \nimport {TRILOGY_NAMESPACE};",
-            f"# import shared CTE persists into local namespace \nimport {optimization.datasource_path.stem};"
+            f"# this import is added by optimization \nimport {optimization.datasource_path.stem};"
         ]
         if optimization
         else []
@@ -96,7 +95,8 @@ def generate_model(
     write_path.parent.mkdir(parents=True, exist_ok=True)
     should_exist.add(write_path)
     with open(write_path, "w") as f:
+        relative_path = write_path.relative_to(output_path)
         f.write(
-            f"# Generated from preql source: {preql_path}\n# Do not edit manually\n"
+            f"# Generated from .preql source: {relative_path}\n# Do not edit manually; direct changes to this file will be overwritten\n"
         )
         f.write("\n".join(outputs))
