@@ -11,7 +11,7 @@ from trilogyt.dbt.generate import generate_model as generate_dbt_model
 # likely requires trilogy feature request
 CONFIG.rendering.parameters = False
 
-__version__ = "0.0.13"
+__version__ = "0.0.14"
 
 __all__ = [
     "enrich_environment",
