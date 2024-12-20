@@ -50,7 +50,7 @@ from {{dep.python_import}} import {{dep.name}}
 def {{model_name}}({{dialect.name | lower}}: DuckDBResource) -> None:
     with {{dialect.name | lower}}.get_connection() as conn:
         conn.execute(
-           """ {{model_sql}} """
+           ''' {{model_sql}} '''
         )
     """
     )
