@@ -3,13 +3,14 @@ import tempfile
 from pathlib import Path as PathlibPath
 
 from trilogy.dialect.enums import Dialects
+from trilogy.utility import unique
 
 from trilogyt.constants import OPTIMIZATION_NAMESPACE, logger
 from trilogyt.dagster.config import DagsterConfig
-from trilogyt.dagster.generate import generate_model, generate_entry_file, ModelInput
+from trilogyt.dagster.generate import ModelInput, generate_entry_file, generate_model
 from trilogyt.dagster.run import run_path
 from trilogyt.scripts.native import OptimizationResult, native_wrapper
-from trilogy.utility import unique
+
 
 def dagster_handler(
     staging_path: PathlibPath,
@@ -18,7 +19,7 @@ def dagster_handler(
     dialect: Dialects,
     debug: bool,
     children: list[PathlibPath],
-)->list[ModelInput]:
+) -> list[ModelInput]:
     logger.info("Optimizing trilogy files...")
 
     root = (
@@ -40,7 +41,7 @@ def dagster_handler(
         for item in opt.glob("*.sql"):
             logger.debug(f"Removing existing {item}")
             os.remove(item)
-    models:list[ModelInput] = []
+    models: list[ModelInput] = []
     for orig_file in children:
         file = staging_path / orig_file.name
         logger.info(
@@ -65,15 +66,11 @@ def dagster_handler(
                     clear_target_dir=False,
                     # environment = env  # type: ignore
                 )
-                models+=optimization_models
+                models += optimization_models
         config = DagsterConfig(root=PathlibPath(dagster_path), namespace=file.stem)
         with open(file) as f:
             base_models = generate_model(
-                f.read(),
-                file,
-                dialect=dialect,
-                config=config,
-                models=models
+                f.read(), file, dialect=dialect, config=config, models=models
             )
             models += base_models
     return models
@@ -116,7 +113,7 @@ def dagster_wrapper(
     _ = generate_entry_file(imports, dialect, dagster_path)
     if run:
         print("Executing generated models")
-        run_path(PathlibPath(dagster_path), imports=imports, dialect=dialect)
+        run_path(PathlibPath(dagster_path), dialect=dialect)
     return 0
 
 
@@ -134,5 +131,5 @@ def dagster_string_command_wrapper(
     _ = generate_entry_file(imports, dialect, dagster_path)
     if run:
         print("Executing generated models")
-        run_path(PathlibPath(dagster_path), imports=imports, dialect=dialect)
+        run_path(PathlibPath(dagster_path), dialect=dialect)
     return 0

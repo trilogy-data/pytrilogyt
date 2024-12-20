@@ -1,8 +1,7 @@
-from logging import INFO
-
 from pytest import fixture
 from trilogy import Dialects, Environment, parse
 from trilogy.core.env_processor import generate_graph
+
 
 @fixture(scope="session")
 def test_environment():
@@ -87,9 +86,7 @@ where
 
 @fixture(scope="session")
 def test_executor(test_environment: Environment):
-    yield Dialects.DUCK_DB.default_executor(
-        environment=test_environment, hooks=[]
-    )
+    yield Dialects.DUCK_DB.default_executor(environment=test_environment, hooks=[])
 
 
 @fixture(scope="session")

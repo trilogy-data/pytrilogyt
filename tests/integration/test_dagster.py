@@ -5,7 +5,6 @@ import pytest
 from click.testing import CliRunner
 from trilogy import Dialects
 
-
 from trilogyt.scripts.main import dagster_wrapper, main
 
 root = Path(__file__)

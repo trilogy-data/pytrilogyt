@@ -1,5 +1,5 @@
 SUFFIX = "gen_model.py"
 
-ALL_JOB_NAME = 'all_job'
+ALL_JOB_NAME = "all_job"
 
-ENTRYPOINT_FILE = 'entrypoint.py'
+ENTRYPOINT_FILE = "entrypoint.py"

@@ -1,9 +1,10 @@
-from logging import INFO, ERROR
+from logging import ERROR, INFO
 
 from pytest import fixture
+from trilogy.constants import logger as trilogy_logger
 
 from trilogyt.constants import logger as root_logger
-from trilogy.constants import logger as trilogy_logger
+
 
 @fixture(scope="session")
 def logger():

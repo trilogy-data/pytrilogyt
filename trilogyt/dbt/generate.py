@@ -1,7 +1,7 @@
 import os
 from collections import Counter, defaultdict
-from pathlib import Path
 from dataclasses import dataclass
+from pathlib import Path
 
 from jinja2 import Template
 from trilogy import Environment, Executor
@@ -25,9 +25,10 @@ DEFAULT_DESCRIPTION: str = "No description provided"
 
 @dataclass
 class QueryProcessingOutput:
-    label:str
-    sql:str
-    datasource:Datasource
+    label: str
+    sql: str
+    datasource: Datasource
+
 
 def generate_model_text(model_name: str, model_type: str, model_sql: str) -> str:
     template = Template(
@@ -41,7 +42,12 @@ def generate_model_text(model_name: str, model_type: str, model_sql: str) -> str
         model_name=model_name, model_type=model_type, model_sql=model_sql
     )
 
-def handle_processed_query(query:ProcessedQueryPersist, possible_dependencies:dict[str, Datasource], executor:Executor)->QueryProcessingOutput:
+
+def handle_processed_query(
+    query: ProcessedQueryPersist,
+    possible_dependencies: dict[str, Datasource],
+    executor: Executor,
+) -> QueryProcessingOutput:
     target = query.output_to.address.location
     eligible = {k: v for k, v in possible_dependencies.items() if k != target}
     for cte in query.ctes:
@@ -64,9 +70,7 @@ def handle_processed_query(query:ProcessedQueryPersist, possible_dependencies:di
                         f"{{{{ ref('{source.identifier}_gen_model') }}}}"
                     )
                 elif isinstance(source.address, str):
-                    source.address = (
-                        f"{{{{ ref('{source.identifier}_gen_model') }}}}"
-                    )
+                    source.address = f"{{{{ ref('{source.identifier}_gen_model') }}}}"
     base = ProcessedQuery(
         output_columns=query.output_columns,
         ctes=query.ctes,
@@ -125,7 +129,9 @@ def generate_model(
     logger.info(Counter([type(c) for c in pqueries]))
     for _, query in enumerate(pqueries):
         if isinstance(query, ProcessedQueryPersist):
-            parsed_query = handle_processed_query(query, possible_dependencies, executor)
+            parsed_query = handle_processed_query(
+                query, possible_dependencies, executor
+            )
             outputs[parsed_query.label] = parsed_query.sql
             output_data[parsed_query.label] = parsed_query.datasource
 

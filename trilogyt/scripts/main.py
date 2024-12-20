@@ -44,9 +44,7 @@ def dbt(preql: str | Path, output_path: Path, dialect: str, debug: bool, run: bo
     preqlt: PathlibPath = PathlibPath(str(preql))
     if preqlt.exists():
         return dbt_wrapper(preqlt, output, edialect, debug, run)
-    return dbt_string_command_wrapper(
-        str(preql), output, edialect, debug, run
-    )
+    return dbt_string_command_wrapper(str(preql), output, edialect, debug, run)
 
 
 @main.command()
@@ -63,12 +61,8 @@ def trilogy(preql: str | Path, output_path: Path, dialect: str, debug: bool, run
     edialect = Dialects(dialect)
     preqlt: PathlibPath = PathlibPath(str(preql))
     if preqlt.exists():
-        return native_wrapper(
-            preqlt, output, edialect, debug, run
-        )
-    return native_string_command_wrapper(
-        str(preql), output, edialect, debug, run
-    )
+        return native_wrapper(preqlt, output, edialect, debug, run)
+    return native_string_command_wrapper(str(preql), output, edialect, debug, run)
 
 
 @main.command()
@@ -84,12 +78,8 @@ def dagster(preql: str | Path, output_path: Path, dialect: str, debug: bool, run
     edialect = Dialects(dialect)
     preqlt: PathlibPath = PathlibPath(str(preql))
     if preqlt.exists():
-        return dagster_wrapper(
-            preqlt, output, edialect, debug, run
-        )
-    return dagster_string_command_wrapper(
-        str(preql), output, edialect, debug, run
-    )
+        return dagster_wrapper(preqlt, output, edialect, debug, run)
+    return dagster_string_command_wrapper(str(preql), output, edialect, debug, run)
 
 
 if __name__ == "__main__":

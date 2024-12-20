@@ -1,5 +1,6 @@
 import importlib.util
 import os
+import subprocess
 from pathlib import Path
 from typing import Any
 
@@ -7,8 +8,6 @@ from trilogy import Dialects
 
 from trilogyt.constants import logger
 from trilogyt.dagster.constants import ALL_JOB_NAME, ENTRYPOINT_FILE
-import subprocess
-import sys
 
 
 def import_asset_from_file(filepath: Path) -> Any:
@@ -74,7 +73,7 @@ def run_dagster_job(path: Path):
         workspace_file (str, optional): Path to the Dagster workspace file, if required.
 
     """
-    config_yaml = path / "repository.yaml"
+    # config_yaml = path / "repository.yaml"
     # Construct the CLI command
     command = [
         "dagster",
@@ -90,8 +89,8 @@ def run_dagster_job(path: Path):
 
     try:
         # Run the command
-        result = subprocess.check_output(command, cwd = str(path))
-        print(f"Dagster executed successfully.\n")
+        result = subprocess.check_output(command, cwd=str(path))
+        print("Dagster executed successfully.\n")
         print("Output:")
         print(result)
 
@@ -99,5 +98,5 @@ def run_dagster_job(path: Path):
         raise ValueError(e.output)
 
 
-def run_path(path: Path, imports: list[Path], dialect: Dialects):
+def run_path(path: Path, dialect: Dialects):
     run_dagster_job(path)
