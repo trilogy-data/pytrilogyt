@@ -40,8 +40,7 @@ def generate_model_text(
     dependencies: list[ModelInput],
 ) -> str:
     template = Template(
-        """
-from dagster_duckdb import DuckDBResource
+        """from dagster_duckdb import DuckDBResource
 from dagster import asset
 {% for dep in deps %}
 from {{dep.python_import}} import {{dep.name}}
@@ -51,7 +50,7 @@ from {{dep.python_import}} import {{dep.name}}
 def {{model_name}}({{dialect.name | lower}}: DuckDBResource) -> None:
     with {{dialect.name | lower}}.get_connection() as conn:
         conn.execute(
-           ''' {{model_sql}} '''
+           """ {{model_sql}} """
         )
     """
     )
