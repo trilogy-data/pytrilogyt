@@ -12,6 +12,7 @@ from trilogy.core.models import (
     ProcessedQueryPersist,
     UnionCTE,
 )
+from trilogy.utility import unique
 from trilogy.dialect.enums import Dialects
 
 from trilogyt.constants import logger
@@ -179,6 +180,7 @@ def generate_model(
                         matched = [x for x in models if x.name == source.identifier]
                         if matched:
                             depends_on.append(matched.pop())
+            depends_on = unique(depends_on, lambda x: x.name)
             # get our names to label the model
             key = query.output_to.address.location.split(".")[-1]
             outputs[key] = executor.generator.compile_statement(query)
