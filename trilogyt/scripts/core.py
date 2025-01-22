@@ -105,7 +105,7 @@ def optimize_multiple(
         concept_modifying_statements = unique(
             [x for x in v.statements if isinstance(x, HasUUID)], "uuid"
         )
-        final = []
+        final: list[HasUUID] = []
         # we should transform a persist into a select for optimization purposes
         for x in concept_modifying_statements:
             if isinstance(x, PersistStatement):
