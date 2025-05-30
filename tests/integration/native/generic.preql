@@ -1,9 +1,9 @@
-# Generated from preql source: c:\Users\ethan\coding_projects\pytrilogyt\tests\integration\preql\generic.preql
-# Do not edit manually
+# Generated from .preql source: generic.preql
+# Do not edit manually; direct changes to this file will be overwritten
 
 
 key scalar int;
-property <scalar>.int_array list<int>;
+property scalar.int_array list<int>;
 key split <- unnest(int_array);
 
 

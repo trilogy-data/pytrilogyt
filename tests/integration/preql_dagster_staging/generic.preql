@@ -3,7 +3,7 @@
 
 
 key scalar int;
-property <scalar>.int_array list<int>;
+property scalar.int_array list<int>;
 key split <- unnest(int_array);
 
 

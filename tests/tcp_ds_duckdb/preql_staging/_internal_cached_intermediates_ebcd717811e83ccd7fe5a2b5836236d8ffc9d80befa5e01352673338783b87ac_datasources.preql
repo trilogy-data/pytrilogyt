@@ -1,0 +1,38 @@
+import _internal_cached_intermediates_ebcd717811e83ccd7fe5a2b5836236d8ffc9d80befa5e01352673338783b87ac;
+
+datasource dsa09b549514982e2f5ebaf23a4352f002a4259c548b06c2eac32969c3a097f293_filtered_on_state_year (
+    returns_customer_text_id: ~returns.customer.text_id,
+    returns_item_id: ~returns.item.id,
+    returns_return_amount: ~returns.return_amount,
+    returns_store_id: ~returns.store.id,
+    returns_store_sales_ticket_number: ~returns.store_sales.ticket_number
+    )
+
+complete where returns.store.state = 'TN' and returns.return_date.year = 2000
+address dsa09b549514982e2f5ebaf23a4352f002a4259c548b06c2eac32969c3a097f293_filtered_on_state_year;
+
+datasource ds686a5f17ccf83dbc51af0bf382c9b726c3a62dfe587eb7774c1be5656b46818d (
+    total_returns: total_returns,
+    returns_store_id: returns.store.id,
+    returns_customer_text_id: returns.customer.text_id
+    )
+
+address ds686a5f17ccf83dbc51af0bf382c9b726c3a62dfe587eb7774c1be5656b46818d;
+
+datasource ds54404a332ea8db7d5077c55e8dfb983a19e81172a43fe2d05f56910f96fbd12f (
+    avg_store_returns: avg_store_returns,
+    returns_store_id: returns.store.id
+    )
+
+address ds54404a332ea8db7d5077c55e8dfb983a19e81172a43fe2d05f56910f96fbd12f;
+
+datasource dsbc912b25ff1ee9ff54c1121741e6d5b7272334fa87fbe928ab53906b3dfaeb77_filtered_on_total_returns_avg_store_returns (
+    returns_customer_text_id: ~returns.customer.text_id,
+    total_returns: ~total_returns,
+    returns_store_id: ~returns.store.id,
+    avg_store_returns: ~avg_store_returns
+    )
+
+complete where total_returns > (1.2 * avg_store_returns)
+address dsbc912b25ff1ee9ff54c1121741e6d5b7272334fa87fbe928ab53906b3dfaeb77_filtered_on_total_returns_avg_store_returns;
+

@@ -3,7 +3,7 @@
 import store_sales as store_sales;
 import customer as customer;
 
-const zips_pre <- unnest(['24128',
+auto zips_pre <- unnest(['24128',
                                      '76232',
                                      '65084',
                                      '87816',

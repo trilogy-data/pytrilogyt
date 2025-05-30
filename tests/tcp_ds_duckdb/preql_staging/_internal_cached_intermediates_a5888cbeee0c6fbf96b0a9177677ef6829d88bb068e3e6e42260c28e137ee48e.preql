@@ -14,6 +14,6 @@ SELECT
     sum(cs.net_profit) -> total_net_profit,
 ORDER BY
     order_count desc
-
-LIMIT 100;
+LIMIT 100
+;
 

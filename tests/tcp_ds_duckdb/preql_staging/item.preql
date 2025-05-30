@@ -1,20 +1,20 @@
-# Generated from preql source: c:\Users\ethan\coding_projects\pytrilogyt\tests\tcp_ds_duckdb\item.preql
-# Do not edit manually
+# Generated from .preql source: item.preql
+# Do not edit manually; direct changes to this file will be overwritten
 
 
 key id int;
-property <id>.name string;
-property <id>.brand_id int;
-property <id>.brand_name string;
-property <id>.manufacturer_id int;
-property <id>.category string;
-property <id>.current_price float;
-property <id>.class string;
-property <id>.desc string;
-property <id>.color string;
-property <id>.manager_id int;
-property <id>.size string;
-property <id>.units string;
+property id.name string;
+property id.brand_id int;
+property id.brand_name string;
+property id.manufacturer_id int;
+property id.category string;
+property id.current_price float;
+property id.class string;
+property id.desc string;
+property id.color string;
+property id.manager_id int;
+property id.size string;
+property id.units string;
 
 
 datasource items (

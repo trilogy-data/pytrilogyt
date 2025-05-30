@@ -1,10 +1,10 @@
-# Generated from preql source: c:\Users\ethan\coding_projects\pytrilogyt\tests\tcp_ds_duckdb\time.preql
-# Do not edit manually
+# Generated from .preql source: time.preql
+# Do not edit manually; direct changes to this file will be overwritten
 
 
 key id int;
-property <id>.time_string string;
-property <id>.time int;
+property id.time_string string;
+property id.time int;
 
 
 datasource date (

@@ -1,9 +1,9 @@
-# Generated from preql source: c:\Users\ethan\coding_projects\pytrilogyt\tests\tcp_ds_duckdb\call_center.preql
-# Do not edit manually
+# Generated from .preql source: call_center.preql
+# Do not edit manually; direct changes to this file will be overwritten
 
 
 key id int;
-property <id>.county string;
+property id.county string;
 
 
 datasource call_center (

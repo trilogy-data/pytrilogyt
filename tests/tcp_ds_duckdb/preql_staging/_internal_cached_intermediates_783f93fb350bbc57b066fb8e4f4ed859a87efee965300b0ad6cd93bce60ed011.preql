@@ -9,6 +9,6 @@ SELECT
     sum(catalog_sales.sales_price) -> sales,
 ORDER BY
     catalog_sales.bill_customer.zip asc nulls first
-
-LIMIT 100;
+LIMIT 100
+;
 

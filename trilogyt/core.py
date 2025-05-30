@@ -3,7 +3,7 @@ from hashlib import sha256
 from trilogy.core.enums import Purpose
 from trilogy.core.env_processor import generate_graph
 from trilogy.core.functions import CurrentDatetime
-from trilogy.core.models import Concept, DataType, Environment
+from trilogy.authoring import Concept, DataType, Environment
 
 from trilogyt.constants import TRILOGY_NAMESPACE
 from trilogyt.enums import PreqltMetrics

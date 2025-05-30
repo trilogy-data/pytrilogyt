@@ -1,11 +1,11 @@
-# Generated from preql source: c:\Users\ethan\coding_projects\pytrilogyt\tests\tcp_ds_duckdb\warehouse.preql
-# Do not edit manually
+# Generated from .preql source: warehouse.preql
+# Do not edit manually; direct changes to this file will be overwritten
 
 
 key id int;
-property <id>.string_id string;
-property <id>.name string;
-property <id>.square_feet int;
+property id.string_id string;
+property id.name string;
+property id.square_feet int;
 
 
 datasource warehouse (

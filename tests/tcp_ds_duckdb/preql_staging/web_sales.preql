@@ -1,5 +1,5 @@
-# Generated from preql source: c:\Users\ethan\coding_projects\pytrilogyt\tests\tcp_ds_duckdb\web_sales.preql
-# Do not edit manually
+# Generated from .preql source: web_sales.preql
+# Do not edit manually; direct changes to this file will be overwritten
 
 
 import item as item;
@@ -9,9 +9,9 @@ import customer as customer;
 
 
 key order_number int;
-property <order_number,item.id>.quantity int;
-property <order_number,item.id>.sales_price float;
-property <order_number,item.id>.external_sales_price float;
+property <item.id,order_number>.quantity int;
+property <item.id,order_number>.sales_price float;
+property <item.id,order_number>.external_sales_price float;
 
 
 datasource web_sales (

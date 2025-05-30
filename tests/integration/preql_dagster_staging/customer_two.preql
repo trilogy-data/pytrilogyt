@@ -10,4 +10,5 @@ import generic as generic;
 PERSIST dim_splits_new INTO dim_splits_new FROM SELECT
     generic.split,
     generic.scalar,
-    _trilogyt._created_at,;
+    _trilogyt._created_at,
+;

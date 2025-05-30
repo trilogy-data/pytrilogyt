@@ -1,18 +1,18 @@
-# Generated from preql source: c:\Users\ethan\coding_projects\pytrilogyt\tests\tcp_ds_duckdb\date.preql
-# Do not edit manually
+# Generated from .preql source: date.preql
+# Do not edit manually; direct changes to this file will be overwritten
 
 
 key id int;
-property <id>.date_string string;
-property <id>._date_string string;
-property <id>.date date;
-property <id>._year_string string;
-property <id>.year int;
-property <id>.day_of_week int;
-property <id>.week_seq int;
-property <id>.month_of_year int;
-property <id>.quarter int;
-property <id>.d_week_seq1 int;
+property id.date_string string;
+property id._date_string string;
+property id.date date;
+property id._year_string string;
+property id.year int;
+property id.day_of_week int;
+property id.week_seq int;
+property id.month_of_year int;
+property id.quarter int;
+property id.d_week_seq1 int;
 
 
 datasource date (

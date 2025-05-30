@@ -1,7 +1,7 @@
-# Generated from preql source: c:\Users\ethan\coding_projects\pytrilogyt\tests\tcp_ds_duckdb\query10.preql
-# Do not edit manually
-# import shared CTE persists into local namespace 
-import _internal_cached_intermediates_df7a4663a335d760b4b6c45c992b389f8b16dc9a1d9648c866a12411bab8bdfd_datasources;
+# Generated from .preql source: query10.preql
+# Do not edit manually; direct changes to this file will be overwritten
+# this import is added by optimization 
+import _internal_cached_intermediates_2157f338cd2ee7d159b1532682e741d8ed01582aca8a4013cdc4a2cf648d990d_datasources;
 
 
 import customer as customer;
@@ -34,7 +34,8 @@ SELECT
     customer.demographics.credit_rating,
     customer.demographics.dependent_count,
     customer.demographics.employed_dependent_count,
-    customer.demographics.college_dependent_count,;
+    customer.demographics.college_dependent_count,
+;
 
 
 WHERE

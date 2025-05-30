@@ -1,13 +1,13 @@
-# Generated from preql source: c:\Users\ethan\coding_projects\pytrilogyt\tests\tcp_ds_duckdb\promotion.preql
-# Do not edit manually
+# Generated from .preql source: promotion.preql
+# Do not edit manually; direct changes to this file will be overwritten
 
 
 key id int;
-property <id>.string_id string;
-property <id>.channel_email string;
-property <id>.channel_catalog string;
-property <id>.channel_event string;
-property <id>.cost float;
+property id.string_id string;
+property id.channel_email string;
+property id.channel_catalog string;
+property id.channel_event string;
+property id.cost float;
 
 
 datasource promotion (

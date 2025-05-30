@@ -1,7 +1,7 @@
-# Generated from preql source: c:\Users\ethan\coding_projects\pytrilogyt\tests\tcp_ds_duckdb\query03.preql
-# Do not edit manually
-# import shared CTE persists into local namespace 
-import _internal_cached_intermediates_a4fd200e4c4a8794bc2998e3ced046a019983eec459fb62889e104ce1abcc44b_datasources;
+# Generated from .preql source: query03.preql
+# Do not edit manually; direct changes to this file will be overwritten
+# this import is added by optimization 
+import _internal_cached_intermediates_e9e90e264977b36b0a12eb9fdad1abd84583ebf8be0e4fd4fa02cd7976204d49_datasources;
 
 
 import store_sales as store_sales;
@@ -18,5 +18,5 @@ ORDER BY
     store_sales.date.year asc,
     sum_agg desc,
     store_sales.item.brand_id asc
-
-LIMIT 100;
+LIMIT 100
+;

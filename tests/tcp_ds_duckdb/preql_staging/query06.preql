@@ -1,7 +1,7 @@
-# Generated from preql source: c:\Users\ethan\coding_projects\pytrilogyt\tests\tcp_ds_duckdb\query06.preql
-# Do not edit manually
-# import shared CTE persists into local namespace 
-import _internal_cached_intermediates_457aa033545ee6db51ee6c3169a587b1d1a9dd919dbee6e656f4299bfba6783b_datasources;
+# Generated from .preql source: query06.preql
+# Do not edit manually; direct changes to this file will be overwritten
+# this import is added by optimization 
+import _internal_cached_intermediates_8b5295ccbb446987dc871772f626528f80da080c97c59eaf3d9ec53c55caec5e_datasources;
 
 
 import store_sales as store_sales;

@@ -5,14 +5,14 @@ from pathlib import Path
 
 from jinja2 import Template
 from trilogy import Environment, Executor
-from trilogy.core.models import (
-    Address,
+from trilogy.authoring import (
+
     Datasource,
     PersistStatement,
-    ProcessedQuery,
-    ProcessedQueryPersist,
-    UnionCTE,
 )
+from trilogy.core.models.datasource import Address
+from trilogy.core.models.execute import UnionCTE
+from trilogy.core.statements.execute import ProcessedQueryPersist, ProcessedQuery
 from trilogy.dialect.enums import Dialects
 from yaml import dump, safe_load
 
@@ -75,11 +75,8 @@ def handle_processed_query(
         output_columns=query.output_columns,
         ctes=query.ctes,
         base=query.base,
-        joins=query.joins,
-        grain=query.grain,
         hidden_columns=query.hidden_columns,
         limit=query.limit,
-        where_clause=query.where_clause,
         order_by=query.order_by,
     )
     return QueryProcessingOutput(

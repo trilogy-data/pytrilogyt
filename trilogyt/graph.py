@@ -5,29 +5,27 @@ from typing import List
 
 from trilogy import Environment
 from trilogy.constants import VIRTUAL_CONCEPT_PREFIX
-from trilogy.core.enums import PurposeLineage
+from trilogy.core.enums import Derivation 
 from trilogy.core.ergonomics import CTE_NAMES
-from trilogy.core.models import (
-    CTE,
-    Address,
+from trilogy.authoring import (
     Comparison,
     Concept,
     Conditional,
     Datasource,
-    Grain,
     Parenthetical,
     PersistStatement,
-    ProcessedQuery,
-    ProcessedQueryPersist,
-    ProcessedRawSQLStatement,
-    ProcessedShowStatement,
-    QueryDatasource,
-    RowsetDerivationStatement,
     SelectItem,
     SelectStatement,
-    UnionCTE,
     WhereClause,
+    ConceptRef,
+    Function
 )
+from trilogy.core.models.build import BuildConditional, BuildComparison, BuildSubselectComparison,  BuildDatasource, BuildConcept, BuildParenthetical, BuildFunction
+from trilogy.core.models.author import Grain, Conditional, SubselectComparison
+from trilogy.core.models.datasource import Address
+from trilogy.core.models.execute import CTE, QueryDatasource, UnionCTE
+from trilogy.core.statements.author import RowsetDerivationStatement
+from trilogy.core.statements.execute import ProcessedQueryPersist, ProcessedQuery, ProcessedRawSQLStatement, ProcessedShowStatement
 from trilogy.dialect.base import BaseDialect
 
 
@@ -73,27 +71,67 @@ def generate_datasource_name(select: SelectStatement, cte_name: str) -> str:
         )
     return base
 
+def convert_build_to_author(input:any ):
+    if isinstance(input, BuildConcept):
+        return ConceptRef(address=input.address)
+    if isinstance(input, BuildConditional):
+        return Conditional(
+            left = convert_build_to_author(input.left),
+            right = convert_build_to_author(input.right),
+            operator=input.operator,
+        )
+    elif isinstance(input, BuildComparison):
+        return Comparison(
+            left = convert_build_to_author(input.left),
+            right = convert_build_to_author(input.right),
+            operator=input.operator,
+        )
+    elif isinstance(input, BuildSubselectComparison):
+        return SubselectComparison(
+            left = convert_build_to_author(input.left),
+            right = convert_build_to_author(input.right),
+            operator=input.operator,
+        )
+    elif isinstance(input, BuildParenthetical):
+        return Parenthetical(
+            content=convert_build_to_author(input.content)
+        )
+    elif isinstance(input, BuildFunction):
+        return Function(
+            operator = input.operator,
+            arguments=[convert_build_to_author(x) for x in input.arguments],
+            arg_count=input.arg_count,
+            output_datatype=input.output_datatype,
+            output_purpose = input.output_purpose,
+        )
+    elif isinstance(input, (int, str, float, bool)):
+        return input
+    else:
+        raise ValueError(type(input))
 
-def cte_to_persist(input: CTE, name: str, generator: BaseDialect) -> PersistStatement:
+
+
+def cte_to_persist(input: CTE, name: str, generator: BaseDialect, env:Environment) -> PersistStatement:
 
     # a rowset will have the CTE ported over and we can assume the select statement doesn't need
     # further filtering
-    rowset = any([x.derivation == PurposeLineage.ROWSET for x in input.output_columns])
+    rowset = any([x.derivation == Derivation.ROWSET for x in input.output_columns])
     if rowset:
         select = SelectStatement(
-            selection=[SelectItem(content=x) for x in input.output_columns],
+            selection=[SelectItem(content=ConceptRef(address=x.address)) for x in input.output_columns],
         )
     else:
         select = SelectStatement(
-            selection=[SelectItem(content=x) for x in input.output_columns],
+            selection=[SelectItem(content=ConceptRef(address=x.address)) for x in input.output_columns],
             where_clause=(
-                WhereClause(conditional=input.condition) if input.condition else None
+                WhereClause(conditional=convert_build_to_author(input.condition)) if input.condition else None
             ),
         )
     datasource = select.to_datasource(
         namespace="default",
         name=generate_datasource_name(select, name),
         address=Address(location=generate_datasource_name(select, name)),
+        environment=env,
     )
     persist = PersistStatement(datasource=datasource, select=select)
     return persist
@@ -119,8 +157,8 @@ def fingerprint_grain(grain: Grain) -> str:
     return "-".join([x for x in grain.components])
 
 
-def fingerprint_source(source: QueryDatasource | Datasource) -> str:
-    if isinstance(source, Datasource):
+def fingerprint_source(source: QueryDatasource | BuildDatasource) -> str:
+    if isinstance(source, BuildDatasource):
         return str(source.address)
     return "-".join([fingerprint_source(s) for s in source.datasources]) + str(
         source.limit
@@ -200,10 +238,8 @@ def analyze(
             # and it itself doesn't have a filter condition; this might be post filtering
             # and irrelevant to global graph.
             # TODO: figure out if it's pre-filtering or post-filtering
-            if x.where_clause and not cte.condition:
-                continue
             fingerprint = fingerprint_cte(
-                cte, x.where_clause.conditional if x.where_clause else None
+                cte, cte.condition if cte.condition else None
             )
             counts[fingerprint] = counts.get(fingerprint, 0) + 1
             lookup[fingerprint] = lookup.get(fingerprint, cte) + cte
@@ -292,6 +328,6 @@ def process_loop(
             print(
                 f"Creating new persist statement from cte {k} with output {[x.address for x in cte.output_columns]}"
             )
-            new_persist.append(cte_to_persist(cte, k, generator=generator))
+            new_persist.append(cte_to_persist(cte, k, generator=generator, env=env))
 
     return ProcessLoopResult(new=new_persist)

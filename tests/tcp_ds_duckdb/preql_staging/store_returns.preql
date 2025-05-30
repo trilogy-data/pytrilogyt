@@ -1,5 +1,5 @@
-# Generated from preql source: c:\Users\ethan\coding_projects\pytrilogyt\tests\tcp_ds_duckdb\store_returns.preql
-# Do not edit manually
+# Generated from .preql source: store_returns.preql
+# Do not edit manually; direct changes to this file will be overwritten
 
 
 import store as store;
@@ -10,7 +10,7 @@ import time as time;
 import customer as customer;
 
 
-property <store_sales.ticket_number,item.id>.return_amount float;
+property <item.id,store_sales.ticket_number>.return_amount float;
 
 
 datasource store_returns (

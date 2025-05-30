@@ -6,14 +6,13 @@ from trilogy import Environment, Executor
 from trilogy.parser import parse_text
 from trilogy.parsing.render import Renderer
 from trilogy.utility import unique
-from trilogy.core.models import (
-    ImportStatement,
+from trilogy.authoring import (
     PersistStatement,
     SelectStatement,
     ConceptDeclarationStatement,
-    CopyStatement,
-    HasUUID,
+
 )
+from trilogy.core.statements.author import ImportStatement, CopyStatement, HasUUID
 from dataclasses import dataclass
 from trilogyt.core import ENVIRONMENT_CONCEPTS, fingerprint_environment
 
@@ -81,7 +80,8 @@ def optimize_multiple(
                 for statement in statements
             ):
                 continue
-            fingerprint = fingerprint_environment(new_env)
+            build_env =  new_env.materialize_for_select({})
+            fingerprint = fingerprint_environment(build_env)
             file_to_fingerprint[path] = fingerprint
             if fingerprint in env_to_statements:
                 opt: OptimizationInput = env_to_statements[fingerprint]
@@ -136,6 +136,7 @@ def optimize_multiple(
             datasource_path=datasource_file,
             new_import=ImportStatement(
                 alias=OPTIMIZATION_NAMESPACE,
+                input_path=OPTIMIZATION_FILE + f"_{k}",
                 path=output_file,
             ),
             fingerprint=k,

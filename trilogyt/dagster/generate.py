@@ -6,12 +6,13 @@ from typing import Any
 
 from jinja2 import Template
 from trilogy import Environment, Executor
-from trilogy.core.models import (
+from trilogy.authoring import (
     Datasource,
     PersistStatement,
-    ProcessedQueryPersist,
-    UnionCTE,
+
 )
+from trilogy.core.models.execute import UnionCTE
+from trilogy.core.statements.execute import ProcessedQueryPersist
 from trilogy.dialect.enums import Dialects
 
 from trilogyt.constants import logger

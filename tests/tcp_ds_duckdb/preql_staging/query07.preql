@@ -1,7 +1,7 @@
-# Generated from preql source: c:\Users\ethan\coding_projects\pytrilogyt\tests\tcp_ds_duckdb\query07.preql
-# Do not edit manually
-# import shared CTE persists into local namespace 
-import _internal_cached_intermediates_5b10b4793ab360a50e14a0ca36e4116005defa4c01902f5ebcf5e92ad708f1f0_datasources;
+# Generated from .preql source: query07.preql
+# Do not edit manually; direct changes to this file will be overwritten
+# this import is added by optimization 
+import _internal_cached_intermediates_9291cdd8e1c53a7faecc5689ab912364129f091a90098ef40a052496d17d4342_datasources;
 
 
 import store_sales as store_sales;
@@ -16,7 +16,8 @@ SELECT
     store_sales.quantity,
     store_sales.list_price,
     store_sales.coupon_amt,
-    store_sales.sales_price,;
+    store_sales.sales_price,
+;
 
 
 SELECT
@@ -27,5 +28,5 @@ SELECT
     avg(filtered_sales.store_sales.sales_price) -> avg_sales_price,
 ORDER BY
     filtered_sales.store_sales.item.name asc
-
-LIMIT 100;
+LIMIT 100
+;

@@ -1,0 +1,26 @@
+const _trilogyt._created_at <- current_datetime();
+
+import store_sales as store_sales;
+
+import customer as customer;
+
+const zips_pre <- unnest(_virt_7180871482901048);
+
+property zips <- substring(CAST(zips_pre AS string),1,5);
+
+metric zip_p_count <- count(filter customer.id where customer.preferred_cust_flag = 'Y') by customer.zip;
+
+property p_cust_zip <- filter customer.zip where zip_p_count > 10;
+
+property final_zips <- substring(filter zips where zips in substring(p_cust_zip,1,5),1,2);
+
+WHERE
+    store_sales.date.quarter = 2 and (store_sales.date.year = 1998 and substring(store_sales.store.zip,1,2) in final_zips)
+SELECT
+    store_sales.store.name,
+    sum(store_sales.net_profit) -> store_net_profit,
+ORDER BY
+    store_sales.store.name asc
+LIMIT 100
+;
+

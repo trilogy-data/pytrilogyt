@@ -1,7 +1,7 @@
-# Generated from preql source: c:\Users\ethan\coding_projects\pytrilogyt\tests\tcp_ds_duckdb\query01.preql
-# Do not edit manually
-# import shared CTE persists into local namespace 
-import _internal_cached_intermediates_b19d3d1d0444de19bd386c24caaf3f0a24085f18ed77abd3ce1240123dff59d3_datasources;
+# Generated from .preql source: query01.preql
+# Do not edit manually; direct changes to this file will be overwritten
+# this import is added by optimization 
+import _internal_cached_intermediates_ebcd717811e83ccd7fe5a2b5836236d8ffc9d80befa5e01352673338783b87ac_datasources;
 
 
 import store_returns as returns;
@@ -19,5 +19,5 @@ HAVING
 
 ORDER BY
     returns.customer.text_id asc
-
-LIMIT 100;
+LIMIT 100
+;

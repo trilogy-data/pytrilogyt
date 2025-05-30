@@ -1,7 +1,7 @@
-# Generated from preql source: c:\Users\ethan\coding_projects\pytrilogyt\tests\tcp_ds_duckdb\query16.preql
-# Do not edit manually
-# import shared CTE persists into local namespace 
-import _internal_cached_intermediates_06f52a4ebc6d43c3c40ece39f1dce7893e919e4a8d24c84099d96b9c0abf59ff_datasources;
+# Generated from .preql source: query16.preql
+# Do not edit manually; direct changes to this file will be overwritten
+# this import is added by optimization 
+import _internal_cached_intermediates_a5888cbeee0c6fbf96b0a9177677ef6829d88bb068e3e6e42260c28e137ee48e_datasources;
 
 
 import catalog_sales as cs;
@@ -19,5 +19,5 @@ SELECT
     sum(cs.net_profit) -> total_net_profit,
 ORDER BY
     order_count desc
-
-LIMIT 100;
+LIMIT 100
+;

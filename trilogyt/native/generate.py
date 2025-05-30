@@ -3,13 +3,14 @@ from collections import Counter
 from pathlib import Path
 
 from trilogy import Environment
-from trilogy.core.models import (
+from trilogy.authoring import (
     ConceptDeclarationStatement,
     Datasource,
-    ImportStatement,
+
     PersistStatement,
     SelectItem,
 )
+from trilogy.core.statements.author import ImportStatement
 from trilogy.parser import parse_text
 from trilogy.parsing.render import Renderer
 
@@ -52,7 +53,7 @@ def generate_model(
             env.add_datasource(ds)
             possible_dependencies[ds.identifier] = ds
             for oc in ds.output_concepts:
-                persist_override[oc.address] = oc
+                persist_override[oc.address] = local_env.concepts[oc.address]
 
     logger.info(f"Reparsing post optimization for {preql_path}.")
     try:

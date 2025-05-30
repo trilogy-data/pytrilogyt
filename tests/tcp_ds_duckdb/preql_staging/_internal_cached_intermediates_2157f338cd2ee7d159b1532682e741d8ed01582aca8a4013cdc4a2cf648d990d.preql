@@ -28,7 +28,8 @@ SELECT
     customer.demographics.credit_rating,
     customer.demographics.dependent_count,
     customer.demographics.employed_dependent_count,
-    customer.demographics.college_dependent_count,;
+    customer.demographics.college_dependent_count,
+;
 
 WHERE
     base.customer.demographics.gender is not null
