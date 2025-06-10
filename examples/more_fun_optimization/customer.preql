@@ -1,0 +1,26 @@
+
+
+
+key id int;
+
+property id.name string;
+
+property id.upper_name <-upper(name);
+
+datasource customers (
+    customer_id:id,
+    customer_name:name,
+)
+grain (id)
+query '''
+select 1 customer_id, 'phil' customer_name
+union all
+select 2, 'sarah'
+union all
+select 3, 'marguerite'
+union all
+select 4, 'sam'
+''';
+
+
+

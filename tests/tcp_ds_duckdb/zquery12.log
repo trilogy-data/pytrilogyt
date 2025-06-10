@@ -1,7 +1,7 @@
-base_prep_time = 0.000325
-base_parse_time = 0.079934
-base_generation_time = 0.002983
-base_exec_time = 0.234387
+base_prep_time = 0.002011
+base_parse_time = 0.237181
+base_generation_time = 0.010727
+base_exec_time = 0.230426
 base_generated_sql = """
 
 WITH 
@@ -63,10 +63,10 @@ ORDER BY
     \"thoughtful\".\"web_sales_item_desc\" asc,
     (\"thoughtful\".\"itemrevenue\" * 100.0) / \"cooperative\".\"_virt_window_sum_7913040918303715\" asc
 LIMIT (100)"""
-optimized_prep_time = 25.910842
-optimized_parse_time = 0.12926
-optimized_generation_time = 0.002881
-optimized_exec_time = 0.23927
+optimized_prep_time = 176.643376
+optimized_parse_time = 2.642256
+optimized_generation_time = 0.008554
+optimized_exec_time = 1.509941
 optimized_generated_sql = """
 
 WITH 
@@ -129,5 +129,5 @@ ORDER BY
     (\"divergent\".\"itemrevenue\" * 100.0) / \"busy\".\"_virt_window_sum_7913040918303715\" asc
 LIMIT (100)"""
 query_id = 12
-sql_comp_time = 0.306439
-total_time = 26.920547
+sql_comp_time = 0.459298
+total_time = 181.79597

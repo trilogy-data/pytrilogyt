@@ -1,0 +1,9 @@
+import _trilogyt_opt_ac4d6a98a469e4d9947657cb883a10bcee515c815b8f50583630444e5dc7256f;
+
+SELECT
+    product.id,
+    product.name,
+    sum(revenue) -> total_revenue,
+    count(customer.id) -> total_customers,
+    sum(qty) -> total_qty,
+;

@@ -96,7 +96,6 @@ def run_query(
             )
         )
 
-from trilogy.parsing.parse_engine import ParsePass
 def test_one(engine, optimized_env):
     run_query(engine, 1, optimized_env)
 

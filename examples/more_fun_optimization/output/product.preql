@@ -1,0 +1,24 @@
+
+
+
+key id int;
+
+property id.name string;
+
+property id.upper_name <-upper(name);
+
+datasource products (
+    product_id:id,
+    product_name:name,
+)
+grain (id)
+query '''
+select 1 product_id, 'jenga' product_name
+union all
+select 2, 'luxe_vespa'
+union all
+select 3, 'luxe_maserati'
+''';
+
+
+

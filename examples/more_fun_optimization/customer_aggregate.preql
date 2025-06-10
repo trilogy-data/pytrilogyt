@@ -1,0 +1,8 @@
+import orders;
+
+# customer analyssi
+select
+    customer.id,
+    sum(revenue) as total_revenue,
+    sum(qty) as total_qty,
+;

@@ -7,6 +7,7 @@ from trilogy.authoring import Concept, DataType, Environment
 
 from trilogyt.constants import TRILOGY_NAMESPACE
 from trilogyt.enums import PreqltMetrics
+from trilogy.core.models.build_environment import BuildEnvironment
 
 ENVIRONMENT_CONCEPTS = [
     Concept(
@@ -28,7 +29,7 @@ def enrich_environment(env: Environment):
     return env
 
 
-def fingerprint_environment(env: Environment) -> str:
+def fingerprint_environment(env: BuildEnvironment) -> str:
     graph = generate_graph(env)
     edges = "-".join([str(x) for x in sorted(list(graph.edges))])
     return sha256(edges.encode()).hexdigest()

@@ -1,0 +1,14 @@
+import _trilogyt_opt_a5888cbeee0c6fbf96b0a9177677ef6829d88bb068e3e6e42260c28e137ee48e;
+
+property multi_warehouse_sales <- filter cs.order_number where count(cs.warehouse.id) by cs.order_number > 1;
+
+WHERE
+    (cs.ship_date.date >= '2002-02-01'::date and cs.ship_date.date <= '2002-04-02'::date) and (cs.customer.state = 'GA' and (cs.call_center.county = 'Williamson County' and (cs.order_number not in cr.order_number and cs.order_number in multi_warehouse_sales)))
+SELECT
+    count_distinct(cs.order_number) -> order_count,
+    sum(cs.extra_ship_cost) -> total_shipping_cost,
+    sum(cs.net_profit) -> total_net_profit,
+ORDER BY
+    order_count desc
+LIMIT 100
+;

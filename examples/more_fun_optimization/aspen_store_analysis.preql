@@ -1,0 +1,20 @@
+import orders;
+
+# aspen store customers
+
+where store.name = 'aspen'
+select
+    customer.id,
+    sum(revenue) as total_revenue,
+    sum(qty) as total_qty,
+;
+
+
+where store.name = 'aspen'
+select
+    product.id,
+    product.name,
+    sum(revenue) as total_revenue,
+    count(customer.id) as total_customers,
+    sum(qty) as total_qty
+;

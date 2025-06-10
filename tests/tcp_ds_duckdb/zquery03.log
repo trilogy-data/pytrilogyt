@@ -1,7 +1,7 @@
-base_prep_time = 0.00017
-base_parse_time = 0.103837
-base_generation_time = 0.002049
-base_exec_time = 0.05374
+base_prep_time = 0.0
+base_parse_time = 0.505479
+base_generation_time = 0.015803
+base_exec_time = 0.286769
 base_generated_sql = """
 
 WITH 
@@ -36,10 +36,10 @@ ORDER BY
     sum(\"cheerful\".\"store_sales_ext_sales_price\") desc,
     \"cheerful\".\"store_sales_item_brand_id\" asc
 LIMIT (100)"""
-optimized_prep_time = 22.054109
-optimized_parse_time = 0.222909
-optimized_generation_time = 0.002887
-optimized_exec_time = 0.059295
+optimized_prep_time = 191.118119
+optimized_parse_time = 1.691314
+optimized_generation_time = 0.033826
+optimized_exec_time = 1.048756
 optimized_generated_sql = """
 
 WITH 
@@ -75,5 +75,5 @@ ORDER BY
     \"kaput\".\"store_sales_item_brand_id\" asc
 LIMIT (100)"""
 query_id = 3
-sql_comp_time = 0.042854
-total_time = 22.554131
+sql_comp_time = 1.063336
+total_time = 195.824721

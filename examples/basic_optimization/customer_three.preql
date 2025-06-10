@@ -1,0 +1,14 @@
+                 
+
+import generic as generic;
+
+with cte as 
+select 
+    generic.split,
+    generic.scalar,
+where generic.split in (1, 2, 3,);
+
+
+                  
+persist dim_splits_three into dim_splits_three from select cte.generic.split;
+

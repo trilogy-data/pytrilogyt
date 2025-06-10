@@ -7,6 +7,7 @@ from trilogyt.scripts.core import optimize_multiple, OptimizationResult
 from trilogyt.constants import logger
 
 
+
 def native_wrapper(
     preql: PathlibPath,
     output_path: PathlibPath,
@@ -34,7 +35,7 @@ def native_wrapper(
         # with multiple files, we can attempt to optimize dependency
         logger.info(f"checking path {preql}")
         children = [
-            x for x in list(preql.glob("*.preql")) if not x.stem.startswith("_internal")
+            x for x in list(preql.glob("*.preql")) if not x.stem.startswith("_")
         ]
         logger.info(f"optimizing across {children}")
         env_to_optimization = optimize_multiple(

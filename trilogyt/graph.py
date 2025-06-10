@@ -4,7 +4,7 @@ from random import choice
 from typing import List
 
 from trilogy import Environment
-from trilogy.constants import VIRTUAL_CONCEPT_PREFIX
+from trilogy.constants import VIRTUAL_CONCEPT_PREFIX, MagicConstants
 from trilogy.core.enums import Derivation 
 from trilogy.core.ergonomics import CTE_NAMES
 from trilogy.authoring import (
@@ -104,8 +104,9 @@ def convert_build_to_author(input:any ):
             output_datatype=input.output_datatype,
             output_purpose = input.output_purpose,
         )
-    elif isinstance(input, (int, str, float, bool)):
+    elif isinstance(input, (int, str, float, bool, MagicConstants)):
         return input
+    
     else:
         raise ValueError(type(input))
 

@@ -1,0 +1,15 @@
+import _trilogyt_opt_e9e90e264977b36b0a12eb9fdad1abd84583ebf8be0e4fd4fa02cd7976204d49;
+
+WHERE
+    store_sales.date.month_of_year = 11 and store_sales.item.manufacturer_id = 128
+SELECT
+    store_sales.date.year,
+    store_sales.item.brand_id,
+    store_sales.item.brand_name,
+    sum(store_sales.ext_sales_price) -> sum_agg,
+ORDER BY
+    store_sales.date.year asc,
+    sum_agg desc,
+    store_sales.item.brand_id asc
+LIMIT 100
+;

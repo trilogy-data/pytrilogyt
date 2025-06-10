@@ -18,6 +18,7 @@ memory.db.wal
 *.prof
 tests/tcp_ds_duckdb/memory
 tests/tcp_ds_duckdb/sf_*
+sf_*
 examples/dagster/my_duckdb_database.duckdb
 
 dagster.db
