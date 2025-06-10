@@ -1,0 +1,79 @@
+base_prep_time = 0.0
+base_parse_time = 0.120115
+base_generation_time = 0.005671
+base_exec_time = 0.006697
+base_generated_sql = """
+
+WITH 
+cheerful as (
+SELECT
+    \"store_sales_item_items\".\"I_BRAND\" as \"store_sales_item_brand_name\",
+    \"store_sales_item_items\".\"I_BRAND_ID\" as \"store_sales_item_brand_id\",
+    \"store_sales_item_items\".\"I_ITEM_SK\" as \"store_sales_item_id\",
+    \"store_sales_store_sales\".\"SS_EXT_SALES_PRICE\" as \"store_sales_ext_sales_price\",
+    \"store_sales_store_sales\".\"SS_TICKET_NUMBER\" as \"store_sales_ticket_number\",
+    cast(\"store_sales_date_date\".\"D_YEAR\" as int) as \"store_sales_date_year\"
+FROM
+    \"memory\".\"store_sales\" as \"store_sales_store_sales\"
+    INNER JOIN \"memory\".\"date_dim\" as \"store_sales_date_date\" on \"store_sales_store_sales\".\"SS_SOLD_DATE_SK\" = \"store_sales_date_date\".\"D_DATE_SK\"
+    INNER JOIN \"memory\".\"item\" as \"store_sales_item_items\" on \"store_sales_store_sales\".\"SS_ITEM_SK\" = \"store_sales_item_items\".\"I_ITEM_SK\"
+WHERE
+    \"store_sales_date_date\".\"D_MOY\" = 11 and \"store_sales_item_items\".\"I_MANUFACT_ID\" = 128
+)
+SELECT
+    \"cheerful\".\"store_sales_date_year\" as \"store_sales_date_year\",
+    \"cheerful\".\"store_sales_item_brand_id\" as \"store_sales_item_brand_id\",
+    \"cheerful\".\"store_sales_item_brand_name\" as \"store_sales_item_brand_name\",
+    sum(\"cheerful\".\"store_sales_ext_sales_price\") as \"sum_agg\"
+FROM
+    \"cheerful\"
+GROUP BY 
+    \"cheerful\".\"store_sales_date_year\",
+    \"cheerful\".\"store_sales_item_brand_id\",
+    \"cheerful\".\"store_sales_item_brand_name\"
+ORDER BY 
+    \"cheerful\".\"store_sales_date_year\" asc,
+    sum(\"cheerful\".\"store_sales_ext_sales_price\") desc,
+    \"cheerful\".\"store_sales_item_brand_id\" asc
+LIMIT (100)"""
+optimized_prep_time = 0.0
+optimized_parse_time = 0.127107
+optimized_generation_time = 0.002007
+optimized_exec_time = 0.002007
+optimized_generated_sql = """
+
+WITH 
+cheerful as (
+SELECT
+    \"store_sales_item_items\".\"I_BRAND\" as \"store_sales_item_brand_name\",
+    \"store_sales_item_items\".\"I_BRAND_ID\" as \"store_sales_item_brand_id\",
+    \"store_sales_item_items\".\"I_ITEM_SK\" as \"store_sales_item_id\",
+    \"store_sales_store_sales\".\"SS_EXT_SALES_PRICE\" as \"store_sales_ext_sales_price\",
+    \"store_sales_store_sales\".\"SS_TICKET_NUMBER\" as \"store_sales_ticket_number\",
+    cast(\"store_sales_date_date\".\"D_YEAR\" as int) as \"store_sales_date_year\"
+FROM
+    \"memory\".\"store_sales\" as \"store_sales_store_sales\"
+    INNER JOIN \"memory\".\"date_dim\" as \"store_sales_date_date\" on \"store_sales_store_sales\".\"SS_SOLD_DATE_SK\" = \"store_sales_date_date\".\"D_DATE_SK\"
+    INNER JOIN \"memory\".\"item\" as \"store_sales_item_items\" on \"store_sales_store_sales\".\"SS_ITEM_SK\" = \"store_sales_item_items\".\"I_ITEM_SK\"
+WHERE
+    \"store_sales_date_date\".\"D_MOY\" = 11 and \"store_sales_item_items\".\"I_MANUFACT_ID\" = 128
+)
+SELECT
+    \"cheerful\".\"store_sales_date_year\" as \"store_sales_date_year\",
+    \"cheerful\".\"store_sales_item_brand_id\" as \"store_sales_item_brand_id\",
+    \"cheerful\".\"store_sales_item_brand_name\" as \"store_sales_item_brand_name\",
+    sum(\"cheerful\".\"store_sales_ext_sales_price\") as \"sum_agg\"
+FROM
+    \"cheerful\"
+GROUP BY 
+    \"cheerful\".\"store_sales_date_year\",
+    \"cheerful\".\"store_sales_item_brand_id\",
+    \"cheerful\".\"store_sales_item_brand_name\"
+ORDER BY 
+    \"cheerful\".\"store_sales_date_year\" asc,
+    sum(\"cheerful\".\"store_sales_ext_sales_price\") desc,
+    \"cheerful\".\"store_sales_item_brand_id\" asc
+LIMIT (100)"""
+query_id = 3
+sql_comp_time = 0.006479
+total_time = 0.270083

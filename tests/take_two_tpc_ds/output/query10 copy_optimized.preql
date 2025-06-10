@@ -1,0 +1,37 @@
+import _trilogyt_opt_6ce3e1aa2cb874da2c6049fd90e530b0e62d7da7fd47211c896b39bece49f9b7;
+
+MERGE catalog_sales.customer.id into ~customer.id;
+
+MERGE web_sales.customer.id into ~customer.id;
+
+MERGE store_sales.customer.id into ~customer.id;
+
+property relevant_customers <- filter customer.id where store_sales.date.year = 2002 and (store_sales.date.month_of_year in (1, 2, 3, 4) and (customer.county in ('Rush County', 'Toole County', 'Jefferson County', 'Dona Ana County', 'La Porte County') and ((((web_sales.date.year = 2002 and web_sales.date.month_of_year in (1, 2, 3, 4))) or ((catalog_sales.date.year = 2002 and catalog_sales.date.month_of_year in (1, 2, 3, 4)))))));
+
+WHERE
+    customer.id in relevant_customers and customer.demographics.gender is not null
+SELECT
+    customer.demographics.gender,
+    customer.demographics.marital_status,
+    customer.demographics.education_status,
+    count(customer.id) -> cnt1,
+    customer.demographics.purchase_estimate,
+    count(customer.id) -> cnt2,
+    customer.demographics.credit_rating,
+    count(customer.id) -> cnt3,
+    customer.demographics.dependent_count,
+    count(customer.id) -> cnt4,
+    customer.demographics.employed_dependent_count,
+    count(customer.id) -> cnt5,
+    customer.demographics.college_dependent_count,
+    count(customer.id) -> cnt6,
+ORDER BY
+    customer.demographics.gender asc,
+    customer.demographics.marital_status asc,
+    customer.demographics.education_status asc,
+    customer.demographics.purchase_estimate asc,
+    customer.demographics.credit_rating asc,
+    customer.demographics.dependent_count asc,
+    customer.demographics.employed_dependent_count asc,
+    customer.demographics.college_dependent_count asc
+;

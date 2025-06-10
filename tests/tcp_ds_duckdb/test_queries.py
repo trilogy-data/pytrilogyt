@@ -5,6 +5,7 @@ import pytest
 import tomli_w
 from dotenv import load_dotenv
 from trilogy import Environment, Executor
+from trilogy.parsing import render
 
 from tests.tcp_ds_duckdb.conftest import OptimizationResult, OptimizedEnv
 

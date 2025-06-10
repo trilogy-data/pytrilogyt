@@ -1,4 +1,4 @@
-import _trilogyt_opt_9291cdd8e1c53a7faecc5689ab912364129f091a90098ef40a052496d17d4342;
+import _trilogyt_opt_408fd8d654e3055c7054c42d9478a00af0341bdade67c57079a8c59c1f26b93d;
 
 rowset filtered_sales <- WHERE
     store_sales.customer_demographic.gender = 'M' and (store_sales.customer_demographic.marital_status = 'S' and (store_sales.customer_demographic.education_status = 'College' and (((store_sales.promotion.channel_email = 'N' or store_sales.promotion.channel_event = 'N')) and store_sales.date.year = 2000)))

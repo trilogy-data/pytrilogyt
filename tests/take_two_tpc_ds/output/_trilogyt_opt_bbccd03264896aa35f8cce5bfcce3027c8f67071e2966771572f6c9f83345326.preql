@@ -1,0 +1,16 @@
+const _trilogyt._created_at <- current_datetime();
+
+import catalog_sales as cs;
+
+WHERE
+    cs.bill_customer_demographic.gender = 'M' and (cs.bill_customer_demographic.marital_status = 'S' and (cs.bill_customer_demographic.education_status = 'College' and (((cs.promotion.channel_email = 'N' or cs.promotion.channel_event = 'N')) and cs.date.year = 2000)))
+SELECT
+    cs.item.name,
+    avg(cs.quantity) -> agg1,
+    avg(cs.list_price) -> agg2,
+    avg(cs.coupon_amt) -> agg3,
+    avg(cs.sales_price) -> agg4,
+ORDER BY
+    cs.item.name asc
+LIMIT 100
+;

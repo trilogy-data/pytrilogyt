@@ -1,4 +1,4 @@
-import _trilogyt_opt_a5888cbeee0c6fbf96b0a9177677ef6829d88bb068e3e6e42260c28e137ee48e;
+import _trilogyt_opt_2420629040292a769a7632076f1601df1a9c52171d16227378be8c74c2a5b700;
 
 property multi_warehouse_sales <- filter cs.order_number where count(cs.warehouse.id) by cs.order_number > 1;
 

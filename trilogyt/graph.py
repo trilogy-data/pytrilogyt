@@ -18,16 +18,17 @@ from trilogy.authoring import (
     SelectStatement,
     WhereClause,
     ConceptRef,
-    Function
+    Function,
 )
 from trilogy.core.models.build import BuildConditional, BuildComparison, BuildSubselectComparison,  BuildDatasource, BuildConcept, BuildParenthetical, BuildFunction
 from trilogy.core.models.author import Grain, Conditional, SubselectComparison
+from trilogy.core.models.core import TupleWrapper, MapWrapper, ListWrapper
 from trilogy.core.models.datasource import Address
 from trilogy.core.models.execute import CTE, QueryDatasource, UnionCTE
 from trilogy.core.statements.author import RowsetDerivationStatement
 from trilogy.core.statements.execute import ProcessedQueryPersist, ProcessedQuery, ProcessedRawSQLStatement, ProcessedShowStatement
 from trilogy.dialect.base import BaseDialect
-
+from datetime import datetime, date
 
 @dataclass
 class AnalyzeResult:
@@ -104,11 +105,10 @@ def convert_build_to_author(input:any ):
             output_datatype=input.output_datatype,
             output_purpose = input.output_purpose,
         )
-    elif isinstance(input, (int, str, float, bool, MagicConstants)):
+    elif isinstance(input, (int, str, float, bool, MagicConstants, datetime, date, TupleWrapper, MapWrapper, ListWrapper)):
         return input
-    
     else:
-        raise ValueError(type(input))
+        raise ValueError(f'Unsupported round trip for {type(input)}')
 
 
 

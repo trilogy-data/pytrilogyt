@@ -1,0 +1,46 @@
+const _trilogyt._created_at <- current_datetime();
+
+import catalog_sales as cs;
+
+import catalog_returns as cr;
+
+property multi_warehouse_sales <- filter cs.order_number where count(cs.warehouse.id) by cs.order_number > 1;
+
+WHERE
+    (cs.ship_date.date >= '2002-02-01'::date and cs.ship_date.date <= '2002-04-02'::date) and (cs.customer_address.state = 'GA' and (cs.call_center.county = 'Williamson County' and (cs.order_number not in cr.order_number and cs.order_number in multi_warehouse_sales)))
+SELECT
+    count_distinct(cs.order_number) -> order_count,
+    sum(cs.extra_ship_cost) -> total_shipping_cost,
+    sum(cs.net_profit) -> total_net_profit,
+ORDER BY
+    order_count desc
+LIMIT 100
+;
+
+WHERE
+    (cs.ship_date.date >= '2002-02-01'::date and cs.ship_date.date <= '2002-04-02'::date) and (cs.customer.state = 'GA' and (cs.call_center.county = 'Williamson County' and (cs.order_number not in cr.order_number and cs.order_number in multi_warehouse_sales)))
+SELECT
+    count_distinct(cs.order_number) -> order_count,
+    sum(cs.extra_ship_cost) -> total_shipping_cost,
+    sum(cs.net_profit) -> total_net_profit,
+ORDER BY
+    order_count desc
+LIMIT 100
+;
+
+PERSIST default.ds690359b893781952e54b528b4b72251c56acbeeef38701f47bce4650b33cce15 INTO ds690359b893781952e54b528b4b72251c56acbeeef38701f47bce4650b33cce15 FROM SELECT
+    cs.order_number,
+    cs.warehouse.id,
+;
+
+PERSIST default.dsab93f574f6b78194e50b292816178f2ec7b2ef65bd94399570fcf709497f8d1e INTO dsab93f574f6b78194e50b292816178f2ec7b2ef65bd94399570fcf709497f8d1e FROM SELECT
+    cr.order_number,
+;
+
+PERSIST default.ds679f2d902e7cfe2123b332245244c119563bfa687e145f011470fe3bf1b9f89f INTO ds679f2d902e7cfe2123b332245244c119563bfa687e145f011470fe3bf1b9f89f FROM SELECT
+    multi_warehouse_sales,
+;
+
+PERSIST default.ds679f2d902e7cfe2123b332245244c119563bfa687e145f011470fe3bf1b9f89f INTO ds679f2d902e7cfe2123b332245244c119563bfa687e145f011470fe3bf1b9f89f FROM SELECT
+    multi_warehouse_sales,
+;

@@ -1,0 +1,62 @@
+const _trilogyt._created_at <- current_datetime();
+
+import web_sales as web_sales;
+
+WHERE
+    (web_sales.date.date >= '1999-02-22'::date and web_sales.date.date <= '1999-03-24'::date) and web_sales.item.category in ('Sports', 'Books', 'Home')
+SELECT
+    web_sales.item.name,
+    web_sales.item.desc,
+    web_sales.item.category,
+    web_sales.item.class,
+    web_sales.item.current_price,
+    sum(web_sales.extra_sales_price) -> itemrevenue,
+    --sum itemrevenue over web_sales.item.class -> itemclassrevenue,
+    (itemrevenue * 100.0) / itemclassrevenue -> revenueratio,
+ORDER BY
+    web_sales.item.category asc,
+    web_sales.item.class asc,
+    web_sales.item.name asc,
+    web_sales.item.desc asc,
+    revenueratio asc
+LIMIT 100
+;
+
+PERSIST default.dsae9e8881ef37cf69ff63c14a51af11c3b2ab312cced5f49a8402bef678e886b2_filtered_on_date_date_category INTO dsae9e8881ef37cf69ff63c14a51af11c3b2ab312cced5f49a8402bef678e886b2_filtered_on_date_date_category FROM WHERE
+    (web_sales.date.date >= '1999-02-22'::date and web_sales.date.date <= '1999-03-24'::date) and web_sales.item.category in ('Sports', 'Books', 'Home')
+SELECT
+    web_sales.extra_sales_price,
+    web_sales.item.category,
+    web_sales.item.class,
+    web_sales.item.current_price,
+    web_sales.item.desc,
+    web_sales.item.id,
+    web_sales.item.name,
+    web_sales.order_number,
+;
+
+PERSIST default.dse5107858aa73c4ac89bdc2fb5071e311746128db46803b684697bdc9083e7b27 INTO dse5107858aa73c4ac89bdc2fb5071e311746128db46803b684697bdc9083e7b27 FROM SELECT
+    itemrevenue,
+    web_sales.item.class,
+    web_sales.item.desc,
+    web_sales.item.category,
+    web_sales.item.name,
+    web_sales.item.current_price,
+;
+
+PERSIST default.ds7103eadf8caef9c298ecf04d30102827c8d1eaf98d20d3df4b36b5b734750769 INTO ds7103eadf8caef9c298ecf04d30102827c8d1eaf98d20d3df4b36b5b734750769 FROM SELECT
+    itemclassrevenue,
+    web_sales.item.class,
+    itemrevenue,
+;
+
+PERSIST default.ds33ba6a273484846e9f6e7c0a9887526c97e6460f466a8099cdf67f7ed3762c0d INTO ds33ba6a273484846e9f6e7c0a9887526c97e6460f466a8099cdf67f7ed3762c0d FROM SELECT
+    itemrevenue,
+    web_sales.item.name,
+    web_sales.item.desc,
+    web_sales.item.category,
+    web_sales.item.current_price,
+    itemclassrevenue,
+    web_sales.item.class,
+    revenueratio,
+;

@@ -1,0 +1,23 @@
+import _trilogyt_opt_09778c3ed6d2ec416f53aff5a0a4bc3e7dd3948fc09851b351bf52ce4cfefa54;
+
+property warehouse_short_name <- substring(warehouse.name,1,20);
+
+property catalog_pk <- concat(CAST(order_number AS string),CAST(item.id AS string));
+
+WHERE
+    (ship_date.month_seq >= 1200 and ship_date.month_seq <= 1211) and (order_number is not null and (call_center.id is not null and (warehouse.id is not null and ship_mode.id is not null)))
+SELECT
+    warehouse_short_name,
+    ship_mode.type,
+    lower(call_center.name) -> cc_name_lower,
+    count(filter catalog_pk where days_to_ship <= 30) -> less_than_30_days,
+    count(filter catalog_pk where days_to_ship > 30 and days_to_ship <= 60) -> between_31_and_60_days,
+    count(filter catalog_pk where days_to_ship > 60 and days_to_ship <= 90) -> between_61_and_90_days,
+    count(filter catalog_pk where days_to_ship > 90 and days_to_ship <= 120) -> between_91_and_120_days,
+    count(filter catalog_pk where days_to_ship > 120) -> over_120_days,
+ORDER BY
+    warehouse_short_name asc nulls first,
+    ship_mode.type asc nulls first,
+    cc_name_lower asc nulls first
+LIMIT 100
+;

@@ -1,0 +1,16 @@
+import _trilogyt_opt_4147fe925a4b12b283abdabdacd1902e4ce59cc01917fc566fdce7c443a88042;
+
+property multi_warehouse_order <- filter web_sales.order_number where count(web_sales.warehouse.id) by web_sales.order_number > 1;
+
+property returned_orders <- filter web_sales.order_number where web_sales.is_returned is True;
+
+WHERE
+    (web_sales.ship_date.date >= '1999-02-01'::date and web_sales.ship_date.date <= '1999-04-02'::date) and (web_sales.ship_address.state = 'IL' and (web_sales.web_site.company_name = 'pri' and (web_sales.order_number in multi_warehouse_order and web_sales.order_number in returned_orders)))
+SELECT
+    count(web_sales.order_number) -> order_count,
+    sum(web_sales.extra_ship_cost) -> total_shipping_cost,
+    sum(web_sales.net_profit) -> total_net_profit,
+ORDER BY
+    order_count desc
+LIMIT 100
+;
