@@ -1,0 +1,16 @@
+import _trilogyt_opt_1d50ec27854013b22f930b83ba29a7e352d41d741eeb70c87f724542996b8072;
+
+MERGE store_sales.item.id into item.id;
+
+WHERE
+    store_sales.date.year = 2001 and (store_sales.date.month_of_year = 1 and (store_sales.item.current_price > 1.2 * avg(item.current_price) by item.category and item.category is not null))
+SELECT
+    store_sales.customer.state,
+    count(store_sales.customer.id) -> customer_count,
+HAVING
+    customer_count >= 10
+
+ORDER BY
+    customer_count asc nulls first,
+    store_sales.customer.state asc nulls first
+;

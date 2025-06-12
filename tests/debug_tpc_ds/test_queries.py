@@ -18,26 +18,25 @@ def run_test_case(
     path: Path,
     optimized_path: Path,
     idx: int,
-    engine: Executor,
+    test_engine: Executor,
+    base_engine: Executor,
     base_results,
 ):
     output_timers = {}
-    for label, preql_path in [
-        # ["base", working_path / f"query{idx:02d}.preql"],
-        ["optimized", optimized_path / f"query{idx:02d}_optimized.preql"],
+    for engine, label, preql_path in [
+        [base_engine, "base", working_path / f"query{idx:02d}.preql"],
+        [test_engine, "optimized", optimized_path / f"query{idx:02d}_optimized.preql"],
     ]:
         with open(preql_path) as f:
             text = f.read()
         prep_time = datetime.now()
-        engine.environment = Environment(working_path=preql_path.parent)
+        # engine.environment = Environment(working_path=preql_path.parent)
 
         end_prep = datetime.now()
         parsed = datetime.now()
 
         queries = engine.parse_text(text)
         post_parsed = datetime.now()
-        print(engine.environment.datasources)
-        raise SyntaxError(engine.environment.datasources)
         generated_sql = engine.generate_sql(queries[-1])
         generated = datetime.now()
         results = engine.execute_raw_sql(generated_sql[-1])
@@ -66,19 +65,16 @@ def run_test_case(
     return output_timers
 
 
-def run_query(
-    engine: Executor, idx: int, optimized_path, profile: bool = False
-):
-
+def run_query(engine: Executor, base_engine:Executor, idx: int, optimized_path, profile: bool = False):
 
     start = datetime.now()
-    base = engine.execute_raw_sql(f"PRAGMA tpcds({idx});")
+    base = base_engine.execute_raw_sql(f"PRAGMA tpcds({idx});")
     comped = datetime.now()
     comp_time = comped - start
     base_results = list(base.fetchall())
 
     test_results = run_test_case(
-        working_path, optimized_path, idx, engine, base_results
+        working_path, optimized_path, idx, engine, base_engine, base_results
     )
     base_output = {
         "query_id": idx,
@@ -94,11 +90,38 @@ def run_query(
             )
         )
 
-def test_one(engine, optimized_env):
-    DebuggingHook()
-    run_query(engine, 1, optimized_env)
-    assert 1 == 0
 
+def test_one(engine, base_engine, optimized_env):
+    run_query(engine, base_engine, 1, optimized_env)
+    assert 1 == 1
+
+def test_three(engine, base_engine, optimized_env):
+    DebuggingHook()
+    run_query(engine, base_engine, 3, optimized_env)
+    assert 1 == 1
+
+def test_three(engine, base_engine, optimized_env):
+    DebuggingHook()
+    run_query(engine, base_engine, 3, optimized_env)
+    assert 1 == 1
+
+
+def test_six(engine, base_engine, optimized_env):
+    DebuggingHook()
+    run_query(engine, base_engine, 6, optimized_env)
+    assert 1 == 1
+
+
+def test_seven(engine, base_engine, optimized_env):
+    DebuggingHook()
+    run_query(engine, base_engine, 7, optimized_env)
+    assert 1 == 1
+
+
+def test_eight(engine, base_engine, optimized_env):
+    DebuggingHook()
+    run_query(engine, base_engine, 8, optimized_env)
+    assert 1 == 1
 
 
 def run_adhoc_compiled(number: int):

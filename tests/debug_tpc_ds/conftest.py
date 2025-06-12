@@ -13,14 +13,43 @@ from logging import StreamHandler
 
 from trilogyt.constants import logger
 from trilogyt.native.run import run_path_v2
-working_path = Path(__file__).parent
+working_path = Path(__file__).parent 
 
 SCALE_FACTOR = .1
 
 
 @pytest.fixture(scope="session")
 def engine():
-    env = Environment(working_path=working_path)
+    env = Environment(working_path=working_path / 'output')
+    engine: Executor = Dialects.DUCK_DB.default_executor(
+        environment=env,
+        hooks=[DebuggingHook(level=INFO, process_other=False, process_ctes=False)],
+        conf=DuckDBConfig(),
+    )
+    db_path = working_path / f"sf_{SCALE_FACTOR}" / "memory"
+    memory = db_path / "schema.sql"
+
+    if Path(memory).exists():
+        # TODO: Detect if loaded
+        engine.execute_raw_sql(f"IMPORT DATABASE '{db_path}';")
+    else:
+        Path(db_path).parent.mkdir(parents=True, exist_ok=True)
+    results = engine.execute_raw_sql("SHOW TABLES;").fetchall()
+    tables = [r[0] for r in results]
+
+    if "store_sales" not in tables:
+        engine.execute_raw_sql(
+            f"""
+        INSTALL tpcds;
+        LOAD tpcds;
+        SELECT * FROM dsdgen(sf={SCALE_FACTOR});
+        EXPORT DATABASE '{db_path}' (FORMAT PARQUET);"""
+        )
+    yield engine
+
+@pytest.fixture(scope="session")
+def base_engine():
+    env = Environment(working_path=working_path / 'output')
     engine: Executor = Dialects.DUCK_DB.default_executor(
         environment=env,
         hooks=[DebuggingHook(level=INFO, process_other=False, process_ctes=False)],
@@ -54,6 +83,7 @@ class OptimizedEnv:
     mappings: dict[Path, OptimizationResult]
 
 
+
 @pytest.fixture(scope="session")
 def optimized_env(engine: Executor):
 
@@ -82,8 +112,9 @@ def optimized_env(engine: Executor):
     optimized_files = list(output_path.glob("**/_trilogyt_opt*.preql"))
     for file in optimized_files:
         logger.info(f'Executing optimized file: {file}')
-        try:
-            engine.execute_file(file, non_interactive=True)
-        except Exception as e:
-            logger.error(f"Error executing optimized file {file}: {e}")
+        engine.execute_file(file, non_interactive=True)
+        # try:
+            
+        # except Exception as e:
+        #     logger.error(f"Error executing optimized file {file}: {e}")
     yield output_path

@@ -29,9 +29,11 @@ from trilogy.core.processing.node_generators.select_merge_node import gen_select
 DebuggingHook()
 r = exec.generate_sql(
     """SELECT
-    total_returns,
+    returns.return_amount,
     returns.customer.text_id,
     returns.store.id,
+    returns.item.id,
+    returns.store_sales.ticket_number,
 ;"""
 )
 print('---------')

@@ -268,13 +268,13 @@ class Optimizer:
                 else:
                     final.append(x)
             strings: list[str] = []
-            renderer = Renderer(environment=optimize_env)
+            renderer = Renderer(environment=v.environment)
             for concept in ENVIRONMENT_CONCEPTS:
                 strings.append(
                     renderer.to_string(ConceptDeclarationStatement(concept=concept))
                 )
-            for cte in final:
-                strings.append(renderer.to_string(cte))
+            for statement in final:
+                strings.append(renderer.to_string(statement))
             for x in new_persists:
                 strings.append(renderer.to_string(x))
                 # f.write(renderer.to_string(x.datasource) + "\n\n")

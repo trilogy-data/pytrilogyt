@@ -27,10 +27,10 @@ SELECT
     returns.store_sales.ticket_number,
 ;
 
-PERSIST default.ds686a5f17ccf83dbc51af0bf382c9b726c3a62dfe587eb7774c1be5656b46818d INTO ds686a5f17ccf83dbc51af0bf382c9b726c3a62dfe587eb7774c1be5656b46818d FROM SELECT
+PERSIST default.ds076b41e98d63ade6d76668df39d060a23d05937779557c564c9c9741a7ecc775 INTO ds076b41e98d63ade6d76668df39d060a23d05937779557c564c9c9741a7ecc775 FROM SELECT
     total_returns,
-    returns.store.id,
     returns.customer.text_id,
+    returns.store.id,
 ;
 
 PERSIST default.ds54404a332ea8db7d5077c55e8dfb983a19e81172a43fe2d05f56910f96fbd12f INTO ds54404a332ea8db7d5077c55e8dfb983a19e81172a43fe2d05f56910f96fbd12f FROM SELECT

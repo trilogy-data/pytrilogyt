@@ -1,0 +1,49 @@
+const _trilogyt._created_at <- current_datetime();
+
+import store_sales as store_sales;
+
+import item as item;
+
+MERGE store_sales.item.id into item.id;
+
+WHERE
+    store_sales.date.year = 2001 and (store_sales.date.month_of_year = 1 and (store_sales.item.current_price > 1.2 * avg(item.current_price) by item.category and item.category is not null))
+SELECT
+    store_sales.customer.state,
+    count(store_sales.customer.id) -> customer_count,
+HAVING
+    customer_count >= 10
+
+ORDER BY
+    customer_count asc nulls first,
+    store_sales.customer.state asc nulls first
+;
+
+PERSIST default.ds26011371864065c9ad4cd6e472b87ff4ddbeab6fff3d1e09cd9bdc031e83b57f INTO ds26011371864065c9ad4cd6e472b87ff4ddbeab6fff3d1e09cd9bdc031e83b57f FROM SELECT
+    store_sales.date.id,
+    item.id,
+    store_sales.customer.id,
+;
+
+PERSIST default.dsa91904d567548c47feba3936960025193f43906aac85e59c3c0ee71599ffadea_filtered_on_year_month_of_year_category INTO dsa91904d567548c47feba3936960025193f43906aac85e59c3c0ee71599ffadea_filtered_on_year_month_of_year_category FROM WHERE
+    (store_sales.date.year = 2001 and store_sales.date.month_of_year = 1) and item.category is not null
+SELECT
+    item.category,
+    store_sales.customer.id,
+    store_sales.customer.state,
+    store_sales.date.month_of_year,
+    store_sales.date.year,
+    store_sales.item.current_price,
+;
+
+PERSIST default.dsc37ee9c1f858a1d38c858456341c000a044fbd04e95a3fbd893aaf5bdbb32432 INTO dsc37ee9c1f858a1d38c858456341c000a044fbd04e95a3fbd893aaf5bdbb32432 FROM SELECT
+    store_sales.customer.id,
+    store_sales.customer.state,
+;
+
+PERSIST default.dsca3b5a51d14fcbd40d5c6c4925c0746c19cb4a6d55f2ac9c8f882233c8276003_filtered_on_customer_count INTO dsca3b5a51d14fcbd40d5c6c4925c0746c19cb4a6d55f2ac9c8f882233c8276003_filtered_on_customer_count FROM WHERE
+    customer_count >= 10
+SELECT
+    store_sales.customer.state,
+    customer_count,
+;

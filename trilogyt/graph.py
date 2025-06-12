@@ -273,6 +273,8 @@ def is_raw_source_cte(cte: CTE) -> bool:
 def has_anon_concepts(cte: CTE) -> bool:
     if any([x.name.startswith(VIRTUAL_CONCEPT_PREFIX) for x in cte.output_columns]):
         return True
+    if cte.condition and any([x.name.startswith(VIRTUAL_CONCEPT_PREFIX) for x in cte.condition.concept_arguments]):
+        return True
     return False
 
 

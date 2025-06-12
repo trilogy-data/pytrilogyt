@@ -1,0 +1,44 @@
+const _trilogyt._created_at <- current_datetime();
+
+import store_sales as store_sales;
+
+rowset filtered_sales <- WHERE
+    store_sales.customer_demographic.gender = 'M' and (store_sales.customer_demographic.marital_status = 'S' and (store_sales.customer_demographic.education_status = 'College' and (((store_sales.promotion.channel_email = 'N' or store_sales.promotion.channel_event = 'N')) and store_sales.date.year = 2000)))
+SELECT
+    store_sales.ticket_number,
+    store_sales.item.id,
+    store_sales.item.name,
+    store_sales.quantity,
+    store_sales.list_price,
+    store_sales.coupon_amt,
+    store_sales.sales_price,
+;
+
+SELECT
+    filtered_sales.store_sales.item.name,
+    avg(filtered_sales.store_sales.quantity) -> avg_quantity,
+    avg(filtered_sales.store_sales.list_price) -> avg_list_price,
+    avg(filtered_sales.store_sales.coupon_amt) -> avg_coupon_amt,
+    avg(filtered_sales.store_sales.sales_price) -> avg_sales_price,
+ORDER BY
+    filtered_sales.store_sales.item.name asc
+LIMIT 100
+;
+
+PERSIST default.ds1db8030a9a4f90d94bb6522fe4fee5973a21f0720e49af6cfaf3935ac40de5d1 INTO ds1db8030a9a4f90d94bb6522fe4fee5973a21f0720e49af6cfaf3935ac40de5d1 FROM SELECT
+    filtered_sales.store_sales.ticket_number,
+    filtered_sales.store_sales.item.id,
+    filtered_sales.store_sales.item.name,
+    filtered_sales.store_sales.quantity,
+    filtered_sales.store_sales.list_price,
+    filtered_sales.store_sales.coupon_amt,
+    filtered_sales.store_sales.sales_price,
+;
+
+PERSIST default.dsde19f92adfdca358cc8fdeac3ef6ac0d4c42a974b82cb2bc78793b2050dcf661 INTO dsde19f92adfdca358cc8fdeac3ef6ac0d4c42a974b82cb2bc78793b2050dcf661 FROM SELECT
+    avg_coupon_amt,
+    filtered_sales.store_sales.item.name,
+    avg_quantity,
+    avg_list_price,
+    avg_sales_price,
+;

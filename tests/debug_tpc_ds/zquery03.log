@@ -1,7 +1,7 @@
-base_prep_time = 0.0
-base_parse_time = 0.120115
-base_generation_time = 0.005671
-base_exec_time = 0.006697
+base_prep_time = 1e-06
+base_parse_time = 0.138878
+base_generation_time = 0.003467
+base_exec_time = 0.006843
 base_generated_sql = """
 
 WITH 
@@ -36,44 +36,27 @@ ORDER BY
     sum(\"cheerful\".\"store_sales_ext_sales_price\") desc,
     \"cheerful\".\"store_sales_item_brand_id\" asc
 LIMIT (100)"""
-optimized_prep_time = 0.0
-optimized_parse_time = 0.127107
-optimized_generation_time = 0.002007
-optimized_exec_time = 0.002007
+optimized_prep_time = 2e-06
+optimized_parse_time = 0.179147
+optimized_generation_time = 0.001188
+optimized_exec_time = 0.001592
 optimized_generated_sql = """
-
-WITH 
-cheerful as (
 SELECT
-    \"store_sales_item_items\".\"I_BRAND\" as \"store_sales_item_brand_name\",
-    \"store_sales_item_items\".\"I_BRAND_ID\" as \"store_sales_item_brand_id\",
-    \"store_sales_item_items\".\"I_ITEM_SK\" as \"store_sales_item_id\",
-    \"store_sales_store_sales\".\"SS_EXT_SALES_PRICE\" as \"store_sales_ext_sales_price\",
-    \"store_sales_store_sales\".\"SS_TICKET_NUMBER\" as \"store_sales_ticket_number\",
-    cast(\"store_sales_date_date\".\"D_YEAR\" as int) as \"store_sales_date_year\"
+    \"default_dse8c5b59e0737539bf620f5ad5df1cdeac6aee638d9fdb565dc4e3c2bb86c5e51_filtered_on_month_of_year_manufacturer_id\".\"store_sales_date_year\" as \"store_sales_date_year\",
+    \"default_dse8c5b59e0737539bf620f5ad5df1cdeac6aee638d9fdb565dc4e3c2bb86c5e51_filtered_on_month_of_year_manufacturer_id\".\"store_sales_item_brand_id\" as \"store_sales_item_brand_id\",
+    \"default_dse8c5b59e0737539bf620f5ad5df1cdeac6aee638d9fdb565dc4e3c2bb86c5e51_filtered_on_month_of_year_manufacturer_id\".\"store_sales_item_brand_name\" as \"store_sales_item_brand_name\",
+    sum(\"default_dse8c5b59e0737539bf620f5ad5df1cdeac6aee638d9fdb565dc4e3c2bb86c5e51_filtered_on_month_of_year_manufacturer_id\".\"store_sales_ext_sales_price\") as \"sum_agg\"
 FROM
-    \"memory\".\"store_sales\" as \"store_sales_store_sales\"
-    INNER JOIN \"memory\".\"date_dim\" as \"store_sales_date_date\" on \"store_sales_store_sales\".\"SS_SOLD_DATE_SK\" = \"store_sales_date_date\".\"D_DATE_SK\"
-    INNER JOIN \"memory\".\"item\" as \"store_sales_item_items\" on \"store_sales_store_sales\".\"SS_ITEM_SK\" = \"store_sales_item_items\".\"I_ITEM_SK\"
-WHERE
-    \"store_sales_date_date\".\"D_MOY\" = 11 and \"store_sales_item_items\".\"I_MANUFACT_ID\" = 128
-)
-SELECT
-    \"cheerful\".\"store_sales_date_year\" as \"store_sales_date_year\",
-    \"cheerful\".\"store_sales_item_brand_id\" as \"store_sales_item_brand_id\",
-    \"cheerful\".\"store_sales_item_brand_name\" as \"store_sales_item_brand_name\",
-    sum(\"cheerful\".\"store_sales_ext_sales_price\") as \"sum_agg\"
-FROM
-    \"cheerful\"
+    \"dse8c5b59e0737539bf620f5ad5df1cdeac6aee638d9fdb565dc4e3c2bb86c5e51_filtered_on_month_of_year_manufacturer_id\" as \"default_dse8c5b59e0737539bf620f5ad5df1cdeac6aee638d9fdb565dc4e3c2bb86c5e51_filtered_on_month_of_year_manufacturer_id\"
 GROUP BY 
-    \"cheerful\".\"store_sales_date_year\",
-    \"cheerful\".\"store_sales_item_brand_id\",
-    \"cheerful\".\"store_sales_item_brand_name\"
+    \"default_dse8c5b59e0737539bf620f5ad5df1cdeac6aee638d9fdb565dc4e3c2bb86c5e51_filtered_on_month_of_year_manufacturer_id\".\"store_sales_date_year\",
+    \"default_dse8c5b59e0737539bf620f5ad5df1cdeac6aee638d9fdb565dc4e3c2bb86c5e51_filtered_on_month_of_year_manufacturer_id\".\"store_sales_item_brand_id\",
+    \"default_dse8c5b59e0737539bf620f5ad5df1cdeac6aee638d9fdb565dc4e3c2bb86c5e51_filtered_on_month_of_year_manufacturer_id\".\"store_sales_item_brand_name\"
 ORDER BY 
-    \"cheerful\".\"store_sales_date_year\" asc,
-    sum(\"cheerful\".\"store_sales_ext_sales_price\") desc,
-    \"cheerful\".\"store_sales_item_brand_id\" asc
+    \"default_dse8c5b59e0737539bf620f5ad5df1cdeac6aee638d9fdb565dc4e3c2bb86c5e51_filtered_on_month_of_year_manufacturer_id\".\"store_sales_date_year\" asc,
+    sum(\"default_dse8c5b59e0737539bf620f5ad5df1cdeac6aee638d9fdb565dc4e3c2bb86c5e51_filtered_on_month_of_year_manufacturer_id\".\"store_sales_ext_sales_price\") desc,
+    \"default_dse8c5b59e0737539bf620f5ad5df1cdeac6aee638d9fdb565dc4e3c2bb86c5e51_filtered_on_month_of_year_manufacturer_id\".\"store_sales_item_brand_id\" asc
 LIMIT (100)"""
 query_id = 3
-sql_comp_time = 0.006479
-total_time = 0.270083
+sql_comp_time = 0.083542
+total_time = 0.424274

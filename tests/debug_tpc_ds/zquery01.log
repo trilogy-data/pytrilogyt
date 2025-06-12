@@ -1,8 +1,8 @@
-optimized_prep_time = 0.00018
-optimized_parse_time = 0.441892
-optimized_generation_time = 0.003534
-optimized_exec_time = 0.007311
-optimized_generated_sql = """
+base_prep_time = 1e-06
+base_parse_time = 0.237969
+base_generation_time = 0.003635
+base_exec_time = 0.007279
+base_generated_sql = """
 
 WITH 
 thoughtful as (
@@ -49,6 +49,42 @@ WHERE
 ORDER BY 
     \"cooperative\".\"returns_customer_text_id\" asc
 LIMIT (100)"""
+optimized_prep_time = 1e-06
+optimized_parse_time = 0.221133
+optimized_generation_time = 0.001525
+optimized_exec_time = 0.004712
+optimized_generated_sql = """
+
+WITH 
+macho as (
+SELECT
+    \"default_dsa09b549514982e2f5ebaf23a4352f002a4259c548b06c2eac32969c3a097f293_filtered_on_state_year\".\"returns_customer_text_id\" as \"returns_customer_text_id\",
+    \"default_dsa09b549514982e2f5ebaf23a4352f002a4259c548b06c2eac32969c3a097f293_filtered_on_state_year\".\"returns_store_id\" as \"returns_store_id\",
+    sum(\"default_dsa09b549514982e2f5ebaf23a4352f002a4259c548b06c2eac32969c3a097f293_filtered_on_state_year\".\"returns_return_amount\") as \"total_returns\"
+FROM
+    \"dsa09b549514982e2f5ebaf23a4352f002a4259c548b06c2eac32969c3a097f293_filtered_on_state_year\" as \"default_dsa09b549514982e2f5ebaf23a4352f002a4259c548b06c2eac32969c3a097f293_filtered_on_state_year\"
+GROUP BY 
+    \"default_dsa09b549514982e2f5ebaf23a4352f002a4259c548b06c2eac32969c3a097f293_filtered_on_state_year\".\"returns_customer_text_id\",
+    \"default_dsa09b549514982e2f5ebaf23a4352f002a4259c548b06c2eac32969c3a097f293_filtered_on_state_year\".\"returns_store_id\"),
+scrawny as (
+SELECT
+    \"macho\".\"returns_store_id\" as \"returns_store_id\",
+    avg(\"macho\".\"total_returns\") as \"avg_store_returns\"
+FROM
+    \"macho\"
+GROUP BY 
+    \"macho\".\"returns_store_id\")
+SELECT
+    \"macho\".\"returns_customer_text_id\" as \"returns_customer_text_id\"
+FROM
+    \"scrawny\"
+    INNER JOIN \"macho\" on \"scrawny\".\"returns_store_id\" = \"macho\".\"returns_store_id\"
+WHERE
+    \"macho\".\"total_returns\" > ( 1.2 * \"scrawny\".\"avg_store_returns\" )
+
+ORDER BY 
+    \"macho\".\"returns_customer_text_id\" asc
+LIMIT (100)"""
 query_id = 1
-sql_comp_time = 0.084672
-total_time = 0.538596
+sql_comp_time = 0.080428
+total_time = 0.558994
