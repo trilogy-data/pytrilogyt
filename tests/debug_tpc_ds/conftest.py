@@ -15,7 +15,7 @@ from trilogyt.constants import logger
 from trilogyt.native.run import run_path_v2
 working_path = Path(__file__).parent 
 
-SCALE_FACTOR = .1
+SCALE_FACTOR = .2
 
 
 @pytest.fixture(scope="session")

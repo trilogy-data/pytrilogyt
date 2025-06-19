@@ -27,9 +27,9 @@ SELECT
     store_sales.ticket_number,
 ;
 
-PERSIST default.dsa595e281b60524e545482e53228e33c3788bb028fa078950654a70bb2a765dea INTO dsa595e281b60524e545482e53228e33c3788bb028fa078950654a70bb2a765dea FROM SELECT
+PERSIST default.dsc2a5f7f5ec6463dfbe2204c19bee8bfdc02af2a93b431844753dc1e2cc686870 INTO dsc2a5f7f5ec6463dfbe2204c19bee8bfdc02af2a93b431844753dc1e2cc686870 FROM SELECT
     sum_agg,
-    store_sales.date.year,
-    store_sales.item.brand_id,
     store_sales.item.brand_name,
+    store_sales.item.brand_id,
+    store_sales.date.year,
 ;

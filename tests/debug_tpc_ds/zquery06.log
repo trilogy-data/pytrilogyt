@@ -1,7 +1,7 @@
-base_prep_time = 0.004511
-base_parse_time = 0.569756
-base_generation_time = 0.011739
-base_exec_time = 0.017959
+base_prep_time = 2e-06
+base_parse_time = 0.244965
+base_generation_time = 0.011993
+base_exec_time = 0.050903
 base_generated_sql = """
 
 WITH 
@@ -68,14 +68,14 @@ HAVING
 ORDER BY 
     sum(1) asc nulls first,
     \"yummy\".\"store_sales_customer_state\" asc nulls first"""
-optimized_prep_time = 0.0
-optimized_parse_time = 0.36196
-optimized_generation_time = 0.000756
-optimized_exec_time = 0.022939
+optimized_prep_time = 2e-06
+optimized_parse_time = 0.694097
+optimized_generation_time = 0.010051
+optimized_exec_time = 0.026281
 optimized_generated_sql = """
 
 WITH 
-questionable as (
+faithful as (
 SELECT
     \"item_items\".\"I_CATEGORY\" as \"item_category\",
     \"store_sales_customer_customer_address\".\"CA_STATE\" as \"store_sales_customer_state\",
@@ -95,7 +95,7 @@ FROM
 WHERE
     cast(\"store_sales_date_date\".\"D_YEAR\" as int) = 2001
 ),
-abundant as (
+vast as (
 SELECT
     \"item_items\".\"I_CATEGORY\" as \"item_category\",
     avg(\"item_items\".\"I_CURRENT_PRICE\") as \"_virt_agg_avg_5942253052406187\"
@@ -103,41 +103,41 @@ FROM
     \"memory\".\"item\" as \"item_items\"
 GROUP BY 
     \"item_items\".\"I_CATEGORY\"),
-uneven as (
+helpless as (
 SELECT
-    \"questionable\".\"item_id\" as \"item_id\",
-    \"questionable\".\"store_sales_customer_state\" as \"store_sales_customer_state\",
-    \"questionable\".\"store_sales_ticket_number\" as \"store_sales_ticket_number\"
+    \"faithful\".\"item_id\" as \"item_id\",
+    \"faithful\".\"store_sales_customer_state\" as \"store_sales_customer_state\",
+    \"faithful\".\"store_sales_ticket_number\" as \"store_sales_ticket_number\"
 FROM
-    \"questionable\"
-    INNER JOIN \"abundant\" on (\"questionable\".\"item_category\" = \"abundant\".\"item_category\" or (\"questionable\".\"item_category\" is null and \"abundant\".\"item_category\" is null))
+    \"faithful\"
+    INNER JOIN \"vast\" on (\"faithful\".\"item_category\" = \"vast\".\"item_category\" or (\"faithful\".\"item_category\" is null and \"vast\".\"item_category\" is null))
 WHERE
-    \"questionable\".\"store_sales_date_year\" = 2001 and ( \"questionable\".\"store_sales_date_month_of_year\" = 1 and ( \"questionable\".\"store_sales_item_current_price\" > 1.2 * \"abundant\".\"_virt_agg_avg_5942253052406187\" and \"questionable\".\"store_sales_item_category\" is not null ) )
+    \"faithful\".\"store_sales_date_year\" = 2001 and ( \"faithful\".\"store_sales_date_month_of_year\" = 1 and ( \"faithful\".\"store_sales_item_current_price\" > 1.2 * \"vast\".\"_virt_agg_avg_5942253052406187\" and \"faithful\".\"store_sales_item_category\" is not null ) )
 ),
-yummy as (
+odd as (
 SELECT
-    \"uneven\".\"item_id\" as \"item_id\",
-    \"uneven\".\"store_sales_customer_state\" as \"store_sales_customer_state\",
-    \"uneven\".\"store_sales_ticket_number\" as \"store_sales_ticket_number\"
+    \"helpless\".\"item_id\" as \"item_id\",
+    \"helpless\".\"store_sales_customer_state\" as \"store_sales_customer_state\",
+    \"helpless\".\"store_sales_ticket_number\" as \"store_sales_ticket_number\"
 FROM
-    \"uneven\"
+    \"helpless\"
 GROUP BY 
-    \"uneven\".\"item_id\",
-    \"uneven\".\"store_sales_customer_state\",
-    \"uneven\".\"store_sales_ticket_number\")
+    \"helpless\".\"item_id\",
+    \"helpless\".\"store_sales_customer_state\",
+    \"helpless\".\"store_sales_ticket_number\")
 SELECT
-    \"yummy\".\"store_sales_customer_state\" as \"store_sales_customer_state\",
+    \"odd\".\"store_sales_customer_state\" as \"store_sales_customer_state\",
     sum(1) as \"customer_count\"
 FROM
-    \"yummy\"
+    \"odd\"
 GROUP BY 
-    \"yummy\".\"store_sales_customer_state\"
+    \"odd\".\"store_sales_customer_state\"
 HAVING
     sum(1) >= 10
 
 ORDER BY 
     sum(1) asc nulls first,
-    \"yummy\".\"store_sales_customer_state\" asc nulls first"""
+    \"odd\".\"store_sales_customer_state\" asc nulls first"""
 query_id = 6
-sql_comp_time = 1.657615
-total_time = 2.649243
+sql_comp_time = 0.103436
+total_time = 1.154511

@@ -48,7 +48,7 @@ def run_test_case(
         if len(base_results) != len(comp_results):
             assert (
                 False
-            ), f"Row count mismatch: {len(base_results)} != {len(comp_results)}"
+            ), f"Row count mismatch for {label}: {len(base_results)} != {len(comp_results)}"
         for ridx, row in enumerate(base_results):
             assert row == comp_results[ridx], (
                 f"{label} row mismatch (expected v actual) for row {ridx} : {row} != {comp_results[ridx]}"
@@ -133,12 +133,17 @@ def run_adhoc_compiled(number: int):
     engine: Executor = Dialects.DUCK_DB.default_executor(
         environment=env, hooks=[DebuggingHook()]
     )
+    optimized_engine = Dialects.DUCK_DB.default_executor(
+        environment=env,
+        hooks=[DebuggingHook()],
+        conf=engine.conf,
+    )
     engine.execute_raw_sql(
         """INSTALL tpcds;
 LOAD tpcds;
-SELECT * FROM dsdgen(sf=.5);"""
+SELECT * FROM dsdgen(sf=.1);"""
     )
-    run_query(engine, number, optimized_path=parent / "preql_staging", profile=False)
+    run_query(engine, number, optimized_path=parent / "output", profile=False)
     print("passed!")
 
 

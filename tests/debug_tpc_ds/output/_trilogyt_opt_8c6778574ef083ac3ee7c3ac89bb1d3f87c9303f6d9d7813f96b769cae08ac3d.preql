@@ -1,4 +1,8 @@
-import _trilogyt_opt_8c6778574ef083ac3ee7c3ac89bb1d3f87c9303f6d9d7813f96b769cae08ac3d;
+const _trilogyt._created_at <- current_datetime();
+
+import store_sales as store_sales;
+
+import item as item;
 
 MERGE store_sales.item.id into item.id;
 

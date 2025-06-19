@@ -1,4 +1,6 @@
-import _trilogyt_opt_be962f83a52cbf53b35bc30ef68fd377a844269b2c1dcf40afc8ae290626c090;
+const _trilogyt._created_at <- current_datetime();
+
+import store_returns as returns;
 
 WHERE
     returns.store.state = 'TN' and returns.return_date.year = 2000
