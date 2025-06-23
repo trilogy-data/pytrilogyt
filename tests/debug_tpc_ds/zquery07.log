@@ -1,11 +1,11 @@
-base_prep_time = 4e-06
-base_parse_time = 0.529889
-base_generation_time = 0.018527
-base_exec_time = 0.07582
+base_prep_time = 2e-06
+base_parse_time = 0.581525
+base_generation_time = 0.015964
+base_exec_time = 0.081919
 base_generated_sql = """
 
 WITH 
-waggish as (
+sedate as (
 SELECT
     \"store_sales_item_items\".\"I_ITEM_ID\" as \"filtered_sales_store_sales_item_name\",
     \"store_sales_item_items\".\"I_ITEM_SK\" as \"filtered_sales_store_sales_item_id\",
@@ -32,22 +32,22 @@ GROUP BY
     \"store_sales_store_sales\".\"SS_SALES_PRICE\",
     \"store_sales_store_sales\".\"SS_TICKET_NUMBER\")
 SELECT
-    \"waggish\".\"filtered_sales_store_sales_item_name\" as \"filtered_sales_store_sales_item_name\",
-    avg(\"waggish\".\"filtered_sales_store_sales_quantity\") as \"avg_quantity\",
-    avg(\"waggish\".\"filtered_sales_store_sales_list_price\") as \"avg_list_price\",
-    avg(\"waggish\".\"filtered_sales_store_sales_coupon_amt\") as \"avg_coupon_amt\",
-    avg(\"waggish\".\"filtered_sales_store_sales_sales_price\") as \"avg_sales_price\"
+    \"sedate\".\"filtered_sales_store_sales_item_name\" as \"filtered_sales_store_sales_item_name\",
+    avg(\"sedate\".\"filtered_sales_store_sales_quantity\") as \"avg_quantity\",
+    avg(\"sedate\".\"filtered_sales_store_sales_list_price\") as \"avg_list_price\",
+    avg(\"sedate\".\"filtered_sales_store_sales_coupon_amt\") as \"avg_coupon_amt\",
+    avg(\"sedate\".\"filtered_sales_store_sales_sales_price\") as \"avg_sales_price\"
 FROM
-    \"waggish\"
+    \"sedate\"
 GROUP BY 
-    \"waggish\".\"filtered_sales_store_sales_item_name\"
+    \"sedate\".\"filtered_sales_store_sales_item_name\"
 ORDER BY 
-    \"waggish\".\"filtered_sales_store_sales_item_name\" asc
+    \"sedate\".\"filtered_sales_store_sales_item_name\" asc
 LIMIT (100)"""
-optimized_prep_time = 2e-06
-optimized_parse_time = 0.454064
-optimized_generation_time = 0.001789
-optimized_exec_time = 0.00231
+optimized_prep_time = 4e-06
+optimized_parse_time = 1.330603
+optimized_generation_time = 0.002119
+optimized_exec_time = 0.002715
 optimized_generated_sql = """
 SELECT
     \"default_dsde19f92adfdca358cc8fdeac3ef6ac0d4c42a974b82cb2bc78793b2050dcf661\".\"filtered_sales_store_sales_item_name\" as \"filtered_sales_store_sales_item_name\",
@@ -61,5 +61,5 @@ ORDER BY
     \"default_dsde19f92adfdca358cc8fdeac3ef6ac0d4c42a974b82cb2bc78793b2050dcf661\".\"filtered_sales_store_sales_item_name\" asc
 LIMIT (100)"""
 query_id = 7
-sql_comp_time = 0.059648
-total_time = 1.148324
+sql_comp_time = 0.048039
+total_time = 2.073142

@@ -1,11 +1,11 @@
-base_prep_time = 3e-06
-base_parse_time = 0.417134
-base_generation_time = 0.006498
-base_exec_time = 0.035946
+base_prep_time = 2e-06
+base_parse_time = 0.396342
+base_generation_time = 0.007446
+base_exec_time = 0.032961
 base_generated_sql = """
 
 WITH 
-concerned as (
+late as (
 SELECT
     \"store_sales_item_items\".\"I_BRAND\" as \"store_sales_item_brand_name\",
     \"store_sales_item_items\".\"I_BRAND_ID\" as \"store_sales_item_brand_id\",
@@ -21,25 +21,25 @@ WHERE
     \"store_sales_date_date\".\"D_MOY\" = 11 and \"store_sales_item_items\".\"I_MANUFACT_ID\" = 128
 )
 SELECT
-    \"concerned\".\"store_sales_date_year\" as \"store_sales_date_year\",
-    \"concerned\".\"store_sales_item_brand_id\" as \"store_sales_item_brand_id\",
-    \"concerned\".\"store_sales_item_brand_name\" as \"store_sales_item_brand_name\",
-    sum(\"concerned\".\"store_sales_ext_sales_price\") as \"sum_agg\"
+    \"late\".\"store_sales_date_year\" as \"store_sales_date_year\",
+    \"late\".\"store_sales_item_brand_id\" as \"store_sales_item_brand_id\",
+    \"late\".\"store_sales_item_brand_name\" as \"store_sales_item_brand_name\",
+    sum(\"late\".\"store_sales_ext_sales_price\") as \"sum_agg\"
 FROM
-    \"concerned\"
+    \"late\"
 GROUP BY 
-    \"concerned\".\"store_sales_date_year\",
-    \"concerned\".\"store_sales_item_brand_id\",
-    \"concerned\".\"store_sales_item_brand_name\"
+    \"late\".\"store_sales_date_year\",
+    \"late\".\"store_sales_item_brand_id\",
+    \"late\".\"store_sales_item_brand_name\"
 ORDER BY 
-    \"concerned\".\"store_sales_date_year\" asc,
-    sum(\"concerned\".\"store_sales_ext_sales_price\") desc,
-    \"concerned\".\"store_sales_item_brand_id\" asc
+    \"late\".\"store_sales_date_year\" asc,
+    sum(\"late\".\"store_sales_ext_sales_price\") desc,
+    \"late\".\"store_sales_item_brand_id\" asc
 LIMIT (100)"""
-optimized_prep_time = 3e-06
-optimized_parse_time = 0.767014
-optimized_generation_time = 0.003003
-optimized_exec_time = 0.009055
+optimized_prep_time = 2e-06
+optimized_parse_time = 1.185166
+optimized_generation_time = 0.003669
+optimized_exec_time = 0.006592
 optimized_generated_sql = """
 SELECT
     \"default_dse8c5b59e0737539bf620f5ad5df1cdeac6aee638d9fdb565dc4e3c2bb86c5e51_filtered_on_month_of_year_manufacturer_id\".\"store_sales_date_year\" as \"store_sales_date_year\",
@@ -58,5 +58,5 @@ ORDER BY
     \"default_dse8c5b59e0737539bf620f5ad5df1cdeac6aee638d9fdb565dc4e3c2bb86c5e51_filtered_on_month_of_year_manufacturer_id\".\"store_sales_item_brand_id\" asc
 LIMIT (100)"""
 query_id = 3
-sql_comp_time = 0.066033
-total_time = 1.309258
+sql_comp_time = 0.027522
+total_time = 1.669084

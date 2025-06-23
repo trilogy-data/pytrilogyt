@@ -1,7 +1,7 @@
-base_prep_time = 0.002011
-base_parse_time = 0.237181
-base_generation_time = 0.010727
-base_exec_time = 0.230426
+base_prep_time = 0.000177
+base_parse_time = 0.063059
+base_generation_time = 0.002914
+base_exec_time = 0.015233
 base_generated_sql = """
 
 WITH 
@@ -63,14 +63,14 @@ ORDER BY
     \"thoughtful\".\"web_sales_item_desc\" asc,
     (\"thoughtful\".\"itemrevenue\" * 100.0) / \"cooperative\".\"_virt_window_sum_7913040918303715\" asc
 LIMIT (100)"""
-optimized_prep_time = 176.643376
-optimized_parse_time = 2.642256
-optimized_generation_time = 0.008554
-optimized_exec_time = 1.509941
+optimized_prep_time = 0.41681
+optimized_parse_time = 0.137714
+optimized_generation_time = 0.002391
+optimized_exec_time = 0.007603
 optimized_generated_sql = """
 
 WITH 
-kaput as (
+scrawny as (
 SELECT
     \"web_sales_item_items\".\"I_CATEGORY\" as \"web_sales_item_category\",
     \"web_sales_item_items\".\"I_CLASS\" as \"web_sales_item_class\",
@@ -87,47 +87,47 @@ FROM
 WHERE
     ( cast(\"web_sales_date_date\".\"D_DATE\" as date) >= date '1999-02-22' and cast(\"web_sales_date_date\".\"D_DATE\" as date) <= date '1999-03-24' ) and \"web_sales_item_items\".\"I_CATEGORY\" in ('Sports','Books','Home')
 ),
-divergent as (
+friendly as (
 SELECT
-    \"kaput\".\"web_sales_item_category\" as \"web_sales_item_category\",
-    \"kaput\".\"web_sales_item_class\" as \"web_sales_item_class\",
-    \"kaput\".\"web_sales_item_current_price\" as \"web_sales_item_current_price\",
-    \"kaput\".\"web_sales_item_desc\" as \"web_sales_item_desc\",
-    \"kaput\".\"web_sales_item_name\" as \"web_sales_item_name\",
-    sum(\"kaput\".\"web_sales_external_sales_price\") as \"itemrevenue\"
+    \"scrawny\".\"web_sales_item_category\" as \"web_sales_item_category\",
+    \"scrawny\".\"web_sales_item_class\" as \"web_sales_item_class\",
+    \"scrawny\".\"web_sales_item_current_price\" as \"web_sales_item_current_price\",
+    \"scrawny\".\"web_sales_item_desc\" as \"web_sales_item_desc\",
+    \"scrawny\".\"web_sales_item_name\" as \"web_sales_item_name\",
+    sum(\"scrawny\".\"web_sales_external_sales_price\") as \"itemrevenue\"
+FROM
+    \"scrawny\"
+GROUP BY 
+    \"scrawny\".\"web_sales_item_category\",
+    \"scrawny\".\"web_sales_item_class\",
+    \"scrawny\".\"web_sales_item_current_price\",
+    \"scrawny\".\"web_sales_item_desc\",
+    \"scrawny\".\"web_sales_item_name\"),
+kaput as (
+SELECT
+    \"friendly\".\"itemrevenue\" as \"itemrevenue\",
+    \"friendly\".\"web_sales_item_class\" as \"web_sales_item_class\",
+    sum(\"friendly\".\"itemrevenue\") over (partition by \"friendly\".\"web_sales_item_class\") as \"_virt_window_sum_7913040918303715\"
+FROM
+    \"friendly\")
+SELECT
+    \"friendly\".\"web_sales_item_name\" as \"web_sales_item_name\",
+    \"friendly\".\"web_sales_item_desc\" as \"web_sales_item_desc\",
+    \"friendly\".\"web_sales_item_category\" as \"web_sales_item_category\",
+    \"friendly\".\"web_sales_item_class\" as \"web_sales_item_class\",
+    \"friendly\".\"web_sales_item_current_price\" as \"web_sales_item_current_price\",
+    \"friendly\".\"itemrevenue\" as \"itemrevenue\",
+    (\"friendly\".\"itemrevenue\" * 100.0) / \"kaput\".\"_virt_window_sum_7913040918303715\" as \"revenueratio\"
 FROM
     \"kaput\"
-GROUP BY 
-    \"kaput\".\"web_sales_item_category\",
-    \"kaput\".\"web_sales_item_class\",
-    \"kaput\".\"web_sales_item_current_price\",
-    \"kaput\".\"web_sales_item_desc\",
-    \"kaput\".\"web_sales_item_name\"),
-busy as (
-SELECT
-    \"divergent\".\"itemrevenue\" as \"itemrevenue\",
-    \"divergent\".\"web_sales_item_class\" as \"web_sales_item_class\",
-    sum(\"divergent\".\"itemrevenue\") over (partition by \"divergent\".\"web_sales_item_class\") as \"_virt_window_sum_7913040918303715\"
-FROM
-    \"divergent\")
-SELECT
-    \"divergent\".\"web_sales_item_name\" as \"web_sales_item_name\",
-    \"divergent\".\"web_sales_item_desc\" as \"web_sales_item_desc\",
-    \"divergent\".\"web_sales_item_category\" as \"web_sales_item_category\",
-    \"divergent\".\"web_sales_item_class\" as \"web_sales_item_class\",
-    \"divergent\".\"web_sales_item_current_price\" as \"web_sales_item_current_price\",
-    \"divergent\".\"itemrevenue\" as \"itemrevenue\",
-    (\"divergent\".\"itemrevenue\" * 100.0) / \"busy\".\"_virt_window_sum_7913040918303715\" as \"revenueratio\"
-FROM
-    \"busy\"
-    LEFT OUTER JOIN \"divergent\" on \"busy\".\"itemrevenue\" = \"divergent\".\"itemrevenue\" AND \"busy\".\"web_sales_item_class\" = \"divergent\".\"web_sales_item_class\"
+    LEFT OUTER JOIN \"friendly\" on \"kaput\".\"itemrevenue\" = \"friendly\".\"itemrevenue\" AND \"kaput\".\"web_sales_item_class\" = \"friendly\".\"web_sales_item_class\"
 ORDER BY 
-    \"divergent\".\"web_sales_item_category\" asc,
-    \"divergent\".\"web_sales_item_class\" asc,
-    \"divergent\".\"web_sales_item_name\" asc,
-    \"divergent\".\"web_sales_item_desc\" asc,
-    (\"divergent\".\"itemrevenue\" * 100.0) / \"busy\".\"_virt_window_sum_7913040918303715\" asc
+    \"friendly\".\"web_sales_item_category\" asc,
+    \"friendly\".\"web_sales_item_class\" asc,
+    \"friendly\".\"web_sales_item_name\" asc,
+    \"friendly\".\"web_sales_item_desc\" asc,
+    (\"friendly\".\"itemrevenue\" * 100.0) / \"kaput\".\"_virt_window_sum_7913040918303715\" asc
 LIMIT (100)"""
 query_id = 12
-sql_comp_time = 0.459298
-total_time = 181.79597
+sql_comp_time = 0.016623
+total_time = 0.669791

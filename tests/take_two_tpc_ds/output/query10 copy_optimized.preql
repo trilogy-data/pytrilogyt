@@ -1,4 +1,4 @@
-import _trilogyt_opt_6ce3e1aa2cb874da2c6049fd90e530b0e62d7da7fd47211c896b39bece49f9b7;
+import _trilogyt_opt_8bfac979a8a2020726abf26a1d1b2b2d7e0e6c772032d9e7175f4fd62c72bb93;
 
 MERGE catalog_sales.customer.id into ~customer.id;
 

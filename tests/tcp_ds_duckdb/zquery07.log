@@ -1,7 +1,7 @@
-base_prep_time = 0.0
-base_parse_time = 0.420492
-base_generation_time = 0.011941
-base_exec_time = 0.759806
+base_prep_time = 0.000174
+base_parse_time = 0.138659
+base_generation_time = 0.003844
+base_exec_time = 0.006775
 base_generated_sql = """
 
 WITH 
@@ -44,14 +44,14 @@ GROUP BY
 ORDER BY 
     \"cooperative\".\"filtered_sales_store_sales_item_name\" asc
 LIMIT (100)"""
-optimized_prep_time = 109.536538
-optimized_parse_time = 3.317623
-optimized_generation_time = 0.011777
-optimized_exec_time = 1.760656
+optimized_prep_time = 0.637552
+optimized_parse_time = 0.496906
+optimized_generation_time = 0.003955
+optimized_exec_time = 0.007011
 optimized_generated_sql = """
 
 WITH 
-busy as (
+kaput as (
 SELECT
     \"store_sales_item_items\".\"I_ITEM_ID\" as \"filtered_sales_store_sales_item_name\",
     \"store_sales_item_items\".\"I_ITEM_SK\" as \"filtered_sales_store_sales_item_id\",
@@ -78,18 +78,18 @@ GROUP BY
     \"store_sales_store_sales\".\"SS_SALES_PRICE\",
     \"store_sales_store_sales\".\"SS_TICKET_NUMBER\")
 SELECT
-    \"busy\".\"filtered_sales_store_sales_item_name\" as \"filtered_sales_store_sales_item_name\",
-    avg(\"busy\".\"filtered_sales_store_sales_quantity\") as \"avg_quantity\",
-    avg(\"busy\".\"filtered_sales_store_sales_list_price\") as \"avg_list_price\",
-    avg(\"busy\".\"filtered_sales_store_sales_coupon_amt\") as \"avg_coupon_amt\",
-    avg(\"busy\".\"filtered_sales_store_sales_sales_price\") as \"avg_sales_price\"
+    \"kaput\".\"filtered_sales_store_sales_item_name\" as \"filtered_sales_store_sales_item_name\",
+    avg(\"kaput\".\"filtered_sales_store_sales_quantity\") as \"avg_quantity\",
+    avg(\"kaput\".\"filtered_sales_store_sales_list_price\") as \"avg_list_price\",
+    avg(\"kaput\".\"filtered_sales_store_sales_coupon_amt\") as \"avg_coupon_amt\",
+    avg(\"kaput\".\"filtered_sales_store_sales_sales_price\") as \"avg_sales_price\"
 FROM
-    \"busy\"
+    \"kaput\"
 GROUP BY 
-    \"busy\".\"filtered_sales_store_sales_item_name\"
+    \"kaput\".\"filtered_sales_store_sales_item_name\"
 ORDER BY 
-    \"busy\".\"filtered_sales_store_sales_item_name\" asc
+    \"kaput\".\"filtered_sales_store_sales_item_name\" asc
 LIMIT (100)"""
 query_id = 7
-sql_comp_time = 1.493995
-total_time = 117.327972
+sql_comp_time = 0.004638
+total_time = 1.307182

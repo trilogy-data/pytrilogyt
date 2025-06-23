@@ -32,14 +32,6 @@ SELECT
     store_sales.ticket_number,
 ;
 
-PERSIST default.ds380d56b7ad4c42e4c565b685188f9732c530e99b7c4ac874b668c8b5ce9d403f_filtered_on_year_month_of_year_current_price_virtual_category INTO ds380d56b7ad4c42e4c565b685188f9732c530e99b7c4ac874b668c8b5ce9d403f_filtered_on_year_month_of_year_current_price_virtual_category FROM WHERE
-    store_sales.date.year = 2001 and (store_sales.date.month_of_year = 1 and (store_sales.item.current_price > 1.2 * _virt_agg_avg_5942253052406187 (not found in environment) and store_sales.item.category is not null))
-SELECT
-    item.id,
-    store_sales.ticket_number,
-    store_sales.customer.state,
-;
-
 PERSIST default.ds1ade888f9d2a2866f34700c85b5043ed154fe4b50449c73f940540187f2035da INTO ds1ade888f9d2a2866f34700c85b5043ed154fe4b50449c73f940540187f2035da FROM SELECT
     store_sales.ticket_number,
     item.id,

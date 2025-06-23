@@ -11,13 +11,13 @@ datasource dsa09b549514982e2f5ebaf23a4352f002a4259c548b06c2eac32969c3a097f293_fi
 complete where returns.store.state = 'TN' and returns.return_date.year = 2000
 address dsa09b549514982e2f5ebaf23a4352f002a4259c548b06c2eac32969c3a097f293_filtered_on_state_year;
 
-datasource ds686a5f17ccf83dbc51af0bf382c9b726c3a62dfe587eb7774c1be5656b46818d (
+datasource ds076b41e98d63ade6d76668df39d060a23d05937779557c564c9c9741a7ecc775 (
     total_returns: total_returns,
-    returns_store_id: returns.store.id,
-    returns_customer_text_id: returns.customer.text_id
+    returns_customer_text_id: returns.customer.text_id,
+    returns_store_id: returns.store.id
     )
 
-address ds686a5f17ccf83dbc51af0bf382c9b726c3a62dfe587eb7774c1be5656b46818d;
+address ds076b41e98d63ade6d76668df39d060a23d05937779557c564c9c9741a7ecc775;
 
 datasource ds54404a332ea8db7d5077c55e8dfb983a19e81172a43fe2d05f56910f96fbd12f (
     avg_store_returns: avg_store_returns,

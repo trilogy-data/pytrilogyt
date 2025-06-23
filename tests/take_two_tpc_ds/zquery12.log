@@ -1,7 +1,7 @@
-base_prep_time = 0.006533
-base_parse_time = 0.082105
-base_generation_time = 0.005314
-base_exec_time = 0.008059
+base_prep_time = 0.000173
+base_parse_time = 0.144195
+base_generation_time = 0.002982
+base_exec_time = 0.034803
 base_generated_sql = """
 
 WITH 
@@ -13,7 +13,7 @@ SELECT
     \"web_sales_item_items\".\"I_ITEM_DESC\" as \"web_sales_item_desc\",
     \"web_sales_item_items\".\"I_ITEM_ID\" as \"web_sales_item_name\",
     \"web_sales_item_items\".\"I_ITEM_SK\" as \"web_sales_item_id\",
-    \"web_sales_web_sales\".\"WS_EXT_SALES_PRICE\" as \"web_sales_external_sales_price\",
+    \"web_sales_web_sales\".\"WS_EXT_SALES_PRICE\" as \"web_sales_extra_sales_price\",
     \"web_sales_web_sales\".\"WS_ORDER_NUMBER\" as \"web_sales_order_number\"
 FROM
     \"memory\".\"web_sales\" as \"web_sales_web_sales\"
@@ -29,7 +29,7 @@ SELECT
     \"cheerful\".\"web_sales_item_current_price\" as \"web_sales_item_current_price\",
     \"cheerful\".\"web_sales_item_desc\" as \"web_sales_item_desc\",
     \"cheerful\".\"web_sales_item_name\" as \"web_sales_item_name\",
-    sum(\"cheerful\".\"web_sales_external_sales_price\") as \"itemrevenue\"
+    sum(\"cheerful\".\"web_sales_extra_sales_price\") as \"itemrevenue\"
 FROM
     \"cheerful\"
 GROUP BY 
@@ -42,7 +42,7 @@ cooperative as (
 SELECT
     \"thoughtful\".\"itemrevenue\" as \"itemrevenue\",
     \"thoughtful\".\"web_sales_item_class\" as \"web_sales_item_class\",
-    sum(\"thoughtful\".\"itemrevenue\") over (partition by \"thoughtful\".\"web_sales_item_class\") as \"_virt_window_sum_7913040918303715\"
+    sum(\"thoughtful\".\"itemrevenue\") over (partition by \"thoughtful\".\"web_sales_item_class\") as \"itemclassrevenue\"
 FROM
     \"thoughtful\")
 SELECT
@@ -52,7 +52,7 @@ SELECT
     \"thoughtful\".\"web_sales_item_class\" as \"web_sales_item_class\",
     \"thoughtful\".\"web_sales_item_current_price\" as \"web_sales_item_current_price\",
     \"thoughtful\".\"itemrevenue\" as \"itemrevenue\",
-    (\"thoughtful\".\"itemrevenue\" * 100.0) / \"cooperative\".\"_virt_window_sum_7913040918303715\" as \"revenueratio\"
+    (\"thoughtful\".\"itemrevenue\" * 100.0) / \"cooperative\".\"itemclassrevenue\" as \"revenueratio\"
 FROM
     \"cooperative\"
     LEFT OUTER JOIN \"thoughtful\" on \"cooperative\".\"itemrevenue\" = \"thoughtful\".\"itemrevenue\" AND (\"cooperative\".\"web_sales_item_class\" = \"thoughtful\".\"web_sales_item_class\" or (\"cooperative\".\"web_sales_item_class\" is null and \"thoughtful\".\"web_sales_item_class\" is null))
@@ -61,12 +61,12 @@ ORDER BY
     \"thoughtful\".\"web_sales_item_class\" asc,
     \"thoughtful\".\"web_sales_item_name\" asc,
     \"thoughtful\".\"web_sales_item_desc\" asc,
-    (\"thoughtful\".\"itemrevenue\" * 100.0) / \"cooperative\".\"_virt_window_sum_7913040918303715\" asc
+    (\"thoughtful\".\"itemrevenue\" * 100.0) / \"cooperative\".\"itemclassrevenue\" asc
 LIMIT (100)"""
-optimized_prep_time = 0.0
-optimized_parse_time = 0.085891
-optimized_generation_time = 0.006065
-optimized_exec_time = 0.009933
+optimized_prep_time = 0.000202
+optimized_parse_time = 0.159093
+optimized_generation_time = 0.002994
+optimized_exec_time = 0.028532
 optimized_generated_sql = """
 
 WITH 
@@ -78,7 +78,7 @@ SELECT
     \"web_sales_item_items\".\"I_ITEM_DESC\" as \"web_sales_item_desc\",
     \"web_sales_item_items\".\"I_ITEM_ID\" as \"web_sales_item_name\",
     \"web_sales_item_items\".\"I_ITEM_SK\" as \"web_sales_item_id\",
-    \"web_sales_web_sales\".\"WS_EXT_SALES_PRICE\" as \"web_sales_external_sales_price\",
+    \"web_sales_web_sales\".\"WS_EXT_SALES_PRICE\" as \"web_sales_extra_sales_price\",
     \"web_sales_web_sales\".\"WS_ORDER_NUMBER\" as \"web_sales_order_number\"
 FROM
     \"memory\".\"web_sales\" as \"web_sales_web_sales\"
@@ -94,7 +94,7 @@ SELECT
     \"cheerful\".\"web_sales_item_current_price\" as \"web_sales_item_current_price\",
     \"cheerful\".\"web_sales_item_desc\" as \"web_sales_item_desc\",
     \"cheerful\".\"web_sales_item_name\" as \"web_sales_item_name\",
-    sum(\"cheerful\".\"web_sales_external_sales_price\") as \"itemrevenue\"
+    sum(\"cheerful\".\"web_sales_extra_sales_price\") as \"itemrevenue\"
 FROM
     \"cheerful\"
 GROUP BY 
@@ -107,7 +107,7 @@ cooperative as (
 SELECT
     \"thoughtful\".\"itemrevenue\" as \"itemrevenue\",
     \"thoughtful\".\"web_sales_item_class\" as \"web_sales_item_class\",
-    sum(\"thoughtful\".\"itemrevenue\") over (partition by \"thoughtful\".\"web_sales_item_class\") as \"_virt_window_sum_7913040918303715\"
+    sum(\"thoughtful\".\"itemrevenue\") over (partition by \"thoughtful\".\"web_sales_item_class\") as \"itemclassrevenue\"
 FROM
     \"thoughtful\")
 SELECT
@@ -117,7 +117,7 @@ SELECT
     \"thoughtful\".\"web_sales_item_class\" as \"web_sales_item_class\",
     \"thoughtful\".\"web_sales_item_current_price\" as \"web_sales_item_current_price\",
     \"thoughtful\".\"itemrevenue\" as \"itemrevenue\",
-    (\"thoughtful\".\"itemrevenue\" * 100.0) / \"cooperative\".\"_virt_window_sum_7913040918303715\" as \"revenueratio\"
+    (\"thoughtful\".\"itemrevenue\" * 100.0) / \"cooperative\".\"itemclassrevenue\" as \"revenueratio\"
 FROM
     \"cooperative\"
     LEFT OUTER JOIN \"thoughtful\" on \"cooperative\".\"itemrevenue\" = \"thoughtful\".\"itemrevenue\" AND (\"cooperative\".\"web_sales_item_class\" = \"thoughtful\".\"web_sales_item_class\" or (\"cooperative\".\"web_sales_item_class\" is null and \"thoughtful\".\"web_sales_item_class\" is null))
@@ -126,8 +126,8 @@ ORDER BY
     \"thoughtful\".\"web_sales_item_class\" asc,
     \"thoughtful\".\"web_sales_item_name\" asc,
     \"thoughtful\".\"web_sales_item_desc\" asc,
-    (\"thoughtful\".\"itemrevenue\" * 100.0) / \"cooperative\".\"_virt_window_sum_7913040918303715\" asc
+    (\"thoughtful\".\"itemrevenue\" * 100.0) / \"cooperative\".\"itemclassrevenue\" asc
 LIMIT (100)"""
 query_id = 12
-sql_comp_time = 0.015524
-total_time = 0.219424
+sql_comp_time = 0.027559
+total_time = 0.412775
