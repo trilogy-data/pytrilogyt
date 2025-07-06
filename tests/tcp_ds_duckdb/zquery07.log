@@ -1,7 +1,7 @@
-base_prep_time = 0.000174
-base_parse_time = 0.138659
-base_generation_time = 0.003844
-base_exec_time = 0.006775
+base_prep_time = 0.00017
+base_parse_time = 0.147273
+base_generation_time = 0.004103
+base_exec_time = 0.007556
 base_generated_sql = """
 
 WITH 
@@ -44,10 +44,10 @@ GROUP BY
 ORDER BY 
     \"cooperative\".\"filtered_sales_store_sales_item_name\" asc
 LIMIT (100)"""
-optimized_prep_time = 0.637552
-optimized_parse_time = 0.496906
-optimized_generation_time = 0.003955
-optimized_exec_time = 0.007011
+optimized_prep_time = 0.659235
+optimized_parse_time = 0.506857
+optimized_generation_time = 0.003842
+optimized_exec_time = 0.00788
 optimized_generated_sql = """
 
 WITH 
@@ -91,5 +91,5 @@ ORDER BY
     \"kaput\".\"filtered_sales_store_sales_item_name\" asc
 LIMIT (100)"""
 query_id = 7
-sql_comp_time = 0.004638
-total_time = 1.307182
+sql_comp_time = 0.004687
+total_time = 1.350089

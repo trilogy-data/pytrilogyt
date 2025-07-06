@@ -1,7 +1,7 @@
-base_prep_time = 0.000175
-base_parse_time = 0.164377
-base_generation_time = 0.005931
-base_exec_time = 0.015638
+base_prep_time = 0.00017
+base_parse_time = 0.141396
+base_generation_time = 0.005273
+base_exec_time = 0.011056
 base_generated_sql = """
 
 WITH 
@@ -68,10 +68,10 @@ HAVING
 ORDER BY 
     sum(1) asc nulls first,
     \"yummy\".\"store_sales_customer_state\" asc nulls first"""
-optimized_prep_time = 0.00019
-optimized_parse_time = 0.178716
-optimized_generation_time = 0.005219
-optimized_exec_time = 0.012456
+optimized_prep_time = 0.00017
+optimized_parse_time = 0.158347
+optimized_generation_time = 0.004739
+optimized_exec_time = 0.008165
 optimized_generated_sql = """
 
 WITH 
@@ -139,5 +139,5 @@ ORDER BY
     sum(1) asc nulls first,
     \"yummy\".\"store_sales_customer_state\" asc nulls first"""
 query_id = 6
-sql_comp_time = 0.026823
-total_time = 0.412053
+sql_comp_time = 0.07908
+total_time = 0.410487

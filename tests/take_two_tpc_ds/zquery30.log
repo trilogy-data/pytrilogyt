@@ -1,7 +1,7 @@
-base_prep_time = 0.00017
-base_parse_time = 0.236744
-base_generation_time = 0.00504
-base_exec_time = 0.025544
+base_prep_time = 0.000233
+base_parse_time = 0.441312
+base_generation_time = 0.010156
+base_exec_time = 0.025664
 base_generated_sql = """
 
 WITH 
@@ -173,10 +173,10 @@ ORDER BY
     \"concerned\".\"web_returns_customer_last_review_date\" asc nulls first,
     \"concerned\".\"customer_state_returns_2002\" asc nulls first
 LIMIT (100)"""
-optimized_prep_time = 0.000196
-optimized_parse_time = 0.268603
-optimized_generation_time = 0.005534
-optimized_exec_time = 0.025873
+optimized_prep_time = 0.000223
+optimized_parse_time = 0.462033
+optimized_generation_time = 0.009939
+optimized_exec_time = 0.040325
 optimized_generated_sql = """
 
 WITH 
@@ -346,5 +346,5 @@ ORDER BY
     \"concerned\".\"customer_state_returns_2002\" asc nulls first
 LIMIT (100)"""
 query_id = 30
-sql_comp_time = 0.021445
-total_time = 0.600209
+sql_comp_time = 0.018555
+total_time = 1.017746

@@ -35,12 +35,12 @@ SELECT
     web_sales.order_number,
 ;
 
-PERSIST default.dsd084f07e2d27980d428ae3d61da8a9fc39f7350e97f22dee87f455d88e01ddc2 INTO dsd084f07e2d27980d428ae3d61da8a9fc39f7350e97f22dee87f455d88e01ddc2 FROM SELECT
+PERSIST default.ds2e9de5407aba13cbf8abbeb1fb4b326169f14b898aa3368c6b20597701ea44c5 INTO ds2e9de5407aba13cbf8abbeb1fb4b326169f14b898aa3368c6b20597701ea44c5 FROM SELECT
     itemrevenue,
-    web_sales.item.category,
-    web_sales.item.current_price,
     web_sales.item.desc,
+    web_sales.item.category,
     web_sales.item.class,
+    web_sales.item.current_price,
     web_sales.item.name,
 ;
 

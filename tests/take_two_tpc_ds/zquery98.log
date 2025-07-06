@@ -1,7 +1,7 @@
-base_prep_time = 0.000168
-base_parse_time = 0.170633
-base_generation_time = 0.003247
-base_exec_time = 0.014559
+base_prep_time = 0.000342
+base_parse_time = 0.304669
+base_generation_time = 0.006177
+base_exec_time = 0.011811
 base_generated_sql = """
 
 WITH 
@@ -75,10 +75,10 @@ ORDER BY
     \"questionable\".\"store_sales_item_name\" asc nulls first,
     \"questionable\".\"store_sales_item_desc\" asc nulls first,
     \"questionable\".\"revenueratio\" asc nulls first"""
-optimized_prep_time = 0.001136
-optimized_parse_time = 0.177683
-optimized_generation_time = 0.003425
-optimized_exec_time = 0.014835
+optimized_prep_time = 0.000817
+optimized_parse_time = 0.3104
+optimized_generation_time = 0.005653
+optimized_exec_time = 0.017325
 optimized_generated_sql = """
 
 WITH 
@@ -153,5 +153,5 @@ ORDER BY
     \"questionable\".\"store_sales_item_desc\" asc nulls first,
     \"questionable\".\"revenueratio\" asc nulls first"""
 query_id = 98
-sql_comp_time = 0.036927
-total_time = 0.438295
+sql_comp_time = 0.042611
+total_time = 0.716448
