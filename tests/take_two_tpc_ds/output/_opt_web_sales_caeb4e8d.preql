@@ -38,25 +38,25 @@ SELECT
 PERSIST default.dsweb_sales.item.category_web_sales.item.class_web_sales.item.current_price_web_sales.item.desc_web_sales.item.name_93d6159c INTO dsweb_sales.item.category_web_sales.item.class_web_sales.item.current_price_web_sales.item.desc_web_sales.item.name_93d6159c FROM SELECT
     itemrevenue,
     web_sales.item.category,
-    web_sales.item.desc,
-    web_sales.item.name,
     web_sales.item.class,
     web_sales.item.current_price,
+    web_sales.item.desc,
+    web_sales.item.name,
 ;
 
 PERSIST default.dsweb_sales.item.class_df37a239 INTO dsweb_sales.item.class_df37a239 FROM SELECT
     itemclassrevenue,
-    web_sales.item.class,
     itemrevenue,
+    web_sales.item.class,
 ;
 
 PERSIST default.dsweb_sales.item.category_web_sales.item.class_web_sales.item.current_price_web_sales.item.desc_web_sales.item.name_1c30e378 INTO dsweb_sales.item.category_web_sales.item.class_web_sales.item.current_price_web_sales.item.desc_web_sales.item.name_1c30e378 FROM SELECT
-    itemrevenue,
-    web_sales.item.name,
-    web_sales.item.desc,
-    web_sales.item.category,
-    web_sales.item.current_price,
     itemclassrevenue,
-    web_sales.item.class,
+    itemrevenue,
     revenueratio,
+    web_sales.item.category,
+    web_sales.item.class,
+    web_sales.item.current_price,
+    web_sales.item.desc,
+    web_sales.item.name,
 ;

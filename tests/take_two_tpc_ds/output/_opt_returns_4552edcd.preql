@@ -29,8 +29,8 @@ SELECT
 
 PERSIST default.dsreturns.customer.text_id_returns.store.id_076b41e9 INTO dsreturns.customer.text_id_returns.store.id_076b41e9 FROM SELECT
     total_returns,
-    returns.store.id,
     returns.customer.text_id,
+    returns.store.id,
 ;
 
 PERSIST default.dsreturns.store.id_54404a33 INTO dsreturns.store.id_54404a33 FROM SELECT
@@ -41,8 +41,8 @@ PERSIST default.dsreturns.store.id_54404a33 INTO dsreturns.store.id_54404a33 FRO
 PERSIST default.dsreturns.customer.text_id_returns.store.id_3beaaf57_filtered_on_total_returns_avg_store_returns INTO dsreturns.customer.text_id_returns.store.id_3beaaf57_filtered_on_total_returns_avg_store_returns FROM WHERE
     total_returns > (1.2 * avg_store_returns)
 SELECT
-    returns.customer.text_id,
-    total_returns,
-    returns.store.id,
     avg_store_returns,
+    total_returns,
+    returns.customer.text_id,
+    returns.store.id,
 ;

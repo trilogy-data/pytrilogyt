@@ -29,8 +29,8 @@ LIMIT 100
 ;
 
 PERSIST default.dscs.order_number_cs.warehouse.id_690359b8 INTO dscs.order_number_cs.warehouse.id_690359b8 FROM SELECT
-    cs.warehouse.id,
     cs.order_number,
+    cs.warehouse.id,
 ;
 
 PERSIST default.dscr.order_number_ab93f574 INTO dscr.order_number_ab93f574 FROM SELECT

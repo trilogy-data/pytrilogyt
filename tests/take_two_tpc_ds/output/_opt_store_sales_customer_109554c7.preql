@@ -35,13 +35,13 @@ PERSIST default.dslocal.zips_pre_b9876e7a INTO dslocal.zips_pre_b9876e7a FROM SE
 ;
 
 PERSIST default.dscustomer.zip_78dc018d INTO dscustomer.zip_78dc018d FROM SELECT
-    zip_p_count,
     customer.zip,
+    zip_p_count,
 ;
 
 PERSIST default.dscustomer.address_id_c3487e4b INTO dscustomer.address_id_c3487e4b FROM SELECT
-    customer.zip,
     customer.address_id,
+    customer.zip,
     zip_p_count,
 ;
 

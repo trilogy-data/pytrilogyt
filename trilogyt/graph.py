@@ -131,11 +131,11 @@ def cte_to_persist(input: CTE, name: str, generator: BaseDialect, env:Environmen
     rowset = any([x.derivation == Derivation.ROWSET for x in input.output_columns])
     if rowset:
         select = SelectStatement(
-            selection=[SelectItem(content=ConceptRef(address=x.address)) for x in input.output_columns],
+            selection=[SelectItem(content=ConceptRef(address=x.address)) for x in sorted(input.output_columns, key=lambda x: x.address)],
         )
     else:
         select = SelectStatement(
-            selection=[SelectItem(content=ConceptRef(address=x.address)) for x in input.output_columns],
+            selection=[SelectItem(content=ConceptRef(address=x.address)) for x in sorted(input.output_columns, key=lambda x: x.address)],
             where_clause=(
                 WhereClause(conditional=convert_build_to_author(input.condition)) if input.condition else None
             ),

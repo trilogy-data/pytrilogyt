@@ -33,14 +33,14 @@ SELECT
 ;
 
 PERSIST default.dsitem.id_store_sales.customer.state_store_sales.ticket_number_fd3a683a INTO dsitem.id_store_sales.customer.state_store_sales.ticket_number_fd3a683a FROM SELECT
-    store_sales.ticket_number,
     item.id,
     store_sales.customer.state,
+    store_sales.ticket_number,
 ;
 
 PERSIST default.dsstore_sales.customer.state_854fd24c_filtered_on_customer_count INTO dsstore_sales.customer.state_854fd24c_filtered_on_customer_count FROM WHERE
     customer_count >= 10
 SELECT
-    store_sales.customer.state,
     customer_count,
+    store_sales.customer.state,
 ;

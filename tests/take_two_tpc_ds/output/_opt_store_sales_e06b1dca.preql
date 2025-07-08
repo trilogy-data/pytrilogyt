@@ -29,7 +29,7 @@ SELECT
 
 PERSIST default.dsstore_sales.date.year_store_sales.item.brand_id_store_sales.item.brand_name_a595e281 INTO dsstore_sales.date.year_store_sales.item.brand_id_store_sales.item.brand_name_a595e281 FROM SELECT
     sum_agg,
+    store_sales.date.year,
     store_sales.item.brand_id,
     store_sales.item.brand_name,
-    store_sales.date.year,
 ;

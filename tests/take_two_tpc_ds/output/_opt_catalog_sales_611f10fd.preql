@@ -22,6 +22,6 @@ SELECT
 ;
 
 PERSIST default.dscatalog_sales.bill_customer.zip_2da46067 INTO dscatalog_sales.bill_customer.zip_2da46067 FROM SELECT
-    sales,
     catalog_sales.bill_customer.zip,
+    sales,
 ;
