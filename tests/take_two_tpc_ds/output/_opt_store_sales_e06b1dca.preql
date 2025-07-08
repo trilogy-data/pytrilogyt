@@ -16,7 +16,7 @@ ORDER BY
 LIMIT 100
 ;
 
-PERSIST default.dse8c5b59e0737539bf620f5ad5df1cdeac6aee638d9fdb565dc4e3c2bb86c5e51_filtered_on_month_of_year_manufacturer_id INTO dse8c5b59e0737539bf620f5ad5df1cdeac6aee638d9fdb565dc4e3c2bb86c5e51_filtered_on_month_of_year_manufacturer_id FROM WHERE
+PERSIST default.dsstore_sales.ticket_number_store_sales.item.id_store_sales.date.year_e8c5b59e_filtered_on_month_of_year_manufacturer_id INTO dsstore_sales.ticket_number_store_sales.item.id_store_sales.date.year_e8c5b59e_filtered_on_month_of_year_manufacturer_id FROM WHERE
     store_sales.date.month_of_year = 11 and store_sales.item.manufacturer_id = 128
 SELECT
     store_sales.date.year,
@@ -27,9 +27,9 @@ SELECT
     store_sales.ticket_number,
 ;
 
-PERSIST default.dsbc98d22e1d9ec4410c01cb28bda4f96e80c606faba8e1d1d4c80761be8b6b0a3 INTO dsbc98d22e1d9ec4410c01cb28bda4f96e80c606faba8e1d1d4c80761be8b6b0a3 FROM SELECT
+PERSIST default.dsstore_sales.item.brand_id_store_sales.date.year_store_sales.item.brand_name_66939df7 INTO dsstore_sales.item.brand_id_store_sales.date.year_store_sales.item.brand_name_66939df7 FROM SELECT
     sum_agg,
     store_sales.item.brand_id,
-    store_sales.item.brand_name,
     store_sales.date.year,
+    store_sales.item.brand_name,
 ;

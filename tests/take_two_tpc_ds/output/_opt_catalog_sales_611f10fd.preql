@@ -12,7 +12,7 @@ ORDER BY
 LIMIT 100
 ;
 
-PERSIST default.ds379de208a35c857b645aec9e848a1313887956ab446a40d4cf8b6bdc81f4b5c2_filtered_on_quarter_year_state_sales_price_zip INTO ds379de208a35c857b645aec9e848a1313887956ab446a40d4cf8b6bdc81f4b5c2_filtered_on_quarter_year_state_sales_price_zip FROM WHERE
+PERSIST default.dscatalog_sales.item.id_catalog_sales.order_number_catalog_sales.bill_customer.zip_379de208_filtered_on_quarter_year_state_sales_price_zip INTO dscatalog_sales.item.id_catalog_sales.order_number_catalog_sales.bill_customer.zip_379de208_filtered_on_quarter_year_state_sales_price_zip FROM WHERE
     catalog_sales.date.quarter = 2 and (catalog_sales.date.year = 2001 and ((catalog_sales.bill_customer.state in ('CA', 'WA', 'GA') or (catalog_sales.sales_price > 500 or substring(catalog_sales.bill_customer.zip,1,5) in ('85669', '86197', '88274', '83405', '86475', '85392', '85460', '80348', '81792')))))
 SELECT
     catalog_sales.bill_customer.zip,
@@ -21,7 +21,7 @@ SELECT
     catalog_sales.sales_price,
 ;
 
-PERSIST default.dsba6800ba3a2887f7a0ebbaab115351118b4cce2f97046a0816da4b8e8d9ee37e INTO dsba6800ba3a2887f7a0ebbaab115351118b4cce2f97046a0816da4b8e8d9ee37e FROM SELECT
+PERSIST default.dscatalog_sales.bill_customer.zip_ba6800ba INTO dscatalog_sales.bill_customer.zip_ba6800ba FROM SELECT
     sales,
     catalog_sales.bill_customer.zip,
 ;

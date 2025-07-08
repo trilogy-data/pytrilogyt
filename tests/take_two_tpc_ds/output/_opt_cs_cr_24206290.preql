@@ -28,19 +28,19 @@ ORDER BY
 LIMIT 100
 ;
 
-PERSIST default.ds690359b893781952e54b528b4b72251c56acbeeef38701f47bce4650b33cce15 INTO ds690359b893781952e54b528b4b72251c56acbeeef38701f47bce4650b33cce15 FROM SELECT
-    cs.order_number,
+PERSIST default.dscs.order_number_cs.warehouse.id_5b2faaaf INTO dscs.order_number_cs.warehouse.id_5b2faaaf FROM SELECT
     cs.warehouse.id,
+    cs.order_number,
 ;
 
-PERSIST default.dsab93f574f6b78194e50b292816178f2ec7b2ef65bd94399570fcf709497f8d1e INTO dsab93f574f6b78194e50b292816178f2ec7b2ef65bd94399570fcf709497f8d1e FROM SELECT
+PERSIST default.dscr.order_number_ab93f574 INTO dscr.order_number_ab93f574 FROM SELECT
     cr.order_number,
 ;
 
-PERSIST default.ds679f2d902e7cfe2123b332245244c119563bfa687e145f011470fe3bf1b9f89f INTO ds679f2d902e7cfe2123b332245244c119563bfa687e145f011470fe3bf1b9f89f FROM SELECT
+PERSIST default.dslocal.multi_warehouse_sales_679f2d90 INTO dslocal.multi_warehouse_sales_679f2d90 FROM SELECT
     multi_warehouse_sales,
 ;
 
-PERSIST default.ds679f2d902e7cfe2123b332245244c119563bfa687e145f011470fe3bf1b9f89f INTO ds679f2d902e7cfe2123b332245244c119563bfa687e145f011470fe3bf1b9f89f FROM SELECT
+PERSIST default.dslocal.multi_warehouse_sales_679f2d90 INTO dslocal.multi_warehouse_sales_679f2d90 FROM SELECT
     multi_warehouse_sales,
 ;

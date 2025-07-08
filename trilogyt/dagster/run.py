@@ -60,7 +60,7 @@ def run_in_process(path: Path, imports: list[Path], dialect: Dialects):
         raise NotImplementedError(f"Unsupported dialect: {dialect}")
 
     result = materialize(assets=selection, resources=resources, selection=selection)
-    print(f"Job result: {result}")
+    logger.info(f"Job result: {result}")
 
 
 def run_dagster_job(path: Path):
@@ -90,9 +90,9 @@ def run_dagster_job(path: Path):
     try:
         # Run the command
         result = subprocess.check_output(command, cwd=str(path))
-        print("Dagster executed successfully.\n")
-        print("Output:")
-        print(result)
+        logger.info("Dagster executed successfully.\n")
+        logger.info("Output:")
+        logger.info(result)
 
     except subprocess.CalledProcessError as e:
         raise ValueError(e.output)

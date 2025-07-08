@@ -1,7 +1,7 @@
-base_prep_time = 0.000239
-base_parse_time = 0.252793
-base_generation_time = 0.004938
-base_exec_time = 0.034675
+base_prep_time = 0.000178
+base_parse_time = 0.142279
+base_generation_time = 0.003117
+base_exec_time = 0.03801
 base_generated_sql = """
 
 WITH 
@@ -63,10 +63,10 @@ ORDER BY
     \"thoughtful\".\"web_sales_item_desc\" asc,
     (\"thoughtful\".\"itemrevenue\" * 100.0) / \"cooperative\".\"itemclassrevenue\" asc
 LIMIT (100)"""
-optimized_prep_time = 0.000214
-optimized_parse_time = 0.272275
-optimized_generation_time = 0.005085
-optimized_exec_time = 0.020528
+optimized_prep_time = 0.000238
+optimized_parse_time = 0.16807
+optimized_generation_time = 0.002892
+optimized_exec_time = 0.013536
 optimized_generated_sql = """
 
 WITH 
@@ -129,5 +129,5 @@ ORDER BY
     (\"thoughtful\".\"itemrevenue\" * 100.0) / \"cooperative\".\"itemclassrevenue\" asc
 LIMIT (100)"""
 query_id = 12
-sql_comp_time = 0.028549
-total_time = 0.629649
+sql_comp_time = 0.041884
+total_time = 0.420892

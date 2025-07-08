@@ -116,7 +116,7 @@ def test_five(engine, optimized_env):
 
 def test_six(engine, optimized_env):
     run_query(engine, 6, optimized_env)
-    assert 1 == 0
+
 
 
 def test_seven(engine, optimized_env):

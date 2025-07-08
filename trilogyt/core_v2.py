@@ -200,8 +200,15 @@ class Optimizer:
         ):
             return None, statements, new_env
         build_env = new_env.materialize_for_select({})
+        human_labels = []
+        for statement in statements:
+            if isinstance(statement, ImportStatement):
+                human_labels.append((statement.alias or statement.input_path).replace('.', '_'))
         fingerprint = fingerprint_environment(build_env)
-        return fingerprint, statements, new_env
+        name = '_'.join(human_labels[:2])
+        if len(human_labels) > 2:
+            name += f"_{len(human_labels) - 2}_more"
+        return name+'_'+fingerprint[0:8], statements, new_env
 
     def mapping_to_optimizations(
         self, working_path: PathlibPath, dialect: Dialects, contents: dict[str, str]
@@ -253,19 +260,28 @@ class Optimizer:
                 generator=exec.generator,
                 threshold=self.materialization_threshold,
             )
+            # don't create a file if there is nothing to persist
+            if not new_persists:
+                continue
 
             concept_modifying_statements = unique(
                 [x for x in v.statements if isinstance(x, HasUUID)], "uuid"
             )
-            final: list[HasUUID] = []
+            pre_final: list[HasUUID] = []
             # we should transform a persist into a select for optimization purposes
             for x in concept_modifying_statements:
                 # if isinstance(x, (RowsetDerivationStatement, SelectStatement, ImportStatement, MergeStatementV2, ConceptDeclarationStatement)):
                 #     final.append(x)
                 # add this to get the definition ins
                 if isinstance(x, PersistStatement):
-                    final.append(x.select)
+                    pre_final.append(x.select)
                 else:
+                    pre_final.append(x)
+            seen = set()
+            final = []
+            for x in pre_final:
+                if x.uuid not in seen:
+                    seen.add(x.uuid)
                     final.append(x)
             strings: list[str] = []
             renderer = Renderer(environment=v.environment)

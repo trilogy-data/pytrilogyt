@@ -1,4 +1,4 @@
-import _trilogyt_opt_e06b1dcafe1622f1d445985d7903746ed5495bdfdf513b598da55b8b5e0a720f;
+import _opt_store_sales_e06b1dca;
 
 WHERE
     store_sales.date.month_of_year = 11 and store_sales.item.manufacturer_id = 128

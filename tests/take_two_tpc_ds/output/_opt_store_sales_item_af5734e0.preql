@@ -19,7 +19,7 @@ ORDER BY
     store_sales.customer.state asc nulls first
 ;
 
-PERSIST default.ds8c6c8978eceb3584f81ac590cad3936069fc052bd8d9547b86ce269e768dab5c_filtered_on_year_month_of_year_category INTO ds8c6c8978eceb3584f81ac590cad3936069fc052bd8d9547b86ce269e768dab5c_filtered_on_year_month_of_year_category FROM WHERE
+PERSIST default.dsstore_sales.ticket_number_store_sales.customer.state_store_sales.date.month_of_year_item.id_store_sales.date.year_8c6c8978_filtered_on_year_month_of_year_category INTO dsstore_sales.ticket_number_store_sales.customer.state_store_sales.date.month_of_year_item.id_store_sales.date.year_8c6c8978_filtered_on_year_month_of_year_category FROM WHERE
     (store_sales.date.year = 2001 and store_sales.date.month_of_year = 1) and store_sales.item.category is not null
 SELECT
     item.category,
@@ -32,13 +32,13 @@ SELECT
     store_sales.ticket_number,
 ;
 
-PERSIST default.ds1ade888f9d2a2866f34700c85b5043ed154fe4b50449c73f940540187f2035da INTO ds1ade888f9d2a2866f34700c85b5043ed154fe4b50449c73f940540187f2035da FROM SELECT
+PERSIST default.dsstore_sales.ticket_number_item.id_store_sales.customer.state_1ade888f INTO dsstore_sales.ticket_number_item.id_store_sales.customer.state_1ade888f FROM SELECT
     store_sales.ticket_number,
     item.id,
     store_sales.customer.state,
 ;
 
-PERSIST default.dsca3b5a51d14fcbd40d5c6c4925c0746c19cb4a6d55f2ac9c8f882233c8276003_filtered_on_customer_count INTO dsca3b5a51d14fcbd40d5c6c4925c0746c19cb4a6d55f2ac9c8f882233c8276003_filtered_on_customer_count FROM WHERE
+PERSIST default.dsstore_sales.customer.state_ca3b5a51_filtered_on_customer_count INTO dsstore_sales.customer.state_ca3b5a51_filtered_on_customer_count FROM WHERE
     customer_count >= 10
 SELECT
     store_sales.customer.state,

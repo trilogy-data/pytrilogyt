@@ -29,6 +29,7 @@ from trilogy.core.statements.author import RowsetDerivationStatement
 from trilogy.core.statements.execute import ProcessedQueryPersist, ProcessedQuery, ProcessedRawSQLStatement, ProcessedShowStatement
 from trilogy.dialect.base import BaseDialect
 from datetime import datetime, date
+from trilogyt.constants import logger
 
 @dataclass
 class AnalyzeResult:
@@ -52,11 +53,21 @@ def hash_concepts(concepts: list[Concept]) -> str:
     return sha256("".join([x.address for x in concepts]).encode()).hexdigest()
 
 
-def generate_datasource_name(select: SelectStatement, cte_name: str) -> str:
+def generate_datasource_name(select: SelectStatement, cte_name: str, env: Environment) -> str:
     """Generate a reasonable table name"""
+    grain = select.calculate_grain(env, select.local_concepts)
+    if grain.components:
+        human = [name_to_short_name(x) for x in grain.components]
+    else:
+        human = [name_to_short_name(x.name) for x in select.output_components]
+    hash = hash_concepts(select.output_components)
+    cutoff= 5
+    inputs = human[0:cutoff]
+    if len(human) > cutoff:
+        inputs.append(f"{len(human) - cutoff}_more")
     base = "ds" + "_".join(
-        [name_to_short_name(x) for x in select.grain.components]
-        + [hash_concepts(select.output_components)]
+        inputs
+        + [hash[0:8]]
     )
     if select.where_clause:
         # TODO: needs to include the filter predicates
@@ -130,8 +141,8 @@ def cte_to_persist(input: CTE, name: str, generator: BaseDialect, env:Environmen
         )
     datasource = select.to_datasource(
         namespace="default",
-        name=generate_datasource_name(select, name),
-        address=Address(location=generate_datasource_name(select, name)),
+        name=generate_datasource_name(select, name, env),
+        address=Address(location=generate_datasource_name(select, name, env)),
         environment=env,
     )
     persist = PersistStatement(datasource=datasource, select=select)
@@ -204,7 +215,6 @@ def process_raw(
     x = 0
     while not complete:
         x += 1
-        print(f" loop {x}")
         parsed = generator.generate_queries(env, inputs)
         new = process_loop(parsed, env, generator=generator, threshold=threshold)
         if new.new:
@@ -245,17 +255,16 @@ def analyze(
             counts[fingerprint] = counts.get(fingerprint, 0) + 1
             lookup[fingerprint] = lookup.get(fingerprint, cte) + cte
     for k, v in counts.items():
-        print(
+        logger.info(
             f"CTE {k} outputs {[x.address for x in lookup[k].output_columns]} is used {v} times"
         )
     counts, mapping = remap_dictionary(counts, CTE_NAMES)
-    # for k, v in counts.items():
-    #     print(f"CTE {k} is used {v} times")
+
     final_map: dict[str, CTE] = {}
     for fingerprint, cte in lookup.items():
         final_map[mapping[fingerprint]] = cte
     for k2, v2 in final_map.items():
-        print(f"CTE {k2} outputs {[x.address for x in v2.output_columns]}")
+        logger.info(f"CTE {k2} outputs {[x.address for x in v2.output_columns]}")
     return AnalyzeResult(counts, final_map)
 
 
@@ -297,7 +306,7 @@ def reorder_ctes(
             return input
         return [mapping[x] for x in topological_order]
     except nx.NetworkXUnfeasible as e:
-        print(
+        logger.error(
             "The graph is not a DAG (contains cycles) and cannot be topologically sorted."
         )
         raise e
@@ -320,7 +329,7 @@ def process_loop(
     )
     new_persist = []
     for k, v in analysis.counts.items():
-        print(f"CTE {k} is used {v} times")
+        logger.info(f"CTE {k} is used {v} times")
         if v >= threshold:
             cte = analysis.mapping[k]
             # skip materializing materialized things
@@ -328,9 +337,10 @@ def process_loop(
                 continue
             if has_anon_concepts(cte):
                 continue
-            print(
-                f"Creating new persist statement from cte {k} with output {[x.address for x in cte.output_columns]}"
+            logger.info(
+                f"Creating new persist statement from cte {k} with output {[x.address for x in cte.output_columns]} grain {cte.grain.components} conditions {cte.condition}"
             )
+            print(f"Creating new persist statement from cte {k} with output {[x.address for x in cte.output_columns]} grain {cte.grain.components} conditions {cte.condition}")
             new_persist.append(cte_to_persist(cte, k, generator=generator, env=env))
 
     return ProcessLoopResult(new=new_persist)

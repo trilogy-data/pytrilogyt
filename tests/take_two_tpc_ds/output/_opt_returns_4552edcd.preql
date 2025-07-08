@@ -17,7 +17,7 @@ ORDER BY
 LIMIT 100
 ;
 
-PERSIST default.dsa09b549514982e2f5ebaf23a4352f002a4259c548b06c2eac32969c3a097f293_filtered_on_state_year INTO dsa09b549514982e2f5ebaf23a4352f002a4259c548b06c2eac32969c3a097f293_filtered_on_state_year FROM WHERE
+PERSIST default.dsreturns.item.id_returns.customer.text_id_returns.store_sales.ticket_number_a09b5495_filtered_on_state_year INTO dsreturns.item.id_returns.customer.text_id_returns.store_sales.ticket_number_a09b5495_filtered_on_state_year FROM WHERE
     returns.store.state = 'TN' and returns.return_date.year = 2000
 SELECT
     returns.customer.text_id,
@@ -27,18 +27,18 @@ SELECT
     returns.store_sales.ticket_number,
 ;
 
-PERSIST default.ds686a5f17ccf83dbc51af0bf382c9b726c3a62dfe587eb7774c1be5656b46818d INTO ds686a5f17ccf83dbc51af0bf382c9b726c3a62dfe587eb7774c1be5656b46818d FROM SELECT
+PERSIST default.dsreturns.store.id_returns.customer.text_id_686a5f17 INTO dsreturns.store.id_returns.customer.text_id_686a5f17 FROM SELECT
     total_returns,
     returns.store.id,
     returns.customer.text_id,
 ;
 
-PERSIST default.ds54404a332ea8db7d5077c55e8dfb983a19e81172a43fe2d05f56910f96fbd12f INTO ds54404a332ea8db7d5077c55e8dfb983a19e81172a43fe2d05f56910f96fbd12f FROM SELECT
+PERSIST default.dsreturns.store.id_54404a33 INTO dsreturns.store.id_54404a33 FROM SELECT
     avg_store_returns,
     returns.store.id,
 ;
 
-PERSIST default.dsbc912b25ff1ee9ff54c1121741e6d5b7272334fa87fbe928ab53906b3dfaeb77_filtered_on_total_returns_avg_store_returns INTO dsbc912b25ff1ee9ff54c1121741e6d5b7272334fa87fbe928ab53906b3dfaeb77_filtered_on_total_returns_avg_store_returns FROM WHERE
+PERSIST default.dsreturns.store.id_returns.customer.text_id_bc912b25_filtered_on_total_returns_avg_store_returns INTO dsreturns.store.id_returns.customer.text_id_bc912b25_filtered_on_total_returns_avg_store_returns FROM WHERE
     total_returns > (1.2 * avg_store_returns)
 SELECT
     returns.customer.text_id,

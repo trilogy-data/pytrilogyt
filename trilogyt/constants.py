@@ -6,7 +6,7 @@ OPTIMIZATION_NAMESPACE = "optimization"
 
 OPTIMIZATION_FILE = "_internal_cached_intermediates"
 
-OPT_PREFIX = "_trilogyt_opt_"
+OPT_PREFIX = "_opt_"
 
 IGNORED_PREFIX = '_internal'
 

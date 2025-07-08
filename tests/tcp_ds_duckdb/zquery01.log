@@ -1,7 +1,7 @@
-base_prep_time = 0.000213
-base_parse_time = 0.163608
-base_generation_time = 0.001839
-base_exec_time = 0.053961
+base_prep_time = 0.000164
+base_parse_time = 0.166918
+base_generation_time = 0.00185
+base_exec_time = 0.00689
 base_generated_sql = """
 
 WITH 
@@ -49,10 +49,10 @@ WHERE
 ORDER BY 
     \"cooperative\".\"returns_customer_text_id\" asc
 LIMIT (100)"""
-optimized_prep_time = 638.212118
-optimized_parse_time = 10.310898
-optimized_generation_time = 0.422568
-optimized_exec_time = 2.879873
+optimized_prep_time = 4.1387
+optimized_parse_time = 0.252554
+optimized_generation_time = 0.000854
+optimized_exec_time = 0.00495
 optimized_generated_sql = """
 
 WITH 
@@ -86,5 +86,5 @@ ORDER BY
     \"late\".\"returns_customer_text_id\" asc
 LIMIT (100)"""
 query_id = 1
-sql_comp_time = 4.559098
-total_time = 657.680964
+sql_comp_time = 0.011066
+total_time = 4.591367

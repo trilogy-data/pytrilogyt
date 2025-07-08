@@ -1,4 +1,4 @@
-import _trilogyt_opt_4552edcd331fbbd1d6dcfd95f7b37e1b374b98abbd14455b42a551bdf8625961;
+import _opt_returns_4552edcd;
 
 WHERE
     returns.store.state = 'TN' and returns.return_date.year = 2000

@@ -24,32 +24,32 @@ ORDER BY
 LIMIT 100
 ;
 
-PERSIST default.ds3d60a895d47b2d5a4b3de249fab042433012318d00218d2c1a472d0ea25e6601 INTO ds3d60a895d47b2d5a4b3de249fab042433012318d00218d2c1a472d0ea25e6601 FROM SELECT
+PERSIST default.dscustomer.zip_customer.id_3d60a895 INTO dscustomer.zip_customer.id_3d60a895 FROM SELECT
     customer.id,
     customer.preferred_cust_flag,
     customer.zip,
 ;
 
-PERSIST default.dsb9876e7aa2cd5e1f5432e4b4d0b6add55dd9154d0e5ce4bba893a4ddc23f9d42 INTO dsb9876e7aa2cd5e1f5432e4b4d0b6add55dd9154d0e5ce4bba893a4ddc23f9d42 FROM SELECT
+PERSIST default.dslocal.zips_pre_b9876e7a INTO dslocal.zips_pre_b9876e7a FROM SELECT
     zips_pre,
 ;
 
-PERSIST default.dsa64ed6cb660b9991057f2b2bff5ce6d65eaa6df6d1917a13cb81be745022edcb INTO dsa64ed6cb660b9991057f2b2bff5ce6d65eaa6df6d1917a13cb81be745022edcb FROM SELECT
+PERSIST default.dscustomer.zip_a64ed6cb INTO dscustomer.zip_a64ed6cb FROM SELECT
     zip_p_count,
     customer.zip,
 ;
 
-PERSIST default.ds3b9fb8e69758b8b30a28c4b08666f4eda66ecfef91c38b07ddc9e789fb16e893 INTO ds3b9fb8e69758b8b30a28c4b08666f4eda66ecfef91c38b07ddc9e789fb16e893 FROM SELECT
+PERSIST default.dscustomer.address_id_3b9fb8e6 INTO dscustomer.address_id_3b9fb8e6 FROM SELECT
     customer.zip,
     customer.address_id,
     zip_p_count,
 ;
 
-PERSIST default.ds919671dbbd0d5a7992b04850b050127c7d4747da70dbf3c68a3149050f06d634 INTO ds919671dbbd0d5a7992b04850b050127c7d4747da70dbf3c68a3149050f06d634 FROM SELECT
+PERSIST default.dslocal.final_zips_919671db INTO dslocal.final_zips_919671db FROM SELECT
     final_zips,
 ;
 
-PERSIST default.dse88a2d960609f6f0eafa587b8ddffedd5456b4c892a59675a930b4fad8963029_filtered_on_quarter_year_zip_final_zips INTO dse88a2d960609f6f0eafa587b8ddffedd5456b4c892a59675a930b4fad8963029_filtered_on_quarter_year_zip_final_zips FROM WHERE
+PERSIST default.dsstore_sales.ticket_number_store_sales.store.name_store_sales.item.id_e88a2d96_filtered_on_quarter_year_zip_final_zips INTO dsstore_sales.ticket_number_store_sales.store.name_store_sales.item.id_e88a2d96_filtered_on_quarter_year_zip_final_zips FROM WHERE
     store_sales.date.quarter = 2 and (store_sales.date.year = 1998 and substring(store_sales.store.zip,1,2) in final_zips)
 SELECT
     store_sales.item.id,
@@ -58,7 +58,7 @@ SELECT
     store_sales.ticket_number,
 ;
 
-PERSIST default.ds2b1ac618399dc1c0e796d4352205b315568130177560608a5b6bde0f228fce67 INTO ds2b1ac618399dc1c0e796d4352205b315568130177560608a5b6bde0f228fce67 FROM SELECT
+PERSIST default.dsstore_sales.store.name_2b1ac618 INTO dsstore_sales.store.name_2b1ac618 FROM SELECT
     store_net_profit,
     store_sales.store.name,
 ;

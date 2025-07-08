@@ -1,7 +1,7 @@
-base_prep_time = 0.000218
-base_parse_time = 0.367457
-base_generation_time = 0.010227
-base_exec_time = 0.014908
+base_prep_time = 0.000203
+base_parse_time = 0.212414
+base_generation_time = 0.005658
+base_exec_time = 0.009266
 base_generated_sql = """
 
 WITH 
@@ -121,10 +121,10 @@ FROM
 ORDER BY 
     \"sparkling\".\"order_count\" desc
 LIMIT (100)"""
-optimized_prep_time = 0.000227
-optimized_parse_time = 0.403746
-optimized_generation_time = 0.011001
-optimized_exec_time = 0.01816
+optimized_prep_time = 0.000196
+optimized_parse_time = 0.224145
+optimized_generation_time = 0.005128
+optimized_exec_time = 0.009952
 optimized_generated_sql = """
 
 WITH 
@@ -242,5 +242,5 @@ ORDER BY
     \"sparkling\".\"order_count\" desc
 LIMIT (100)"""
 query_id = 95
-sql_comp_time = 0.039595
-total_time = 0.874173
+sql_comp_time = 0.030712
+total_time = 0.506398

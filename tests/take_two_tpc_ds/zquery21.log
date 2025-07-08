@@ -1,7 +1,7 @@
-base_prep_time = 0.000241
-base_parse_time = 0.062979
-base_generation_time = 0.005284
-base_exec_time = 0.00958
+base_prep_time = 0.000223
+base_parse_time = 0.035416
+base_generation_time = 0.002392
+base_exec_time = 0.004799
 base_generated_sql = """
 
 WITH 
@@ -69,10 +69,10 @@ ORDER BY
     \"thoughtful\".\"inventory_warehouse_name\" asc nulls first,
     \"thoughtful\".\"inventory_item_name\" asc nulls first
 LIMIT (100)"""
-optimized_prep_time = 0.000209
-optimized_parse_time = 0.0767
-optimized_generation_time = 0.004762
-optimized_exec_time = 0.006435
+optimized_prep_time = 0.000184
+optimized_parse_time = 0.044121
+optimized_generation_time = 0.002529
+optimized_exec_time = 0.004037
 optimized_generated_sql = """
 
 WITH 
@@ -141,5 +141,5 @@ ORDER BY
     \"thoughtful\".\"inventory_item_name\" asc nulls first
 LIMIT (100)"""
 query_id = 21
-sql_comp_time = 0.014928
-total_time = 0.188965
+sql_comp_time = 0.013612
+total_time = 0.114557
