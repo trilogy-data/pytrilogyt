@@ -50,7 +50,7 @@ def name_to_short_name(x: str):
 
 # hash a
 def hash_concepts(concepts: list[Concept]) -> str:
-    return sha256("".join([x.address for x in concepts]).encode()).hexdigest()
+    return sha256("".join(sorted([x.address for x in concepts])).encode()).hexdigest()
 
 
 def generate_datasource_name(select: SelectStatement, cte_name: str, env: Environment) -> str:

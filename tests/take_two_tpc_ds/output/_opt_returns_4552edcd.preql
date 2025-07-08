@@ -17,7 +17,7 @@ ORDER BY
 LIMIT 100
 ;
 
-PERSIST default.dsreturns.item.id_returns.customer.text_id_returns.store_sales.ticket_number_a09b5495_filtered_on_state_year INTO dsreturns.item.id_returns.customer.text_id_returns.store_sales.ticket_number_a09b5495_filtered_on_state_year FROM WHERE
+PERSIST default.dsreturns.customer.text_id_returns.store_sales.ticket_number_returns.item.id_a09b5495_filtered_on_state_year INTO dsreturns.customer.text_id_returns.store_sales.ticket_number_returns.item.id_a09b5495_filtered_on_state_year FROM WHERE
     returns.store.state = 'TN' and returns.return_date.year = 2000
 SELECT
     returns.customer.text_id,
@@ -27,7 +27,7 @@ SELECT
     returns.store_sales.ticket_number,
 ;
 
-PERSIST default.dsreturns.store.id_returns.customer.text_id_686a5f17 INTO dsreturns.store.id_returns.customer.text_id_686a5f17 FROM SELECT
+PERSIST default.dsreturns.store.id_returns.customer.text_id_076b41e9 INTO dsreturns.store.id_returns.customer.text_id_076b41e9 FROM SELECT
     total_returns,
     returns.store.id,
     returns.customer.text_id,
@@ -38,7 +38,7 @@ PERSIST default.dsreturns.store.id_54404a33 INTO dsreturns.store.id_54404a33 FRO
     returns.store.id,
 ;
 
-PERSIST default.dsreturns.store.id_returns.customer.text_id_bc912b25_filtered_on_total_returns_avg_store_returns INTO dsreturns.store.id_returns.customer.text_id_bc912b25_filtered_on_total_returns_avg_store_returns FROM WHERE
+PERSIST default.dsreturns.store.id_returns.customer.text_id_3beaaf57_filtered_on_total_returns_avg_store_returns INTO dsreturns.store.id_returns.customer.text_id_3beaaf57_filtered_on_total_returns_avg_store_returns FROM WHERE
     total_returns > (1.2 * avg_store_returns)
 SELECT
     returns.customer.text_id,
