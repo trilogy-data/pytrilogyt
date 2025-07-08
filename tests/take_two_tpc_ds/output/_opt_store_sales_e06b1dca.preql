@@ -16,7 +16,7 @@ ORDER BY
 LIMIT 100
 ;
 
-PERSIST default.dsstore_sales.date.year_store_sales.ticket_number_store_sales.item.id_e8c5b59e_filtered_on_month_of_year_manufacturer_id INTO dsstore_sales.date.year_store_sales.ticket_number_store_sales.item.id_e8c5b59e_filtered_on_month_of_year_manufacturer_id FROM WHERE
+PERSIST default.dsstore_sales.date.year_store_sales.item.id_store_sales.ticket_number_e8c5b59e_filtered_on_month_of_year_manufacturer_id INTO dsstore_sales.date.year_store_sales.item.id_store_sales.ticket_number_e8c5b59e_filtered_on_month_of_year_manufacturer_id FROM WHERE
     store_sales.date.month_of_year = 11 and store_sales.item.manufacturer_id = 128
 SELECT
     store_sales.date.year,
@@ -27,7 +27,7 @@ SELECT
     store_sales.ticket_number,
 ;
 
-PERSIST default.dsstore_sales.item.brand_id_store_sales.item.brand_name_store_sales.date.year_a595e281 INTO dsstore_sales.item.brand_id_store_sales.item.brand_name_store_sales.date.year_a595e281 FROM SELECT
+PERSIST default.dsstore_sales.date.year_store_sales.item.brand_id_store_sales.item.brand_name_a595e281 INTO dsstore_sales.date.year_store_sales.item.brand_id_store_sales.item.brand_name_a595e281 FROM SELECT
     sum_agg,
     store_sales.item.brand_id,
     store_sales.item.brand_name,

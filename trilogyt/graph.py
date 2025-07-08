@@ -60,6 +60,7 @@ def generate_datasource_name(select: SelectStatement, cte_name: str, env: Enviro
         human = [name_to_short_name(x) for x in grain.components]
     else:
         human = [name_to_short_name(x.name) for x in select.output_components]
+    human = sorted(human)
     hash = hash_concepts(select.output_components)
     cutoff= 5
     inputs = human[0:cutoff]

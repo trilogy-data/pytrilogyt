@@ -19,7 +19,7 @@ ORDER BY
     store_sales.customer.state asc nulls first
 ;
 
-PERSIST default.dsstore_sales.ticket_number_store_sales.date.month_of_year_store_sales.date.year_store_sales.customer.state_item.id_8c6c8978_filtered_on_year_month_of_year_category INTO dsstore_sales.ticket_number_store_sales.date.month_of_year_store_sales.date.year_store_sales.customer.state_item.id_8c6c8978_filtered_on_year_month_of_year_category FROM WHERE
+PERSIST default.dsitem.id_store_sales.customer.state_store_sales.date.month_of_year_store_sales.date.year_store_sales.ticket_number_8c6c8978_filtered_on_year_month_of_year_category INTO dsitem.id_store_sales.customer.state_store_sales.date.month_of_year_store_sales.date.year_store_sales.ticket_number_8c6c8978_filtered_on_year_month_of_year_category FROM WHERE
     (store_sales.date.year = 2001 and store_sales.date.month_of_year = 1) and store_sales.item.category is not null
 SELECT
     item.category,
@@ -32,7 +32,7 @@ SELECT
     store_sales.ticket_number,
 ;
 
-PERSIST default.dsstore_sales.customer.state_store_sales.ticket_number_item.id_fd3a683a INTO dsstore_sales.customer.state_store_sales.ticket_number_item.id_fd3a683a FROM SELECT
+PERSIST default.dsitem.id_store_sales.customer.state_store_sales.ticket_number_fd3a683a INTO dsitem.id_store_sales.customer.state_store_sales.ticket_number_fd3a683a FROM SELECT
     store_sales.ticket_number,
     item.id,
     store_sales.customer.state,

@@ -22,7 +22,7 @@ ORDER BY
 LIMIT 100
 ;
 
-PERSIST default.dsweb_sales.order_number_web_sales.item.id_ae9e8881_filtered_on_date_date_category INTO dsweb_sales.order_number_web_sales.item.id_ae9e8881_filtered_on_date_date_category FROM WHERE
+PERSIST default.dsweb_sales.item.id_web_sales.order_number_ae9e8881_filtered_on_date_date_category INTO dsweb_sales.item.id_web_sales.order_number_ae9e8881_filtered_on_date_date_category FROM WHERE
     (web_sales.date.date >= '1999-02-22'::date and web_sales.date.date <= '1999-03-24'::date) and web_sales.item.category in ('Sports', 'Books', 'Home')
 SELECT
     web_sales.extra_sales_price,
@@ -35,13 +35,13 @@ SELECT
     web_sales.order_number,
 ;
 
-PERSIST default.dsweb_sales.item.current_price_web_sales.item.name_web_sales.item.desc_web_sales.item.category_web_sales.item.class_93d6159c INTO dsweb_sales.item.current_price_web_sales.item.name_web_sales.item.desc_web_sales.item.category_web_sales.item.class_93d6159c FROM SELECT
+PERSIST default.dsweb_sales.item.category_web_sales.item.class_web_sales.item.current_price_web_sales.item.desc_web_sales.item.name_93d6159c INTO dsweb_sales.item.category_web_sales.item.class_web_sales.item.current_price_web_sales.item.desc_web_sales.item.name_93d6159c FROM SELECT
     itemrevenue,
-    web_sales.item.current_price,
-    web_sales.item.name,
-    web_sales.item.desc,
     web_sales.item.category,
+    web_sales.item.desc,
+    web_sales.item.name,
     web_sales.item.class,
+    web_sales.item.current_price,
 ;
 
 PERSIST default.dsweb_sales.item.class_df37a239 INTO dsweb_sales.item.class_df37a239 FROM SELECT
@@ -50,7 +50,7 @@ PERSIST default.dsweb_sales.item.class_df37a239 INTO dsweb_sales.item.class_df37
     itemrevenue,
 ;
 
-PERSIST default.dsweb_sales.item.current_price_web_sales.item.name_web_sales.item.desc_web_sales.item.category_web_sales.item.class_1c30e378 INTO dsweb_sales.item.current_price_web_sales.item.name_web_sales.item.desc_web_sales.item.category_web_sales.item.class_1c30e378 FROM SELECT
+PERSIST default.dsweb_sales.item.category_web_sales.item.class_web_sales.item.current_price_web_sales.item.desc_web_sales.item.name_1c30e378 INTO dsweb_sales.item.category_web_sales.item.class_web_sales.item.current_price_web_sales.item.desc_web_sales.item.name_1c30e378 FROM SELECT
     itemrevenue,
     web_sales.item.name,
     web_sales.item.desc,
