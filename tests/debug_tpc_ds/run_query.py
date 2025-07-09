@@ -1,5 +1,6 @@
-from trilogy import Environment, Dialects
 from pathlib import Path
+
+from trilogy import Dialects, Environment
 
 built_path = Path(__file__).parent / "output"
 
@@ -25,7 +26,7 @@ run = exec.execute_file(
 for z in env.datasources:
     print(z)
 from trilogy.hooks.query_debugger import DebuggingHook
-from trilogy.core.processing.node_generators.select_merge_node import gen_select_merge_node
+
 DebuggingHook()
 r = exec.generate_sql(
     """SELECT
@@ -36,5 +37,5 @@ r = exec.generate_sql(
     returns.store_sales.ticket_number,
 ;"""
 )
-print('---------')
+print("---------")
 print(r[-1])

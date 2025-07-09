@@ -1,27 +1,22 @@
 from trilogy.dialect.enums import Dialects  # noqa
 from pathlib import Path as PathlibPath  # noqa
 import os
-from sys import path as sys_path
 from trilogy import Environment, Executor
-from trilogy.parsing.parse_engine import parse_text
 from trilogy.parsing.render import Renderer
 from trilogy.utility import unique
 from trilogy.authoring import (
     PersistStatement,
-    SelectStatement,
     ConceptDeclarationStatement,
-    RowsetDerivationStatement,
     ImportStatement,
 )
-from trilogy.core.statements.author import CopyStatement
 from trilogy.core.models.author import HasUUID
 from dataclasses import dataclass
-from trilogyt.core import ENVIRONMENT_CONCEPTS, fingerprint_environment
+from trilogyt.core import ENVIRONMENT_CONCEPTS
 
-from trilogyt.constants import OPTIMIZATION_FILE, logger, OPT_PREFIX
+from trilogyt.constants import logger, OPT_PREFIX
 from trilogyt.graph import process_raw
-from trilogyt.exceptions import OptimizationError
 from trilogy.core.models.environment import Import
+from trilogyt.fingerprint import ContentToFingerprintCache
 
 
 @dataclass
@@ -43,9 +38,6 @@ class OptimizationResult:
         return f"{OPT_PREFIX}{self.fingerprint}"
 
 
-
-
-
 def print_tabulate(q, tabulate):
     result = q.fetchall()
     print(tabulate(result, headers=q.keys(), tablefmt="psql"))
@@ -55,6 +47,7 @@ class Optimizer:
 
     def __init__(self, materialization_threshold: int = 2):
         self.materialization_threshold = materialization_threshold
+        self.fingerprint_cache = ContentToFingerprintCache()
 
     def paths_to_optimizations(
         self, working_path: PathlibPath, dialect: Dialects, files: list[PathlibPath]
@@ -77,7 +70,8 @@ class Optimizer:
                 item.unlink()
             elif item.is_dir():
                 os.rmdir(item)
-    def write_imports(self, imports:dict[str, list[Import]], target: PathlibPath):
+
+    def write_imports(self, imports: dict[str, list[Import]], target: PathlibPath):
         if not imports:
             return
         logger.info("Writing imports to path: %s", target)
@@ -89,18 +83,19 @@ class Optimizer:
                 if not imp.input_path:
                     continue
                 logger.info(
-                    "Processing import: %s for optimization: %s",
-                    imp.input_path, k)
+                    "Processing import: %s for optimization: %s", imp.input_path, k
+                )
+                # check if target has been written
+                # if it has, we can skip
+                if PathlibPath(target / PathlibPath(imp.input_path).name).exists():
+                    continue
                 with open(imp.input_path, "r") as input_file:
                     content = input_file.read()
-                    env, _ = Environment(working_path=target.parent).parse(
-                        content
-                    )
+                    env, _ = Environment(working_path=target.parent).parse(content)
                     self.write_imports(env.imports, target)
-                    with open(
-                        target / PathlibPath(imp.input_path).name, 'w') as f:
+                    with open(target / PathlibPath(imp.input_path).name, "w") as f:
                         f.write(content)
-    
+
     def optimizations_to_files(
         self,
         optimizations: dict[str, OptimizationResult],
@@ -143,6 +138,9 @@ class Optimizer:
             optimization = optimizations.get(fingerprint)
             if not optimization:
                 new = content
+                env, _ = Environment(working_path=working_path).parse(content)
+                if env.imports:
+                    self.write_imports(env.imports, output_path)
             else:
                 new = self._apply_optimization(
                     content, optimization, working_path, target_path
@@ -187,28 +185,10 @@ class Optimizer:
     def _content_to_fingerprint(
         self, working_path, content: str
     ) -> tuple[str | None, list[any], Environment]:
-        local_env = Environment(
-            working_path=working_path,
+
+        return self.fingerprint_cache.content_to_fingerprint(
+            working_path=str(working_path), content=content
         )
-        try:
-            new_env, statements = parse_text(content, environment=local_env)
-        except Exception as e:
-            raise e
-        if not any(
-            isinstance(statement, (SelectStatement, PersistStatement, CopyStatement))
-            for statement in statements
-        ):
-            return None, statements, new_env
-        build_env = new_env.materialize_for_select({})
-        human_labels = []
-        for statement in statements:
-            if isinstance(statement, ImportStatement):
-                human_labels.append((statement.alias or statement.input_path).replace('.', '_'))
-        fingerprint = fingerprint_environment(build_env)
-        name = '_'.join(human_labels[:2])
-        if len(human_labels) > 2:
-            name += f"_{len(human_labels) - 2}_more"
-        return name+'_'+fingerprint[0:8], statements, new_env
 
     def mapping_to_optimizations(
         self, working_path: PathlibPath, dialect: Dialects, contents: dict[str, str]
@@ -300,82 +280,3 @@ class Optimizer:
             )
 
         return outputs
-
-
-def optimize_multiple(
-    base: PathlibPath,
-    paths: list[PathlibPath],
-    dialect: Dialects,
-) -> list[OptimizationResult]:
-
-    optimize_env = Environment(working_path=base.stem)
-    exec = Executor(
-        dialect=dialect, engine=dialect.default_engine(), environment=optimize_env
-    )
-
-    env_to_statements: dict[str, OptimizationInput] = {}
-    file_to_fingerprint = {}
-    for path in paths:
-        if path.name.startswith(OPTIMIZATION_FILE):
-            continue
-        with open(path) as f:
-            local_env = Environment(
-                working_path=path.parent,
-            )
-            try:
-                new_env, statements = parse_text(f.read(), environment=local_env)
-            except Exception as e:
-                raise SyntaxError(f"Unable to parse {path} due to {e}")
-            if not any(
-                isinstance(
-                    statement, (SelectStatement, PersistStatement, CopyStatement)
-                )
-                for statement in statements
-            ):
-                continue
-            build_env = new_env.materialize_for_select({})
-            fingerprint = fingerprint_environment(build_env)
-            file_to_fingerprint[path] = fingerprint
-            if fingerprint in env_to_statements:
-                opt: OptimizationInput = env_to_statements[fingerprint]
-                opt.statements += statements
-            else:
-                env_to_statements[fingerprint] = OptimizationInput(
-                    fingerprint=fingerprint, environment=new_env, statements=statements
-                )
-
-    # determine the new persists we need to create
-    outputs: list[OptimizationResult] = []
-    for k, v in env_to_statements.items():
-        _, new_persists = process_raw(
-            inject=False,
-            inputs=v.statements,
-            env=v.environment,
-            generator=exec.generator,
-            threshold=2,
-        )
-
-        concept_modifying_statements = unique(
-            [x for x in v.statements if isinstance(x, HasUUID)], "uuid"
-        )
-        final: list[HasUUID] = []
-        # we should transform a persist into a select for optimization purposes
-        for x in concept_modifying_statements:
-            if isinstance(x, PersistStatement):
-                final.append(x.select)
-            else:
-                final.append(x)
-        strings: list[str] = []
-        for concept in ENVIRONMENT_CONCEPTS:
-            strings.append(
-                renderer.to_string(ConceptDeclarationStatement(concept=concept))
-                + "\n\n"
-            )
-        for cte in final:
-            strings.append(renderer.to_string(cte) + "\n\n")
-        for x in new_persists:
-            strings.append(renderer.to_string(x) + "\n\n")
-            # f.write(renderer.to_string(x.datasource) + "\n\n")
-
-        outputs.append(OptimizationResult(fingerprint=k, content="\n\n".join(strings)))
-    return outputs

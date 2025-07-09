@@ -7,20 +7,18 @@ from trilogy import Dialects, Environment, Executor
 from trilogy.dialect.config import DuckDBConfig
 from trilogy.hooks.query_debugger import DebuggingHook
 
-from trilogyt.scripts.native import OptimizationResult, native_wrapper
-from trilogyt.core_v2 import Optimizer
-from logging import StreamHandler
-
 from trilogyt.constants import logger
-from trilogyt.native.run import run_path_v2
-working_path = Path(__file__).parent 
+from trilogyt.core_v2 import Optimizer
+from trilogyt.scripts.native import OptimizationResult
 
-SCALE_FACTOR = .2
+working_path = Path(__file__).parent
+
+SCALE_FACTOR = 0.2
 
 
 @pytest.fixture(scope="session")
 def engine():
-    env = Environment(working_path=working_path / 'output')
+    env = Environment(working_path=working_path / "output")
     engine: Executor = Dialects.DUCK_DB.default_executor(
         environment=env,
         hooks=[DebuggingHook(level=INFO, process_other=False, process_ctes=False)],
@@ -47,9 +45,10 @@ def engine():
         )
     yield engine
 
+
 @pytest.fixture(scope="session")
 def base_engine():
-    env = Environment(working_path=working_path / 'output')
+    env = Environment(working_path=working_path / "output")
     engine: Executor = Dialects.DUCK_DB.default_executor(
         environment=env,
         hooks=[DebuggingHook(level=INFO, process_other=False, process_ctes=False)],
@@ -83,7 +82,6 @@ class OptimizedEnv:
     mappings: dict[Path, OptimizationResult]
 
 
-
 @pytest.fixture(scope="session")
 def optimized_env(engine: Executor):
 
@@ -93,28 +91,32 @@ def optimized_env(engine: Executor):
     output_path = root / "output"
     if not output_path.exists():
         output_path.mkdir(parents=True, exist_ok=True)
-    sources = [x for x in files if not x.stem.startswith("_") and not x.stem.endswith("_optimized")]
+    sources = [
+        x
+        for x in files
+        if not x.stem.startswith("_") and not x.stem.endswith("_optimized")
+    ]
     optimizer = Optimizer()
 
-    logger.info(f'Have {len(sources)} files')
+    logger.info(f"Have {len(sources)} files")
 
     optimizations = optimizer.paths_to_optimizations(
         working_path=root, files=sources, dialect=Dialects.DUCK_DB
     )
 
-
     optimizer.wipe_directory(output_path)
     optimizer.optimizations_to_files(optimizations, root, output_path)
 
-
-    optimizer.rewrite_files_with_optimizations(root, sources, optimizations, '_optimized', output_path)
+    optimizer.rewrite_files_with_optimizations(
+        root, sources, optimizations, "_optimized", output_path
+    )
 
     optimized_files = list(output_path.glob("**/_trilogyt_opt*.preql"))
     for file in optimized_files:
-        logger.info(f'Executing optimized file: {file}')
+        logger.info(f"Executing optimized file: {file}")
         engine.execute_file(file, non_interactive=True)
         # try:
-            
+
         # except Exception as e:
         #     logger.error(f"Error executing optimized file {file}: {e}")
     yield output_path

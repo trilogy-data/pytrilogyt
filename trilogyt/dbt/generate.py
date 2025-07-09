@@ -6,13 +6,12 @@ from pathlib import Path
 from jinja2 import Template
 from trilogy import Environment, Executor
 from trilogy.authoring import (
-
     Datasource,
     PersistStatement,
 )
 from trilogy.core.models.datasource import Address
 from trilogy.core.models.execute import UnionCTE
-from trilogy.core.statements.execute import ProcessedQueryPersist, ProcessedQuery
+from trilogy.core.statements.execute import ProcessedQuery, ProcessedQueryPersist
 from trilogy.dialect.enums import Dialects
 from yaml import dump, safe_load
 

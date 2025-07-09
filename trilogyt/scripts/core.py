@@ -10,7 +10,6 @@ from trilogy.authoring import (
     PersistStatement,
     SelectStatement,
     ConceptDeclarationStatement,
-
 )
 from trilogy.core.statements.author import ImportStatement, CopyStatement, HasUUID
 from dataclasses import dataclass
@@ -80,7 +79,7 @@ def optimize_multiple(
                 for statement in statements
             ):
                 continue
-            build_env =  new_env.materialize_for_select({})
+            build_env = new_env.materialize_for_select({})
             fingerprint = fingerprint_environment(build_env)
             file_to_fingerprint[path] = fingerprint
             if fingerprint in env_to_statements:

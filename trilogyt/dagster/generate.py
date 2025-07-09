@@ -9,7 +9,6 @@ from trilogy import Environment, Executor
 from trilogy.authoring import (
     Datasource,
     PersistStatement,
-
 )
 from trilogy.core.models.execute import UnionCTE
 from trilogy.core.statements.execute import ProcessedQueryPersist

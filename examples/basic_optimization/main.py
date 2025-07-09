@@ -1,14 +1,14 @@
 import os
-from pathlib import Path
 import sys
+from pathlib import Path
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
-from trilogy import Dialects
-
-from trilogyt.core_v2 import Optimizer
 from logging import StreamHandler
 
+from trilogy import Dialects
+
 from trilogyt.constants import logger
+from trilogyt.core_v2 import Optimizer
 
 logger.addHandler(StreamHandler())
 
@@ -20,9 +20,11 @@ optimizer = Optimizer()
 
 files = root.glob("*.preql")
 
-sources = [x for x in files if not x.stem.startswith("_") and not x.stem.endswith("_optimized")]
+sources = [
+    x for x in files if not x.stem.startswith("_") and not x.stem.endswith("_optimized")
+]
 
-logger.info(f'Have {len(sources)} files')
+logger.info(f"Have {len(sources)} files")
 
 optimizations = optimizer.paths_to_optimizations(
     working_path=root, files=sources, dialect=Dialects.DUCK_DB
@@ -39,7 +41,7 @@ for k, opt in optimizations.items():
 optimizer.optimizations_to_files(optimizations, root)
 
 
-optimizer.rewrite_files_with_optimizations(root, sources, optimizations, '_optimized')
+optimizer.rewrite_files_with_optimizations(root, sources, optimizations, "_optimized")
 
 # def get_optimizations(logger):
 #     fake = root.parent / "native"

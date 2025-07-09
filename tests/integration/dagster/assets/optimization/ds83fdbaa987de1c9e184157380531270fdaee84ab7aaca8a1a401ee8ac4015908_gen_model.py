@@ -1,12 +1,14 @@
-from dagster_duckdb import DuckDBResource
 from dagster import asset
+from dagster_duckdb import DuckDBResource
 
 
 @asset(deps=[])
-def ds83fdbaa987de1c9e184157380531270fdaee84ab7aaca8a1a401ee8ac4015908(duck_db: DuckDBResource) -> None:
+def ds83fdbaa987de1c9e184157380531270fdaee84ab7aaca8a1a401ee8ac4015908(
+    duck_db: DuckDBResource,
+) -> None:
     with duck_db.get_connection() as conn:
         conn.execute(
-           ''' 
+            """ 
 CREATE OR REPLACE TABLE ds83fdbaa987de1c9e184157380531270fdaee84ab7aaca8a1a401ee8ac4015908 AS
 
 WITH 
@@ -31,6 +33,5 @@ FROM
     "highfalutin"
 WHERE
     "highfalutin"."generic_split" in (1,2,3)
- '''
+ """
         )
-    

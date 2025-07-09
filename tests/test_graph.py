@@ -1,6 +1,6 @@
 from trilogy import Dialects, parse
-from trilogy.core.enums import SourceType
 from trilogy.authoring import Environment
+from trilogy.core.enums import SourceType
 from trilogy.core.models.author import LooseConceptList
 from trilogy.core.models.execute import CTE, QueryDatasource
 from trilogy.dialect.duckdb import DuckDBDialect

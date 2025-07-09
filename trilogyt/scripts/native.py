@@ -7,7 +7,6 @@ from trilogyt.scripts.core import optimize_multiple, OptimizationResult
 from trilogyt.constants import logger
 
 
-
 def native_wrapper(
     preql: PathlibPath,
     output_path: PathlibPath,

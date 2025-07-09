@@ -1,13 +1,10 @@
 from datetime import datetime
 from pathlib import Path
 
-import pytest
 import tomli_w
 from dotenv import load_dotenv
 from trilogy import Environment, Executor
 from trilogy.hooks.query_debugger import DebuggingHook
-
-from tests.tcp_ds_duckdb.conftest import OptimizationResult, OptimizedEnv
 
 load_dotenv()
 
@@ -65,7 +62,13 @@ def run_test_case(
     return output_timers
 
 
-def run_query(engine: Executor, base_engine:Executor, idx: int, optimized_path, profile: bool = False):
+def run_query(
+    engine: Executor,
+    base_engine: Executor,
+    idx: int,
+    optimized_path,
+    profile: bool = False,
+):
 
     start = datetime.now()
     base = base_engine.execute_raw_sql(f"PRAGMA tpcds({idx});")
@@ -95,10 +98,12 @@ def test_one(engine, base_engine, optimized_env):
     run_query(engine, base_engine, 1, optimized_env)
     assert 1 == 1
 
+
 def test_three(engine, base_engine, optimized_env):
     DebuggingHook()
     run_query(engine, base_engine, 3, optimized_env)
     assert 1 == 1
+
 
 def test_three(engine, base_engine, optimized_env):
     DebuggingHook()
@@ -125,7 +130,7 @@ def test_eight(engine, base_engine, optimized_env):
 
 
 def run_adhoc_compiled(number: int):
-    from trilogy import Dialects, Environment
+    from trilogy import Dialects
     from trilogy.hooks.query_debugger import DebuggingHook
 
     parent = Path(__file__).parent

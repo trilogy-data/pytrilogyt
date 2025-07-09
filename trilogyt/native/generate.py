@@ -6,7 +6,6 @@ from trilogy import Environment
 from trilogy.authoring import (
     ConceptDeclarationStatement,
     Datasource,
-
     PersistStatement,
     SelectItem,
 )

@@ -1,13 +1,13 @@
 from hashlib import sha256
 
+from trilogy.authoring import Concept, DataType, Environment
 from trilogy.core.enums import Purpose
 from trilogy.core.env_processor import generate_graph
 from trilogy.core.functions import CurrentDatetime
-from trilogy.authoring import Concept, DataType, Environment
+from trilogy.core.models.build_environment import BuildEnvironment
 
 from trilogyt.constants import TRILOGY_NAMESPACE
 from trilogyt.enums import PreqltMetrics
-from trilogy.core.models.build_environment import BuildEnvironment
 
 ENVIRONMENT_CONCEPTS = [
     Concept(

@@ -7,12 +7,11 @@ from trilogyt.constants import logger
 from trilogyt.scripts.core import OptimizationResult
 
 
-def generate_execution_order(edges)->list[Path]:
+def generate_execution_order(edges) -> list[Path]:
     graph = DiGraph()
     for edge in edges:
         graph.add_edge(*edge)
-    return topological_sort(graph) #type: ignore
-
+    return topological_sort(graph)  # type: ignore
 
 
 def run_path_v2(

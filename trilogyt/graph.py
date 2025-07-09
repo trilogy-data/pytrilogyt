@@ -1,35 +1,52 @@
 from dataclasses import dataclass
+from datetime import date, datetime
 from hashlib import sha256
 from random import choice
 from typing import List
 
 from trilogy import Environment
-from trilogy.constants import VIRTUAL_CONCEPT_PREFIX, MagicConstants
-from trilogy.core.enums import Derivation 
-from trilogy.core.ergonomics import CTE_NAMES
 from trilogy.authoring import (
     Comparison,
     Concept,
+    ConceptRef,
     Conditional,
     Datasource,
+    Function,
     Parenthetical,
     PersistStatement,
     SelectItem,
     SelectStatement,
     WhereClause,
-    ConceptRef,
-    Function,
+    Grain,
+    SubselectComparison,
+    RowsetDerivationStatement,
+    Address,
 )
-from trilogy.core.models.build import BuildConditional, BuildComparison, BuildSubselectComparison,  BuildDatasource, BuildConcept, BuildParenthetical, BuildFunction
-from trilogy.core.models.author import Grain, Conditional, SubselectComparison
-from trilogy.core.models.core import TupleWrapper, MapWrapper, ListWrapper
-from trilogy.core.models.datasource import Address
+from trilogy.constants import VIRTUAL_CONCEPT_PREFIX, MagicConstants
+from trilogy.core.enums import Derivation
+from trilogy.core.ergonomics import CTE_NAMES
+from trilogy.core.models.build import (
+    BuildComparison,
+    BuildConcept,
+    BuildConditional,
+    BuildDatasource,
+    BuildFunction,
+    BuildParenthetical,
+    BuildSubselectComparison,
+)
+from trilogy.core.models.core import ListWrapper, MapWrapper, TupleWrapper
 from trilogy.core.models.execute import CTE, QueryDatasource, UnionCTE
-from trilogy.core.statements.author import RowsetDerivationStatement
-from trilogy.core.statements.execute import ProcessedQueryPersist, ProcessedQuery, ProcessedRawSQLStatement, ProcessedShowStatement
+
+from trilogy.core.statements.execute import (
+    ProcessedQuery,
+    ProcessedQueryPersist,
+    ProcessedRawSQLStatement,
+    ProcessedShowStatement,
+)
 from trilogy.dialect.base import BaseDialect
-from datetime import datetime, date
+
 from trilogyt.constants import logger
+
 
 @dataclass
 class AnalyzeResult:
@@ -53,7 +70,9 @@ def hash_concepts(concepts: list[Concept]) -> str:
     return sha256("".join(sorted([x.address for x in concepts])).encode()).hexdigest()
 
 
-def generate_datasource_name(select: SelectStatement, cte_name: str, env: Environment) -> str:
+def generate_datasource_name(
+    select: SelectStatement, cte_name: str, env: Environment
+) -> str:
     """Generate a reasonable table name"""
     grain = select.calculate_grain(env, select.local_concepts)
     if grain.components:
@@ -62,14 +81,11 @@ def generate_datasource_name(select: SelectStatement, cte_name: str, env: Enviro
         human = [name_to_short_name(x.name) for x in select.output_components]
     human = sorted(human)
     hash = hash_concepts(select.output_components)
-    cutoff= 5
+    cutoff = 5
     inputs = human[0:cutoff]
     if len(human) > cutoff:
         inputs.append(f"{len(human) - cutoff}_more")
-    base = "ds" + "_".join(
-        inputs
-        + [hash[0:8]]
-    )
+    base = "ds" + "_".join(inputs + [hash[0:8]])
     if select.where_clause:
         # TODO: needs to include the filter predicates
         base = (
@@ -84,60 +100,82 @@ def generate_datasource_name(select: SelectStatement, cte_name: str, env: Enviro
         )
     return base
 
-def convert_build_to_author(input:any ):
+
+def convert_build_to_author(input: any):
     if isinstance(input, BuildConcept):
         return ConceptRef(address=input.address)
     if isinstance(input, BuildConditional):
         return Conditional(
-            left = convert_build_to_author(input.left),
-            right = convert_build_to_author(input.right),
+            left=convert_build_to_author(input.left),
+            right=convert_build_to_author(input.right),
             operator=input.operator,
         )
     elif isinstance(input, BuildComparison):
         return Comparison(
-            left = convert_build_to_author(input.left),
-            right = convert_build_to_author(input.right),
+            left=convert_build_to_author(input.left),
+            right=convert_build_to_author(input.right),
             operator=input.operator,
         )
     elif isinstance(input, BuildSubselectComparison):
         return SubselectComparison(
-            left = convert_build_to_author(input.left),
-            right = convert_build_to_author(input.right),
+            left=convert_build_to_author(input.left),
+            right=convert_build_to_author(input.right),
             operator=input.operator,
         )
     elif isinstance(input, BuildParenthetical):
-        return Parenthetical(
-            content=convert_build_to_author(input.content)
-        )
+        return Parenthetical(content=convert_build_to_author(input.content))
     elif isinstance(input, BuildFunction):
         return Function(
-            operator = input.operator,
+            operator=input.operator,
             arguments=[convert_build_to_author(x) for x in input.arguments],
             arg_count=input.arg_count,
             output_datatype=input.output_datatype,
-            output_purpose = input.output_purpose,
+            output_purpose=input.output_purpose,
         )
-    elif isinstance(input, (int, str, float, bool, MagicConstants, datetime, date, TupleWrapper, MapWrapper, ListWrapper)):
+    elif isinstance(
+        input,
+        (
+            int,
+            str,
+            float,
+            bool,
+            MagicConstants,
+            datetime,
+            date,
+            TupleWrapper,
+            MapWrapper,
+            ListWrapper,
+        ),
+    ):
         return input
     else:
-        raise ValueError(f'Unsupported round trip for {type(input)}')
+        raise ValueError(f"Unsupported round trip for {type(input)}")
 
 
-
-def cte_to_persist(input: CTE, name: str, generator: BaseDialect, env:Environment) -> PersistStatement:
+def cte_to_persist(
+    input: CTE, name: str, generator: BaseDialect, env: Environment
+) -> PersistStatement:
 
     # a rowset will have the CTE ported over and we can assume the select statement doesn't need
     # further filtering
     rowset = any([x.derivation == Derivation.ROWSET for x in input.output_columns])
     if rowset:
         select = SelectStatement(
-            selection=[SelectItem(content=ConceptRef(address=x.address)) for x in sorted(input.output_columns, key=lambda x: x.address)],
+            selection=[
+                SelectItem(content=ConceptRef(address=x.address))
+                for x in sorted(input.output_columns, key=lambda x: x.address)
+            ],
         )
     else:
         select = SelectStatement(
-            selection=[SelectItem(content=ConceptRef(address=x.address)) for x in sorted(input.output_columns, key=lambda x: x.address)],
+            selection=[
+                SelectItem(content=ConceptRef(address=x.address))
+                for x in sorted(input.output_columns, key=lambda x: x.address)
+            ],
             where_clause=(
-                WhereClause(conditional=convert_build_to_author(input.condition)) if input.condition else None
+                WhereClause(conditional=convert_build_to_author(input.condition))
+                if input.condition
+                else None
             ),
         )
     datasource = select.to_datasource(
@@ -250,9 +288,7 @@ def analyze(
             # and it itself doesn't have a filter condition; this might be post filtering
             # and irrelevant to global graph.
             # TODO: figure out if it's pre-filtering or post-filtering
-            fingerprint = fingerprint_cte(
-                cte, cte.condition if cte.condition else None
-            )
+            fingerprint = fingerprint_cte(cte, cte.condition if cte.condition else None)
             counts[fingerprint] = counts.get(fingerprint, 0) + 1
             lookup[fingerprint] = lookup.get(fingerprint, cte) + cte
     for k, v in counts.items():
@@ -283,7 +319,12 @@ def is_raw_source_cte(cte: CTE) -> bool:
 def has_anon_concepts(cte: CTE) -> bool:
     if any([x.name.startswith(VIRTUAL_CONCEPT_PREFIX) for x in cte.output_columns]):
         return True
-    if cte.condition and any([x.name.startswith(VIRTUAL_CONCEPT_PREFIX) for x in cte.condition.concept_arguments]):
+    if cte.condition and any(
+        [
+            x.name.startswith(VIRTUAL_CONCEPT_PREFIX)
+            for x in cte.condition.concept_arguments
+        ]
+    ):
         return True
     return False
 
@@ -341,7 +382,9 @@ def process_loop(
             logger.info(
                 f"Creating new persist statement from cte {k} with output {[x.address for x in cte.output_columns]} grain {cte.grain.components} conditions {cte.condition}"
             )
-            print(f"Creating new persist statement from cte {k} with output {[x.address for x in cte.output_columns]} grain {cte.grain.components} conditions {cte.condition}")
+            print(
+                f"Creating new persist statement from cte {k} with output {[x.address for x in cte.output_columns]} grain {cte.grain.components} conditions {cte.condition}"
+            )
             new_persist.append(cte_to_persist(cte, k, generator=generator, env=env))
 
     return ProcessLoopResult(new=new_persist)
