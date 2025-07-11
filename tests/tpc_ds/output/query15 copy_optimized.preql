@@ -1,7 +1,7 @@
 import _opt_catalog_sales_611f10fd;
 
 WHERE
-    catalog_sales.date.quarter = 2 and (catalog_sales.date.year = 2001 and ((catalog_sales.bill_customer.state in ('CA', 'WA', 'GA') or (catalog_sales.sales_price > 500 or substring(catalog_sales.bill_customer.zip,1,5) in ('85669', '86197', '88274', '83405', '86475', '85392', '85460', '80348', '81792')))))
+    catalog_sales.date.quarter = 2 and catalog_sales.date.year = 2001 and (catalog_sales.bill_customer.state in ('CA', 'WA', 'GA') or catalog_sales.sales_price > 500 or substring(catalog_sales.bill_customer.zip,1,5) in ('85669', '86197', '88274', '83405', '86475', '85392', '85460', '80348', '81792'))
 SELECT
     catalog_sales.bill_customer.zip,
     sum(catalog_sales.sales_price) -> sales,
@@ -11,7 +11,7 @@ LIMIT 100
 ;
 
 WHERE
-    catalog_sales.date.quarter = 2 and (catalog_sales.date.year = 2001 and ((catalog_sales.bill_customer.state in ('CA', 'WA', 'GA') or (catalog_sales.sales_price > 500 or substring(catalog_sales.bill_customer.zip,1,5) in ('85669', '86197', '88274', '83405', '86475', '85392', '85460', '80348', '81792')))))
+    catalog_sales.date.quarter = 2 and catalog_sales.date.year = 2001 and (catalog_sales.bill_customer.state in ('CA', 'WA', 'GA') or catalog_sales.sales_price > 500 or substring(catalog_sales.bill_customer.zip,1,5) in ('85669', '86197', '88274', '83405', '86475', '85392', '85460', '80348', '81792'))
 SELECT
     catalog_sales.bill_customer.zip,
     sum(catalog_sales.sales_price) -> sales,

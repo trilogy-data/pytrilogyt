@@ -1,7 +1,12 @@
-base_prep_time = 0.000185
-base_parse_time = 0.138039
-base_generation_time = 0.002952
-base_exec_time = 0.021952
+base_prep_time = 0.0
+base_parse_time = 0.30282
+base_generation_time = 0.0
+base_exec_time = 0.055097
+optimized_prep_time = 0.001192
+optimized_parse_time = 0.778954
+optimized_generation_time = 0.0
+optimized_exec_time = 0.046305
+was_optimized = false
 base_generated_sql = """
 
 WITH 
@@ -55,7 +60,7 @@ SELECT
     (\"thoughtful\".\"itemrevenue\" * 100.0) / \"cooperative\".\"itemclassrevenue\" as \"revenueratio\"
 FROM
     \"cooperative\"
-    LEFT OUTER JOIN \"thoughtful\" on \"cooperative\".\"itemrevenue\" = \"thoughtful\".\"itemrevenue\" AND (\"cooperative\".\"web_sales_item_class\" = \"thoughtful\".\"web_sales_item_class\" or (\"cooperative\".\"web_sales_item_class\" is null and \"thoughtful\".\"web_sales_item_class\" is null))
+    LEFT OUTER JOIN \"thoughtful\" on (\"cooperative\".\"itemrevenue\" = \"thoughtful\".\"itemrevenue\" or (\"cooperative\".\"itemrevenue\" is null and \"thoughtful\".\"itemrevenue\" is null)) AND (\"cooperative\".\"web_sales_item_class\" = \"thoughtful\".\"web_sales_item_class\" or (\"cooperative\".\"web_sales_item_class\" is null and \"thoughtful\".\"web_sales_item_class\" is null))
 ORDER BY 
     \"thoughtful\".\"web_sales_item_category\" asc,
     \"thoughtful\".\"web_sales_item_class\" asc,
@@ -63,10 +68,6 @@ ORDER BY
     \"thoughtful\".\"web_sales_item_desc\" asc,
     (\"thoughtful\".\"itemrevenue\" * 100.0) / \"cooperative\".\"itemclassrevenue\" asc
 LIMIT (100)"""
-optimized_prep_time = 0.000173
-optimized_parse_time = 0.224823
-optimized_generation_time = 0.003013
-optimized_exec_time = 0.017392
 optimized_generated_sql = """
 
 WITH 
@@ -85,7 +86,7 @@ FROM
     INNER JOIN \"memory\".\"date_dim\" as \"web_sales_date_date\" on \"web_sales_web_sales\".\"WS_SOLD_DATE_SK\" = \"web_sales_date_date\".\"D_DATE_SK\"
     INNER JOIN \"memory\".\"item\" as \"web_sales_item_items\" on \"web_sales_web_sales\".\"WS_ITEM_SK\" = \"web_sales_item_items\".\"I_ITEM_SK\"
 WHERE
-    ( cast(\"web_sales_date_date\".\"D_DATE\" as date) >= date '1999-02-22' and cast(\"web_sales_date_date\".\"D_DATE\" as date) <= date '1999-03-24' ) and \"web_sales_item_items\".\"I_CATEGORY\" in ('Sports','Books','Home')
+    cast(\"web_sales_date_date\".\"D_DATE\" as date) >= date '1999-02-22' and cast(\"web_sales_date_date\".\"D_DATE\" as date) <= date '1999-03-24' and \"web_sales_item_items\".\"I_CATEGORY\" in ('Sports','Books','Home')
 ),
 thoughtful as (
 SELECT
@@ -120,7 +121,7 @@ SELECT
     (\"thoughtful\".\"itemrevenue\" * 100.0) / \"cooperative\".\"itemclassrevenue\" as \"revenueratio\"
 FROM
     \"cooperative\"
-    LEFT OUTER JOIN \"thoughtful\" on \"cooperative\".\"itemrevenue\" = \"thoughtful\".\"itemrevenue\" AND (\"cooperative\".\"web_sales_item_class\" = \"thoughtful\".\"web_sales_item_class\" or (\"cooperative\".\"web_sales_item_class\" is null and \"thoughtful\".\"web_sales_item_class\" is null))
+    LEFT OUTER JOIN \"thoughtful\" on (\"cooperative\".\"itemrevenue\" = \"thoughtful\".\"itemrevenue\" or (\"cooperative\".\"itemrevenue\" is null and \"thoughtful\".\"itemrevenue\" is null)) AND (\"cooperative\".\"web_sales_item_class\" = \"thoughtful\".\"web_sales_item_class\" or (\"cooperative\".\"web_sales_item_class\" is null and \"thoughtful\".\"web_sales_item_class\" is null))
 ORDER BY 
     \"thoughtful\".\"web_sales_item_category\" asc,
     \"thoughtful\".\"web_sales_item_class\" asc,
@@ -129,5 +130,5 @@ ORDER BY
     (\"thoughtful\".\"itemrevenue\" * 100.0) / \"cooperative\".\"itemclassrevenue\" asc
 LIMIT (100)"""
 query_id = 12
-sql_comp_time = 0.031312
-total_time = 0.445527
+sql_comp_time = 0.056855
+total_time = 1.245024

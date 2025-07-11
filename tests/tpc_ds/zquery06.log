@@ -1,7 +1,12 @@
-base_prep_time = 0.000175
-base_parse_time = 0.151891
-base_generation_time = 0.005827
-base_exec_time = 0.015507
+base_prep_time = 0.002064
+base_parse_time = 0.636668
+base_generation_time = 0.0
+base_exec_time = 0.031772
+optimized_prep_time = 0.0
+optimized_parse_time = 0.402055
+optimized_generation_time = 0.015869
+optimized_exec_time = 0.033707
+was_optimized = false
 base_generated_sql = """
 
 WITH 
@@ -68,10 +73,6 @@ HAVING
 ORDER BY 
     sum(1) asc nulls first,
     \"yummy\".\"store_sales_customer_state\" asc nulls first"""
-optimized_prep_time = 0.000167
-optimized_parse_time = 0.828654
-optimized_generation_time = 0.005187
-optimized_exec_time = 0.016344
 optimized_generated_sql = """
 
 WITH 
@@ -93,7 +94,7 @@ FROM
     INNER JOIN \"memory\".\"item\" as \"store_sales_item_items\" on \"store_sales_store_sales\".\"SS_ITEM_SK\" = \"store_sales_item_items\".\"I_ITEM_SK\"
     INNER JOIN \"memory\".\"item\" as \"item_items\" on \"store_sales_store_sales\".\"SS_ITEM_SK\" = \"item_items\".\"I_ITEM_SK\"
 WHERE
-    cast(\"store_sales_date_date\".\"D_YEAR\" as int) = 2001
+    cast(\"store_sales_date_date\".\"D_YEAR\" as int) = 2001 and \"store_sales_date_date\".\"D_MOY\" = 1 and \"store_sales_item_items\".\"I_CATEGORY\" is not null
 ),
 abundant as (
 SELECT
@@ -112,7 +113,7 @@ FROM
     \"questionable\"
     INNER JOIN \"abundant\" on (\"questionable\".\"item_category\" = \"abundant\".\"item_category\" or (\"questionable\".\"item_category\" is null and \"abundant\".\"item_category\" is null))
 WHERE
-    \"questionable\".\"store_sales_date_year\" = 2001 and ( \"questionable\".\"store_sales_date_month_of_year\" = 1 and ( \"questionable\".\"store_sales_item_current_price\" > 1.2 * \"abundant\".\"_virt_agg_avg_5942253052406187\" and \"questionable\".\"store_sales_item_category\" is not null ) )
+    \"questionable\".\"store_sales_date_year\" = 2001 and \"questionable\".\"store_sales_date_month_of_year\" = 1 and \"questionable\".\"store_sales_item_current_price\" > 1.2 * \"abundant\".\"_virt_agg_avg_5942253052406187\" and \"questionable\".\"store_sales_item_category\" is not null
 ),
 yummy as (
 SELECT
@@ -139,5 +140,5 @@ ORDER BY
     sum(1) asc nulls first,
     \"yummy\".\"store_sales_customer_state\" asc nulls first"""
 query_id = 6
-sql_comp_time = 0.023771
-total_time = 1.049835
+sql_comp_time = 0.041233
+total_time = 1.164705

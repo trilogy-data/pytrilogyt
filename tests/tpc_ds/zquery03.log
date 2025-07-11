@@ -1,7 +1,12 @@
-base_prep_time = 0.000171
-base_parse_time = 0.125849
-base_generation_time = 0.001768
-base_exec_time = 0.020589
+base_prep_time = 0.0
+base_parse_time = 0.202848
+base_generation_time = 0.004622
+base_exec_time = 0.027789
+optimized_prep_time = 0.0
+optimized_parse_time = 0.330427
+optimized_generation_time = 0.004479
+optimized_exec_time = 0.032001
+was_optimized = false
 base_generated_sql = """
 
 WITH 
@@ -36,10 +41,6 @@ ORDER BY
     sum(\"cheerful\".\"store_sales_ext_sales_price\") desc,
     \"cheerful\".\"store_sales_item_brand_id\" asc
 LIMIT (100)"""
-optimized_prep_time = 0.000169
-optimized_parse_time = 0.18424
-optimized_generation_time = 0.002133
-optimized_exec_time = 0.022972
 optimized_generated_sql = """
 
 WITH 
@@ -75,5 +76,5 @@ ORDER BY
     \"cheerful\".\"store_sales_item_brand_id\" asc
 LIMIT (100)"""
 query_id = 3
-sql_comp_time = 0.016397
-total_time = 0.376648
+sql_comp_time = 0.027853
+total_time = 0.632059

@@ -15,7 +15,7 @@ property p_cust_zip <- filter customer.zip where zip_p_count > 10;
 property final_zips <- substring(filter zips where zips in substring(p_cust_zip,1,5),1,2);
 
 WHERE
-    store_sales.date.quarter = 2 and (store_sales.date.year = 1998 and substring(store_sales.store.zip,1,2) in final_zips)
+    store_sales.date.quarter = 2 and store_sales.date.year = 1998 and substring(store_sales.store.zip,1,2) in final_zips
 SELECT
     store_sales.store.name,
     sum(store_sales.net_profit) -> store_net_profit,
@@ -50,7 +50,7 @@ PERSIST default.dslocal.final_zips_919671db INTO dslocal.final_zips_919671db FRO
 ;
 
 PERSIST default.dsstore_sales.item.id_store_sales.store.name_store_sales.ticket_number_e88a2d96_filtered_on_quarter_year_zip_final_zips INTO dsstore_sales.item.id_store_sales.store.name_store_sales.ticket_number_e88a2d96_filtered_on_quarter_year_zip_final_zips FROM WHERE
-    store_sales.date.quarter = 2 and (store_sales.date.year = 1998 and substring(store_sales.store.zip,1,2) in final_zips)
+    store_sales.date.quarter = 2 and store_sales.date.year = 1998 and substring(store_sales.store.zip,1,2) in final_zips
 SELECT
     store_sales.item.id,
     store_sales.net_profit,

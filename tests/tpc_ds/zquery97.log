@@ -1,7 +1,12 @@
-base_prep_time = 0.000185
-base_parse_time = 1.421145
-base_generation_time = 0.002559
-base_exec_time = 0.116318
+base_prep_time = 0.007056
+base_parse_time = 1.170546
+base_generation_time = 0.007428
+base_exec_time = 0.163236
+optimized_prep_time = 0.0
+optimized_parse_time = 1.112015
+optimized_generation_time = 0.0
+optimized_exec_time = 0.168469
+was_optimized = false
 base_generated_sql = """
 
 WITH 
@@ -106,10 +111,6 @@ SELECT
 	END) as \"both_sales\"
 FROM
     \"juicy\""""
-optimized_prep_time = 0.000221
-optimized_parse_time = 0.675088
-optimized_generation_time = 0.002766
-optimized_exec_time = 0.113085
 optimized_generated_sql = """
 
 WITH 
@@ -215,5 +216,5 @@ SELECT
 FROM
     \"juicy\""""
 query_id = 97
-sql_comp_time = 0.033965
-total_time = 2.3691
+sql_comp_time = 0.043098
+total_time = 2.689782

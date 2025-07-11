@@ -1,7 +1,7 @@
 import _opt_web_sales_caeb4e8d;
 
 WHERE
-    (web_sales.date.date >= '1999-02-22'::date and web_sales.date.date <= '1999-03-24'::date) and web_sales.item.category in ('Sports', 'Books', 'Home')
+    web_sales.date.date >= '1999-02-22'::date and web_sales.date.date <= '1999-03-24'::date and web_sales.item.category in ('Sports', 'Books', 'Home')
 SELECT
     web_sales.item.name,
     web_sales.item.desc,
@@ -21,7 +21,7 @@ LIMIT 100
 ;
 
 WHERE
-    (web_sales.date.date >= '1999-02-22'::date and web_sales.date.date <= '1999-03-24'::date) and web_sales.item.category in ('Sports', 'Books', 'Home')
+    web_sales.date.date >= '1999-02-22'::date and web_sales.date.date <= '1999-03-24'::date and web_sales.item.category in ('Sports', 'Books', 'Home')
 SELECT
     web_sales.item.name,
     web_sales.item.desc,

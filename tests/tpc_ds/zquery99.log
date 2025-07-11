@@ -1,7 +1,12 @@
-base_prep_time = 0.000174
-base_parse_time = 0.151745
-base_generation_time = 0.004821
-base_exec_time = 0.045624
+base_prep_time = 0.0
+base_parse_time = 0.196813
+base_generation_time = 0.0
+base_exec_time = 0.069408
+optimized_prep_time = 0.0
+optimized_parse_time = 0.518314
+optimized_generation_time = 0.015593
+optimized_exec_time = 0.050901
+was_optimized = false
 base_generated_sql = """
 
 WITH 
@@ -58,10 +63,6 @@ ORDER BY
     \"abundant\".\"ship_mode_type\" asc nulls first,
     \"abundant\".\"cc_name_lower\" asc nulls first
 LIMIT (100)"""
-optimized_prep_time = 0.000171
-optimized_parse_time = 0.145764
-optimized_generation_time = 0.005002
-optimized_exec_time = 0.046421
 optimized_generated_sql = """
 
 WITH 
@@ -119,5 +120,5 @@ ORDER BY
     \"abundant\".\"cc_name_lower\" asc nulls first
 LIMIT (100)"""
 query_id = 99
-sql_comp_time = 0.028366
-total_time = 0.430338
+sql_comp_time = 0.038491
+total_time = 0.88952

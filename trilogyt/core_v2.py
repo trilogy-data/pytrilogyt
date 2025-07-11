@@ -17,25 +17,8 @@ from trilogyt.constants import logger, OPT_PREFIX
 from trilogyt.graph import process_raw
 from trilogy.core.models.environment import Import
 from trilogyt.fingerprint import ContentToFingerprintCache
-
-
-@dataclass
-class OptimizationInput:
-    fingerprint: str
-    environment: Environment
-    statements: list
-    imports: dict[str, list[Import]] | None = None
-
-
-@dataclass
-class OptimizationResult:
-    fingerprint: str
-    content: str
-    imports: dict[str, list[Import]] | None = None
-
-    @property
-    def filename(self) -> str:
-        return f"{OPT_PREFIX}{self.fingerprint}"
+from trilogyt.models import OptimizationInput, OptimizationResult
+from trilogyt.io import BaseWorkspace
 
 
 def print_tabulate(q, tabulate):
@@ -50,16 +33,15 @@ class Optimizer:
         self.fingerprint_cache = ContentToFingerprintCache()
 
     def paths_to_optimizations(
-        self, working_path: PathlibPath, dialect: Dialects, files: list[PathlibPath]
+        self, working_path: PathlibPath, dialect: Dialects, workspace: BaseWorkspace
     ) -> dict[str, OptimizationResult]:
 
         mapping: dict[str, str] = {}
-        for file in files:
-            logger.info("Parsing file: %s", file)
-            with open(file) as f:
-                mapping[str(file)] = f.read()
+        for k, v in workspace.get_files():
+            logger.info("Parsing file: %s", k)
+            mapping[k] = v
 
-        return self.mapping_to_optimizations(working_path, dialect, mapping)
+        return self.mapping_to_optimizations(workspace, dialect, mapping)
 
     def wipe_directory(self, path: PathlibPath):
         if not path.exists():
@@ -118,13 +100,13 @@ class Optimizer:
 
     def rewrite_files_with_optimizations(
         self,
-        working_path: PathlibPath,
+        workspace: BaseWorkspace,
         files: list[PathlibPath],
         optimizations: dict[str, OptimizationResult],
         suffix: str = "_optimized",
-        output_path: PathlibPath | None = None,
+        output_workspace: BaseWorkspace | None = None,
     ):
-        target_path = output_path or working_path
+        target_workspace = output_workspace or workspace
         for file in files:
             logger.info(
                 "Parsing file: %s",
@@ -132,30 +114,26 @@ class Optimizer:
             )
             with open(file) as f:
                 content = f.read()
-            fingerprint, _, _ = self._content_to_fingerprint(working_path, content)
+            fingerprint, _, _ = self._content_to_fingerprint(target_workspace, content)
             if fingerprint is None:
                 continue
             optimization = optimizations.get(fingerprint)
             if not optimization:
                 new = content
-                env, _ = Environment(working_path=working_path).parse(content)
+                env, _ = target_workspace.get_environment().parse(content)
                 if env.imports:
-                    self.write_imports(env.imports, output_path)
+                    self.write_imports(env.imports, target_workspace)
             else:
                 new = self._apply_optimization(
-                    content, optimization, working_path, target_path
+                    content, optimization, workspace, target_workspace
                 )
-            if output_path is not None:
-                new_path = (
-                    output_path / file.with_name(file.stem + suffix + file.suffix).name
-                )
-            else:
-                new_path = file.with_name(file.stem + suffix + file.suffix)
-            with open(new_path, "w") as f:
-                logger.info(
-                    "Rewriting file: %s with optimization %s", file, fingerprint
-                )
-                f.write(new)
+
+            target_workspace.write_file(
+                file,
+                new,
+                suffix=suffix,
+            )
+
 
     def _apply_optimization(
         self,
@@ -183,22 +161,22 @@ class Optimizer:
         return "\n\n".join(strings)
 
     def _content_to_fingerprint(
-        self, working_path, content: str
+        self, workspace:BaseWorkspace, content: str
     ) -> tuple[str | None, list[any], Environment]:
 
         return self.fingerprint_cache.content_to_fingerprint(
-            working_path=str(working_path), content=content
+            workspace=workspace, content=content
         )
 
     def mapping_to_optimizations(
-        self, working_path: PathlibPath, dialect: Dialects, contents: dict[str, str]
+        self, workspace:BaseWorkspace, dialect: Dialects, contents: dict[str, str]
     ) -> dict[str, OptimizationResult]:
         env_to_statements: dict[str, OptimizationInput] = {}
         key_to_fingerprint = {}
         for key, content in contents.items():
             # to look at first - fingerprint does not include local select overrides
             fingerprint, statements, new_env = self._content_to_fingerprint(
-                working_path, content
+                workspace, content
             )
             # if there is no fingerprint, skip
             if not fingerprint:
@@ -216,7 +194,7 @@ class Optimizer:
                 )
 
         return self.optimization_inputs_to_outputs(
-            working_path, env_to_statements, dialect
+            workspace, env_to_statements, dialect
         )
 
     def optimization_inputs_to_outputs(

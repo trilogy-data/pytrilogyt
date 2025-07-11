@@ -19,6 +19,7 @@ def run_test_case(
     base_results,
 ):
     output_timers = {}
+    output_cache = {}
     for label, preql_path in [
         ["base", working_path / f"query{idx:02d}.preql"],
         ["optimized", optimized_path / f"query{idx:02d}_optimized.preql"],
@@ -39,7 +40,8 @@ def run_test_case(
         execed = datetime.now()
         exec_time = execed - generated
         comp_results = list(results.fetchall())
-        assert len(comp_results) > 0, "No results returned"
+        if len(base_results)>0:
+            assert len(comp_results) > 0, "No results returned"
         # check we got it
         if len(base_results) != len(comp_results):
             assert (
@@ -57,7 +59,11 @@ def run_test_case(
             generated - post_parsed
         ).total_seconds()
         output_timers[f"{label}_exec_time"] = exec_time.total_seconds()
-        output_timers[f"{label}_generated_sql"] = generated_sql[-1]
+        output_cache[f"{label}_generated_sql"] = generated_sql[-1]
+    output_timers['was_optimized'] = output_cache["optimized_generated_sql"] != output_cache["base_generated_sql"]
+    # show queries at the end
+    for k, v in output_cache.items():
+        output_timers[k] = v
     return output_timers
 
 

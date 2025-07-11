@@ -7,7 +7,7 @@ import item as item;
 MERGE store_sales.item.id into item.id;
 
 WHERE
-    store_sales.date.year = 2001 and (store_sales.date.month_of_year = 1 and (store_sales.item.current_price > 1.2 * avg(item.current_price) by item.category and store_sales.item.category is not null))
+    store_sales.date.year = 2001 and store_sales.date.month_of_year = 1 and store_sales.item.current_price > 1.2 * avg(item.current_price) by item.category and store_sales.item.category is not null
 SELECT
     store_sales.customer.state,
     sum(group(1) by store_sales.ticket_number, item.id) -> customer_count,
@@ -20,7 +20,7 @@ ORDER BY
 ;
 
 PERSIST default.dsitem.id_store_sales.customer.state_store_sales.date.month_of_year_store_sales.date.year_store_sales.ticket_number_8c6c8978_filtered_on_year_month_of_year_category INTO dsitem.id_store_sales.customer.state_store_sales.date.month_of_year_store_sales.date.year_store_sales.ticket_number_8c6c8978_filtered_on_year_month_of_year_category FROM WHERE
-    (store_sales.date.year = 2001 and store_sales.date.month_of_year = 1) and store_sales.item.category is not null
+    store_sales.date.year = 2001 and store_sales.date.month_of_year = 1 and store_sales.item.category is not null
 SELECT
     item.category,
     item.id,

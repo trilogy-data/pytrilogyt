@@ -10,7 +10,7 @@ from trilogy.authoring import (
 from trilogy.core.statements.author import CopyStatement
 from trilogy.core.models.author import HasUUID
 from trilogyt.core import fingerprint_environment
-
+from trilogyt.io import BaseWorkspace
 import hashlib
 
 
@@ -19,10 +19,10 @@ class ContentToFingerprintCache:
         self._cache: dict[str, tuple[str, list[HasUUID], "Environment"]] = {}
         self.max_cache_size = max_cache_size
 
-    def _get_content_hash(self, content: str, working_path: str) -> str:
+    def _get_content_hash(self, content: str, workspace:BaseWorkspace) -> str:
         """Generate a hash of the input content and working path."""
         # Combine content and working_path for the hash since working_path affects the result
-        combined_input = f"{working_path}:{content}"
+        combined_input = f"{workspace.id}:{content}"
         return hashlib.sha256(combined_input.encode("utf-8")).hexdigest()
 
     def _evict_oldest_if_needed(self):
@@ -33,10 +33,10 @@ class ContentToFingerprintCache:
             del self._cache[oldest_key]
 
     def content_to_fingerprint(
-        self, working_path: str, content: str
+        self, workspace:BaseWorkspace, content: str
     ) -> tuple[str, list[HasUUID], "Environment"]:
         # Generate hash of input
-        content_hash = self._get_content_hash(content, working_path)
+        content_hash = self._get_content_hash(content, workspace)
 
         # Check cache first
         if content_hash in self._cache:
@@ -44,7 +44,7 @@ class ContentToFingerprintCache:
             return (cached_result[0], cached_result[1], cached_result[2])
 
         # If not in cache, compute the result
-        local_env = Environment(working_path=working_path)
+        local_env = workspace.get_environment()
 
         try:
             new_env, statements = parse_text(content, environment=local_env)
