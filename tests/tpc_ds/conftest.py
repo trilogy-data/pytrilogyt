@@ -10,6 +10,7 @@ from trilogy.hooks.query_debugger import DebuggingHook
 from trilogyt.constants import logger
 from trilogyt.core_v2 import Optimizer
 from trilogyt.scripts.native import OptimizationResult
+from trilogyt import FileWorkspace
 
 working_path = Path(__file__).parent
 
@@ -69,9 +70,15 @@ def optimized_env(engine: Executor):
     optimizer = Optimizer()
 
     logger.info(f"Have {len(sources)} files")
-
-    optimizations = optimizer.paths_to_optimizations(
+    workspace = FileWorkspace(
         working_path=root, files=sources, dialect=Dialects.DUCK_DB
+    )
+    output_workspace = FileWorkspace(
+        working_path=output_path, files=[] dialect=Dialects.DUCK_DB
+    )
+    
+    optimizations = optimizer.paths_to_optimizations(
+        workspace=workspace, dialect=Dialects.DUCK_DB
     )
 
     optimizer.wipe_directory(output_path)

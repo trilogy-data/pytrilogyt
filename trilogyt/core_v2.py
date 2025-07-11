@@ -19,7 +19,7 @@ from trilogy.core.models.environment import Import
 from trilogyt.fingerprint import ContentToFingerprintCache
 from trilogyt.models import OptimizationInput, OptimizationResult
 from trilogyt.io import BaseWorkspace
-
+from pathlib import Path
 
 def print_tabulate(q, tabulate):
     result = q.fetchall()
@@ -31,9 +31,10 @@ class Optimizer:
     def __init__(self, materialization_threshold: int = 2):
         self.materialization_threshold = materialization_threshold
         self.fingerprint_cache = ContentToFingerprintCache()
+        self.suffix = "_optimized",
 
     def paths_to_optimizations(
-        self, working_path: PathlibPath, dialect: Dialects, workspace: BaseWorkspace
+        self, dialect: Dialects, workspace: BaseWorkspace
     ) -> dict[str, OptimizationResult]:
 
         mapping: dict[str, str] = {}
@@ -81,18 +82,14 @@ class Optimizer:
     def optimizations_to_files(
         self,
         optimizations: dict[str, OptimizationResult],
-        path: PathlibPath,
-        output_path: PathlibPath | None = None,
+        workspace: BaseWorkspace,
+        output_workspace: BaseWorkspace | None = None,
     ):
-        target = output_path or path
+        target = output_workspace or workspace
         for k, opt in optimizations.items():
             if not opt.content.strip():
                 continue
-
-            file_path = target / PathlibPath(opt.filename).with_suffix(".preql")
-            logger.info("Writing optimization to file: %s", file_path)
-            with open(file_path, "w") as f:
-                f.write(opt.content)
+            workspace.write_file(PathlibPath(opt.filename).with_suffix(".preql"), opt.content)
             if opt.imports:
                 self.write_imports(opt.imports, target)
 
@@ -103,7 +100,7 @@ class Optimizer:
         workspace: BaseWorkspace,
         files: list[PathlibPath],
         optimizations: dict[str, OptimizationResult],
-        suffix: str = "_optimized",
+
         output_workspace: BaseWorkspace | None = None,
     ):
         target_workspace = output_workspace or workspace
@@ -127,11 +124,10 @@ class Optimizer:
                 new = self._apply_optimization(
                     content, optimization, workspace, target_workspace
                 )
-
+            file = Path(self.working_path / f"{path.stem}{suffix}{path.suffix}")
             target_workspace.write_file(
                 file,
                 new,
-                suffix=suffix,
             )
 
 

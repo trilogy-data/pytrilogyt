@@ -52,12 +52,11 @@ class FileWorkspace(BaseWorkspace):
             self,
             path: Path,
             content: str,
-            suffix: str = "optimized",
     ):
         """Write a file to the workspace."""
-        file_path = Path(self.working_path / f"{path.stem}{suffix}{path.suffix}")
-        file_path.write_text(content)
-        self.paths.append(file_path)
+        
+        path.write_text(content)
+        self.paths.append(path)
     
 
 class MemoryWorkspace(BaseWorkspace):
