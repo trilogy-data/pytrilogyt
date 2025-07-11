@@ -18,8 +18,8 @@ SELECT
 FROM
     "quizzical")
 SELECT
-    "highfalutin"."generic_split" as "cte_generic_split",
-    "highfalutin"."generic_scalar" as "cte_generic_scalar"
+    "highfalutin"."generic_scalar" as "cte_generic_scalar",
+    "highfalutin"."generic_split" as "cte_generic_split"
 FROM
     "highfalutin"
 WHERE

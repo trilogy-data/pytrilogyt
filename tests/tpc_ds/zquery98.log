@@ -1,11 +1,11 @@
-base_prep_time = 0.0
-base_parse_time = 0.253299
-base_generation_time = 0.0
-base_exec_time = 0.034169
+base_prep_time = 0.000999
+base_parse_time = 0.664765
+base_generation_time = 0.003996
+base_exec_time = 0.036653
 optimized_prep_time = 0.0
-optimized_parse_time = 0.241028
-optimized_generation_time = 0.000584
-optimized_exec_time = 0.01226
+optimized_parse_time = 0.240956
+optimized_generation_time = 0.004303
+optimized_exec_time = 0.020956
 was_optimized = false
 base_generated_sql = """
 
@@ -154,5 +154,5 @@ ORDER BY
     \"questionable\".\"store_sales_item_desc\" asc nulls first,
     \"questionable\".\"revenueratio\" asc nulls first"""
 query_id = 98
-sql_comp_time = 0.10688
-total_time = 0.679427
+sql_comp_time = 0.166978
+total_time = 1.181786

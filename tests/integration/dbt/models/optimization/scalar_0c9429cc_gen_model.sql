@@ -12,7 +12,7 @@ FROM
 select [1,2,3,4] as int_array, 2 as scalar
 )) as "generic_avalues")
 SELECT
-    unnest("quizzical"."generic_int_array") as "generic_split",
-    "quizzical"."generic_scalar" as "generic_scalar"
+    "quizzical"."generic_scalar" as "generic_scalar",
+    unnest("quizzical"."generic_int_array") as "generic_split"
 FROM
     "quizzical"

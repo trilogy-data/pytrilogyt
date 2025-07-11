@@ -1,11 +1,11 @@
-base_prep_time = 0.0
-base_parse_time = 0.548355
-base_generation_time = 0.0
-base_exec_time = 0.057341
+base_prep_time = 0.001019
+base_parse_time = 0.161665
+base_generation_time = 0.004999
+base_exec_time = 0.054401
 optimized_prep_time = 0.0
-optimized_parse_time = 0.167656
-optimized_generation_time = 0.0
-optimized_exec_time = 0.062796
+optimized_parse_time = 0.158624
+optimized_generation_time = 0.004068
+optimized_exec_time = 0.05773
 was_optimized = false
 base_generated_sql = """
 
@@ -76,5 +76,5 @@ ORDER BY
     \"cooperative\".\"cs_item_name\" asc
 LIMIT (100)"""
 query_id = 26
-sql_comp_time = 0.061811
-total_time = 0.897959
+sql_comp_time = 0.049246
+total_time = 0.496418

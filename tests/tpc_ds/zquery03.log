@@ -1,11 +1,11 @@
 base_prep_time = 0.0
-base_parse_time = 0.202848
-base_generation_time = 0.004622
-base_exec_time = 0.027789
+base_parse_time = 0.160272
+base_generation_time = 0.004012
+base_exec_time = 0.028495
 optimized_prep_time = 0.0
-optimized_parse_time = 0.330427
-optimized_generation_time = 0.004479
-optimized_exec_time = 0.032001
+optimized_parse_time = 0.687913
+optimized_generation_time = 0.00414
+optimized_exec_time = 0.02923
 was_optimized = false
 base_generated_sql = """
 
@@ -76,5 +76,5 @@ ORDER BY
     \"cheerful\".\"store_sales_item_brand_id\" asc
 LIMIT (100)"""
 query_id = 3
-sql_comp_time = 0.027853
-total_time = 0.632059
+sql_comp_time = 0.021977
+total_time = 0.941877

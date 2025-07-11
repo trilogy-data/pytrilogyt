@@ -5,12 +5,12 @@ from trilogy.core.models.author import LooseConceptList
 from trilogy.core.models.execute import CTE, QueryDatasource
 from trilogy.dialect.duckdb import DuckDBDialect
 from trilogy.parsing.render import Renderer
-
+from trilogy.core.models.build import Factory
 from trilogyt.graph import fingerprint_cte, process_raw
 
 
 def test_fingerprint(test_environment: Environment):
-
+    test_environment = Factory(environment=test_environment).build(test_environment)
     oid = test_environment.concepts["order_id"]
     oid_ds = test_environment.datasources["orders"]
     qds = QueryDatasource(
@@ -76,26 +76,26 @@ select split;
     for x in consolidated:
         final.append(renderer.to_string(x))
     reparsed = exec.parse_text("\n".join(final), persist=True)
-
-    # we should have our new datasource
-    assert len(env.datasources) == 3
     env = exec.environment
-    split = env.concepts["split"]
+    build_env = env.materialize_for_select()
+    # we should have our new datasource
+    assert len(build_env.datasources) == 3
+
+    split = build_env.concepts["split"]
     instance = [
         x for x in list(env.datasources.values()) if split.address in x.output_concepts
     ][0]
-    assert split.address in [x for x in env.materialized_concepts]
-    assert "local.split" in [x for x in env.materialized_concepts]
+    
+    assert split.address in [x for x in build_env.materialized_concepts]
+    assert "local.split" in [x for x in build_env.materialized_concepts]
     materialized_lcl = LooseConceptList(
         concepts=[
             x
             for x in reparsed[-1].output_columns
-            if x.address in [z for z in env.materialized_concepts]
+            if x.address in [z for z in build_env.materialized_concepts]
         ]
     )
     assert materialized_lcl.addresses == {"local.split"}
     final = reparsed[-1]
     # check that our queries use the new datasource
-    assert final.ctes[0].source.datasources[0] == instance, final.ctes[
-        0
-    ].source.datasources[0]
+    assert final.ctes[0].source.datasources[0].name == instance.name, f'expected {instance.name} but got {final.ctes[0].source.datasources[0].name}'

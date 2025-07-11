@@ -18,8 +18,10 @@ from trilogyt.graph import process_raw
 from trilogy.core.models.environment import Import
 from trilogyt.fingerprint import ContentToFingerprintCache
 from trilogyt.models import OptimizationInput, OptimizationResult
-from trilogyt.io import BaseWorkspace
+from trilogyt.io import BaseWorkspace, FileWorkspace
+from trilogy.render import get_dialect_generator
 from pathlib import Path
+from typing import Any
 
 def print_tabulate(q, tabulate):
     result = q.fetchall()
@@ -31,33 +33,26 @@ class Optimizer:
     def __init__(self, materialization_threshold: int = 2):
         self.materialization_threshold = materialization_threshold
         self.fingerprint_cache = ContentToFingerprintCache()
-        self.suffix = "_optimized",
+        self.suffix = "_optimized"
 
     def paths_to_optimizations(
         self, dialect: Dialects, workspace: BaseWorkspace
     ) -> dict[str, OptimizationResult]:
 
-        mapping: dict[str, str] = {}
-        for k, v in workspace.get_files():
+        mapping: dict[Path, str] = {}
+        for k, v in workspace.get_files().items():
             logger.info("Parsing file: %s", k)
             mapping[k] = v
 
         return self.mapping_to_optimizations(workspace, dialect, mapping)
 
-    def wipe_directory(self, path: PathlibPath):
-        if not path.exists():
-            return
-        logger.info("Wiping directory: %s", path)
-        for item in path.iterdir():
-            if item.is_file():
-                item.unlink()
-            elif item.is_dir():
-                os.rmdir(item)
 
-    def write_imports(self, imports: dict[str, list[Import]], target: PathlibPath):
+
+    def write_imports(self, imports: dict[str, list[Import]], workspace:BaseWorkspace, target_workspace: BaseWorkspace):
         if not imports:
             return
-        logger.info("Writing imports to path: %s", target)
+        if isinstance(target_workspace, FileWorkspace):
+            logger.info("Writing imports to path: %s", target_workspace.working_path)
 
         for k, imp_list in imports.items():
             if not imp_list:
@@ -70,14 +65,14 @@ class Optimizer:
                 )
                 # check if target has been written
                 # if it has, we can skip
-                if PathlibPath(target / PathlibPath(imp.input_path).name).exists():
+                target_path = PathlibPath(PathlibPath(imp.input_path).name)
+                if target_workspace.file_exists(target_path):
                     continue
-                with open(imp.input_path, "r") as input_file:
-                    content = input_file.read()
-                    env, _ = Environment(working_path=target.parent).parse(content)
-                    self.write_imports(env.imports, target)
-                    with open(target / PathlibPath(imp.input_path).name, "w") as f:
-                        f.write(content)
+                content = workspace.get_file(imp.input_path)
+
+                env, _ = workspace.get_environment().parse(content)
+                self.write_imports(env.imports, workspace, target_workspace)
+                target_workspace.write_file(target_path, content)
 
     def optimizations_to_files(
         self,
@@ -89,42 +84,35 @@ class Optimizer:
         for k, opt in optimizations.items():
             if not opt.content.strip():
                 continue
-            workspace.write_file(PathlibPath(opt.filename).with_suffix(".preql"), opt.content)
+            target.write_file(PathlibPath(opt.filename).with_suffix(".preql"), opt.content)
             if opt.imports:
-                self.write_imports(opt.imports, target)
+                self.write_imports(opt.imports, workspace, target)
 
         return
 
     def rewrite_files_with_optimizations(
         self,
         workspace: BaseWorkspace,
-        files: list[PathlibPath],
         optimizations: dict[str, OptimizationResult],
-
         output_workspace: BaseWorkspace | None = None,
     ):
         target_workspace = output_workspace or workspace
-        for file in files:
-            logger.info(
-                "Parsing file: %s",
-                file,
-            )
-            with open(file) as f:
-                content = f.read()
-            fingerprint, _, _ = self._content_to_fingerprint(target_workspace, content)
+        for file in workspace.get_files():
+            content = workspace.get_file(file)
+            fingerprint, _, _ = self._content_to_fingerprint(workspace, content)
             if fingerprint is None:
                 continue
             optimization = optimizations.get(fingerprint)
             if not optimization:
                 new = content
-                env, _ = target_workspace.get_environment().parse(content)
+                env, _ = workspace.get_environment().parse(content)
                 if env.imports:
-                    self.write_imports(env.imports, target_workspace)
+                    self.write_imports(env.imports, workspace, target_workspace)
             else:
                 new = self._apply_optimization(
                     content, optimization, workspace, target_workspace
                 )
-            file = Path(self.working_path / f"{path.stem}{suffix}{path.suffix}")
+            file = Path(f"{file.stem}{self.suffix}{file.suffix}")
             target_workspace.write_file(
                 file,
                 new,
@@ -135,19 +123,19 @@ class Optimizer:
         self,
         content: str,
         optimization: OptimizationResult,
-        working_path: PathlibPath,
-        target_path: PathlibPath | None = None,
+        workspace: BaseWorkspace,
+        target_workspace: BaseWorkspace | None = None,
     ) -> str:
-        target_path = target_path or working_path
+        target_workspace = target_workspace or workspace
         fingerprint, statements, env = self._content_to_fingerprint(
-            working_path, content
+            workspace, content
         )
         renderer = Renderer(environment=env)
         statements = [
             ImportStatement(
                 alias="",
-                input_path=str(target_path / optimization.filename),
-                path=optimization.filename,
+                input_path=optimization.filename,
+                path=optimization.filename, #type:ignore
             )
         ] + [x for x in statements if not isinstance(x, ImportStatement)]
         strings = []
@@ -158,14 +146,14 @@ class Optimizer:
 
     def _content_to_fingerprint(
         self, workspace:BaseWorkspace, content: str
-    ) -> tuple[str | None, list[any], Environment]:
+    ) -> tuple[str | None, list[Any], Environment]:
 
         return self.fingerprint_cache.content_to_fingerprint(
             workspace=workspace, content=content
         )
 
     def mapping_to_optimizations(
-        self, workspace:BaseWorkspace, dialect: Dialects, contents: dict[str, str]
+        self, workspace:BaseWorkspace, dialect: Dialects, contents: dict[Path, str]
     ) -> dict[str, OptimizationResult]:
         env_to_statements: dict[str, OptimizationInput] = {}
         key_to_fingerprint = {}
@@ -195,11 +183,11 @@ class Optimizer:
 
     def optimization_inputs_to_outputs(
         self,
-        working_path: PathlibPath,
+        workspace:BaseWorkspace,
         mapping: dict[str, OptimizationInput],
         dialect: Dialects,
     ) -> dict[str, OptimizationResult]:
-        optimize_env = Environment(working_path=working_path)
+        optimize_env = workspace.get_environment()
         exec = Executor(
             dialect=dialect, engine=dialect.default_engine(), environment=optimize_env
         )
@@ -211,7 +199,7 @@ class Optimizer:
                 inject=False,
                 inputs=v.statements,
                 env=v.environment,
-                generator=exec.generator,
+                generator=get_dialect_generator(dialect, Renderer(environment=v.environment)),
                 threshold=self.materialization_threshold,
             )
             # don't create a file if there is nothing to persist

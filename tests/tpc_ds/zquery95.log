@@ -1,11 +1,11 @@
 base_prep_time = 0.0
-base_parse_time = 0.334445
-base_generation_time = 0.0
-base_exec_time = 0.070368
+base_parse_time = 0.313115
+base_generation_time = 0.005997
+base_exec_time = 0.060938
 optimized_prep_time = 0.0
-optimized_parse_time = 0.648116
-optimized_generation_time = 0.00709
-optimized_exec_time = 0.059839
+optimized_parse_time = 0.729087
+optimized_generation_time = 0.006999
+optimized_exec_time = 0.067508
 was_optimized = false
 base_generated_sql = """
 
@@ -246,5 +246,5 @@ ORDER BY
     \"sparkling\".\"order_count\" desc
 LIMIT (100)"""
 query_id = 95
-sql_comp_time = 0.38265
-total_time = 1.506532
+sql_comp_time = 0.283452
+total_time = 1.476124

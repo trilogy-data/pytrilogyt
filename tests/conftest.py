@@ -64,11 +64,11 @@ select 2, 'product2'
 
 
 # aggregate tests
-property store_id.store_order_count <- count(order_id) by store_id;
+auto store_id.store_order_count <- count(order_id) by store_id;
 auto store_order_count_2 <- count(order_id) by store_id;
 
 # property tests
-property store_id.upper_store_name <- upper(store_name);
+auto store_id.upper_store_name <- upper(store_name);
 auto upper_store_name_2 <- upper(store_name);
 
 # filter tests

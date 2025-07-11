@@ -1,11 +1,11 @@
-base_prep_time = 0.002064
-base_parse_time = 0.636668
-base_generation_time = 0.0
-base_exec_time = 0.031772
+base_prep_time = 0.0
+base_parse_time = 0.196476
+base_generation_time = 0.006438
+base_exec_time = 0.023866
 optimized_prep_time = 0.0
-optimized_parse_time = 0.402055
-optimized_generation_time = 0.015869
-optimized_exec_time = 0.033707
+optimized_parse_time = 0.323745
+optimized_generation_time = 0.008302
+optimized_exec_time = 0.021216
 was_optimized = false
 base_generated_sql = """
 
@@ -140,5 +140,5 @@ ORDER BY
     sum(1) asc nulls first,
     \"yummy\".\"store_sales_customer_state\" asc nulls first"""
 query_id = 6
-sql_comp_time = 0.041233
-total_time = 1.164705
+sql_comp_time = 0.04693
+total_time = 0.641051

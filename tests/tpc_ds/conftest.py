@@ -70,22 +70,18 @@ def optimized_env(engine: Executor):
     optimizer = Optimizer()
 
     logger.info(f"Have {len(sources)} files")
-    workspace = FileWorkspace(
-        working_path=root, files=sources, dialect=Dialects.DUCK_DB
-    )
-    output_workspace = FileWorkspace(
-        working_path=output_path, files=[] dialect=Dialects.DUCK_DB
-    )
-    
+    workspace = FileWorkspace(working_path=root, paths=sources)
+    output_workspace = FileWorkspace(working_path=output_path, paths=[])
+
     optimizations = optimizer.paths_to_optimizations(
         workspace=workspace, dialect=Dialects.DUCK_DB
     )
+    output_workspace.wipe()
 
-    optimizer.wipe_directory(output_path)
-    optimizer.optimizations_to_files(optimizations, root, output_path)
+    optimizer.optimizations_to_files(optimizations, workspace, output_workspace)
 
     optimizer.rewrite_files_with_optimizations(
-        root, sources, optimizations, "_optimized", output_path
+        workspace, optimizations, output_workspace=output_workspace
     )
 
     optimized_files = list(output_path.glob("**/_trilogyt_opt*.preql"))

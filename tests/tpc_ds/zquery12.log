@@ -1,11 +1,11 @@
 base_prep_time = 0.0
-base_parse_time = 0.30282
-base_generation_time = 0.0
-base_exec_time = 0.055097
-optimized_prep_time = 0.001192
-optimized_parse_time = 0.778954
-optimized_generation_time = 0.0
-optimized_exec_time = 0.046305
+base_parse_time = 0.182193
+base_generation_time = 0.004137
+base_exec_time = 0.022678
+optimized_prep_time = 0.0
+optimized_parse_time = 0.31522
+optimized_generation_time = 0.004124
+optimized_exec_time = 0.028581
 was_optimized = false
 base_generated_sql = """
 
@@ -130,5 +130,5 @@ ORDER BY
     (\"thoughtful\".\"itemrevenue\" * 100.0) / \"cooperative\".\"itemclassrevenue\" asc
 LIMIT (100)"""
 query_id = 12
-sql_comp_time = 0.056855
-total_time = 1.245024
+sql_comp_time = 0.067964
+total_time = 0.635486
