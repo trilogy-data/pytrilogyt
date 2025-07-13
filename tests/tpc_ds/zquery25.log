@@ -1,11 +1,11 @@
-base_prep_time = 0.0
-base_parse_time = 1.080803
-base_generation_time = 0.026732
-base_exec_time = 0.06813
-optimized_prep_time = 0.0
-optimized_parse_time = 1.084215
-optimized_generation_time = 0.024845
-optimized_exec_time = 0.06799
+base_prep_time = 0.000243
+base_parse_time = 0.88725
+base_generation_time = 0.034663
+base_exec_time = 0.093265
+optimized_prep_time = 0.000178
+optimized_parse_time = 0.983074
+optimized_generation_time = 0.034337
+optimized_exec_time = 0.098074
 was_optimized = false
 base_generated_sql = """
 
@@ -294,5 +294,5 @@ ORDER BY
     \"vacuous\".\"store_sales_store_name\" asc
 LIMIT (100)"""
 query_id = 25
-sql_comp_time = 0.03263
-total_time = 2.395616
+sql_comp_time = 0.036816
+total_time = 2.171144

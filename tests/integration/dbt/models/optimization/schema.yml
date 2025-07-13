@@ -7,7 +7,7 @@ models:
     name: generic_scalar
     tests: []
   description: Automatically generated model from trilogy
-  name: scalar_445831a9_gen_model
+  name: dsgeneric_scalar_445831a9_gen_model
 - columns:
   - description: No description provided
     name: generic_scalar
@@ -16,14 +16,5 @@ models:
     name: generic_split
     tests: []
   description: Automatically generated model from trilogy
-  name: scalar_0c9429cc_gen_model
-- columns:
-  - description: No description provided
-    name: cte_generic_scalar
-    tests: []
-  - description: No description provided
-    name: cte_generic_split
-    tests: []
-  description: Automatically generated model from trilogy
-  name: scalar_02e41b09_gen_model
+  name: dsgeneric_scalar_0c9429cc_gen_model
 version: 2

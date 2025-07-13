@@ -1,12 +1,11 @@
 from pathlib import Path
+import shutil
 from trilogy.core.models.environment import (
     DictImportResolver,
     Environment,
     FileSystemImportResolver,
-    Import,
 )
 from random import randint
-import os
 
 class BaseWorkspace:
 
@@ -85,7 +84,7 @@ class FileWorkspace(BaseWorkspace):
             if item.is_file():
                 item.unlink()
             elif item.is_dir():
-                os.rmdir(item)
+                shutil.rmtree(item)  # Recursively removes directory and all contents
 class MemoryWorkspace(BaseWorkspace):
     def __init__(self):
         self.files:dict[str, str] = {}

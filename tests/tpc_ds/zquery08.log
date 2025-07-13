@@ -1,12 +1,12 @@
-base_prep_time = 0.0
-base_parse_time = 0.249865
-base_generation_time = 0.008292
-base_exec_time = 0.033538
-optimized_prep_time = 0.0
-optimized_parse_time = 0.897347
-optimized_generation_time = 0.004141
-optimized_exec_time = 0.030532
-was_optimized = false
+base_prep_time = 0.000319
+base_parse_time = 0.442162
+base_generation_time = 0.009552
+base_exec_time = 0.091362
+optimized_prep_time = 0.000332
+optimized_parse_time = 0.795938
+optimized_generation_time = 0.008935
+optimized_exec_time = 0.052313
+was_optimized = true
 base_generated_sql = """
 
 WITH 
@@ -157,7 +157,7 @@ FROM
     INNER JOIN \"memory\".\"date_dim\" as \"store_sales_date_date\" on \"store_sales_store_sales\".\"SS_SOLD_DATE_SK\" = \"store_sales_date_date\".\"D_DATE_SK\"
     INNER JOIN \"memory\".\"store\" as \"store_sales_store_store\" on \"store_sales_store_sales\".\"SS_STORE_SK\" = \"store_sales_store_store\".\"S_STORE_SK\"
 WHERE
-    \"store_sales_date_date\".\"D_QOY\" = 2 and cast(\"store_sales_date_date\".\"D_YEAR\" as int) = 1998 and SUBSTRING(\"store_sales_store_store\".\"S_ZIP\",1,2) in (select concerned.\"final_zips\" from concerned where concerned.\"final_zips\" is not null)
+    \"store_sales_date_date\".\"D_QOY\" = 2 and ( cast(\"store_sales_date_date\".\"D_YEAR\" as int) = 1998 and SUBSTRING(\"store_sales_store_store\".\"S_ZIP\",1,2) in (select concerned.\"final_zips\" from concerned where concerned.\"final_zips\" is not null) )
 )
 SELECT
     \"young\".\"store_sales_store_name\" as \"store_sales_store_name\",
@@ -170,5 +170,5 @@ ORDER BY
     \"young\".\"store_sales_store_name\" asc
 LIMIT (100)"""
 query_id = 8
-sql_comp_time = 0.038827
-total_time = 1.269909
+sql_comp_time = 0.087975
+total_time = 1.502404

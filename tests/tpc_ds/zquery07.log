@@ -1,11 +1,11 @@
-base_prep_time = 0.0
-base_parse_time = 0.70009
-base_generation_time = 0.008431
-base_exec_time = 0.099888
-optimized_prep_time = 0.000997
-optimized_parse_time = 0.207651
-optimized_generation_time = 0.003674
-optimized_exec_time = 0.08357
+base_prep_time = 0.000236
+base_parse_time = 0.347429
+base_generation_time = 0.007537
+base_exec_time = 0.135126
+optimized_prep_time = 0.000285
+optimized_parse_time = 0.356145
+optimized_generation_time = 0.008328
+optimized_exec_time = 0.141333
 was_optimized = false
 base_generated_sql = """
 
@@ -92,5 +92,5 @@ ORDER BY
     \"cooperative\".\"filtered_sales_store_sales_item_name\" asc
 LIMIT (100)"""
 query_id = 7
-sql_comp_time = 0.131222
-total_time = 1.241876
+sql_comp_time = 0.091292
+total_time = 1.101542

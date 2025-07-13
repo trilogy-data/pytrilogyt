@@ -1,11 +1,11 @@
-base_prep_time = 0.0
-base_parse_time = 0.184736
-base_generation_time = 0.005102
-base_exec_time = 0.075247
-optimized_prep_time = 0.0
-optimized_parse_time = 0.177767
-optimized_generation_time = 0.007461
-optimized_exec_time = 0.055759
+base_prep_time = 0.000293
+base_parse_time = 0.294695
+base_generation_time = 0.008908
+base_exec_time = 0.105883
+optimized_prep_time = 0.000267
+optimized_parse_time = 0.287211
+optimized_generation_time = 0.009827
+optimized_exec_time = 0.082641
 was_optimized = false
 base_generated_sql = """
 
@@ -120,5 +120,5 @@ ORDER BY
     \"abundant\".\"cc_name_lower\" asc nulls first
 LIMIT (100)"""
 query_id = 99
-sql_comp_time = 0.041623
-total_time = 0.566132
+sql_comp_time = 0.065027
+total_time = 0.858101

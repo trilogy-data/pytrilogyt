@@ -1,0 +1,35 @@
+const _trilogyt._created_at <- current_datetime();
+
+import generic as generic;
+
+rowset cte <- WHERE
+    generic.split in (1, 2, 3)
+SELECT
+    generic.split,
+    generic.scalar,
+;
+
+SELECT
+    cte.generic.split,
+;
+
+datasource dsgeneric_scalar_445831a9 (
+    generic_int_array: generic.int_array,
+    generic_scalar: generic.scalar
+    )
+
+address dsgeneric_scalar_445831a9;
+
+datasource dsgeneric_scalar_0c9429cc (
+    generic_scalar: generic.scalar,
+    generic_split: generic.split
+    )
+
+address dsgeneric_scalar_0c9429cc;
+
+datasource dscte_generic_scalar_02e41b09 (
+    cte_generic_scalar: cte.generic.scalar,
+    cte_generic_split: cte.generic.split
+    )
+
+address dscte_generic_scalar_02e41b09;

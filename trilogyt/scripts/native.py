@@ -5,7 +5,8 @@ from trilogyt.native.generate import generate_model
 from trilogyt.native.run import run_path
 from trilogyt.scripts.core import optimize_multiple, OptimizationResult
 from trilogyt.constants import logger
-
+from trilogyt.core_v2 import Optimizer
+from trilogyt.io import FileWorkspace
 
 def native_wrapper(
     preql: PathlibPath,
@@ -23,36 +24,26 @@ def native_wrapper(
 
     env_to_optimization = {}
     if preql.is_file():
-        with open(preql) as f:
-            generate_model(
-                f.read(),
-                preql,
-                output_path=output_path,
-                # environment = env  # type: ignore
-            )
+        base = FileWorkspace(working_path=preql.parent, paths=[preql])
     else:
-        # with multiple files, we can attempt to optimize dependency
-        logger.info(f"checking path {preql}")
         children = [
             x for x in list(preql.glob("*.preql")) if not x.stem.startswith("_")
         ]
-        logger.info(f"optimizing across {children}")
-        env_to_optimization = optimize_multiple(
-            preql, children, output_path, dialect=dialect
-        )
-        for file in children:
-            with open(file) as f:
-                with open(output_path / file.name, "w") as f2:
-                    f2.write(f.read())
-        for file in children:
-            with open(file) as f:
-                generate_model(
-                    f.read(),
-                    file,
-                    output_path=output_path,
-                    optimization=env_to_optimization.get(file, None),
-                )
+        base = FileWorkspace(working_path=preql, paths=children)
 
+    optimizer = Optimizer(suffix="")
+
+    optimizations = optimizer.paths_to_optimizations(
+        workspace=base, dialect=Dialects.DUCK_DB
+    )
+    output_workspace = FileWorkspace(working_path=output_path, paths=[])
+    output_workspace.wipe()
+
+    optimizer.optimizations_to_files(optimizations, base, output_workspace)
+
+    optimizer.rewrite_files_with_optimizations(
+        base, optimizations, output_workspace=output_workspace
+    )
     if run:
         print("Executing generated models")
         run_path(output_path, dialect=dialect, env_to_optimization=env_to_optimization)

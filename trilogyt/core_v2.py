@@ -8,6 +8,8 @@ from trilogy.authoring import (
     PersistStatement,
     ConceptDeclarationStatement,
     ImportStatement,
+    RowsetDerivationStatement,
+    SelectStatement,
 )
 from trilogy.core.models.author import HasUUID
 from dataclasses import dataclass
@@ -23,6 +25,7 @@ from trilogy.render import get_dialect_generator
 from pathlib import Path
 from typing import Any
 
+
 def print_tabulate(q, tabulate):
     result = q.fetchall()
     print(tabulate(result, headers=q.keys(), tablefmt="psql"))
@@ -30,10 +33,10 @@ def print_tabulate(q, tabulate):
 
 class Optimizer:
 
-    def __init__(self, materialization_threshold: int = 2):
+    def __init__(self, materialization_threshold: int = 2, suffix: str = "_optimized"):
         self.materialization_threshold = materialization_threshold
         self.fingerprint_cache = ContentToFingerprintCache()
-        self.suffix = "_optimized"
+        self.suffix = suffix
 
     def paths_to_optimizations(
         self, dialect: Dialects, workspace: BaseWorkspace
@@ -46,9 +49,12 @@ class Optimizer:
 
         return self.mapping_to_optimizations(workspace, dialect, mapping)
 
-
-
-    def write_imports(self, imports: dict[str, list[Import]], workspace:BaseWorkspace, target_workspace: BaseWorkspace):
+    def write_imports(
+        self,
+        imports: dict[str, list[Import]],
+        workspace: BaseWorkspace,
+        target_workspace: BaseWorkspace,
+    ):
         if not imports:
             return
         if isinstance(target_workspace, FileWorkspace):
@@ -82,9 +88,15 @@ class Optimizer:
     ):
         target = output_workspace or workspace
         for k, opt in optimizations.items():
-            if not opt.content.strip():
+            if not opt.build_content.strip():
                 continue
-            target.write_file(PathlibPath(opt.filename).with_suffix(".preql"), opt.content)
+            target.write_file(
+                PathlibPath(opt.filename + "_build").with_suffix(".preql"),
+                opt.build_content,
+            )
+            target.write_file(
+                PathlibPath(opt.filename).with_suffix(".preql"), opt.import_content
+            )
             if opt.imports:
                 self.write_imports(opt.imports, workspace, target)
 
@@ -109,15 +121,16 @@ class Optimizer:
                 if env.imports:
                     self.write_imports(env.imports, workspace, target_workspace)
             else:
+
                 new = self._apply_optimization(
                     content, optimization, workspace, target_workspace
                 )
             file = Path(f"{file.stem}{self.suffix}{file.suffix}")
+            logger.info("Writing optimized file: %s", file)
             target_workspace.write_file(
                 file,
                 new,
             )
-
 
     def _apply_optimization(
         self,
@@ -127,17 +140,21 @@ class Optimizer:
         target_workspace: BaseWorkspace | None = None,
     ) -> str:
         target_workspace = target_workspace or workspace
-        fingerprint, statements, env = self._content_to_fingerprint(
-            workspace, content
-        )
+        fingerprint, statements, env = self._content_to_fingerprint(workspace, content)
         renderer = Renderer(environment=env)
         statements = [
             ImportStatement(
                 alias="",
                 input_path=optimization.filename,
-                path=optimization.filename, #type:ignore
+                path=optimization.filename,  # type:ignore
             )
-        ] + [x for x in statements if not isinstance(x, ImportStatement)]
+        ] + [
+            x
+            for x in statements
+            if not isinstance(
+                x, (ImportStatement, RowsetDerivationStatement)
+            )
+        ]
         strings = []
         for x in statements:
 
@@ -145,7 +162,7 @@ class Optimizer:
         return "\n\n".join(strings)
 
     def _content_to_fingerprint(
-        self, workspace:BaseWorkspace, content: str
+        self, workspace: BaseWorkspace, content: str
     ) -> tuple[str | None, list[Any], Environment]:
 
         return self.fingerprint_cache.content_to_fingerprint(
@@ -153,7 +170,7 @@ class Optimizer:
         )
 
     def mapping_to_optimizations(
-        self, workspace:BaseWorkspace, dialect: Dialects, contents: dict[Path, str]
+        self, workspace: BaseWorkspace, dialect: Dialects, contents: dict[Path, str]
     ) -> dict[str, OptimizationResult]:
         env_to_statements: dict[str, OptimizationInput] = {}
         key_to_fingerprint = {}
@@ -173,7 +190,8 @@ class Optimizer:
                 env_to_statements[fingerprint] = OptimizationInput(
                     fingerprint=fingerprint,
                     environment=new_env,
-                    statements=statements,
+                    # don't mutate existing statement list
+                    statements=[*statements],
                     imports=new_env.imports,
                 )
 
@@ -183,7 +201,7 @@ class Optimizer:
 
     def optimization_inputs_to_outputs(
         self,
-        workspace:BaseWorkspace,
+        workspace: BaseWorkspace,
         mapping: dict[str, OptimizationInput],
         dialect: Dialects,
     ) -> dict[str, OptimizationResult]:
@@ -199,7 +217,9 @@ class Optimizer:
                 inject=False,
                 inputs=v.statements,
                 env=v.environment,
-                generator=get_dialect_generator(dialect, Renderer(environment=v.environment)),
+                generator=get_dialect_generator(
+                    dialect, Renderer(environment=v.environment)
+                ),
                 threshold=self.materialization_threshold,
             )
             # don't create a file if there is nothing to persist
@@ -225,20 +245,29 @@ class Optimizer:
                 if x.uuid not in seen:
                     seen.add(x.uuid)
                     final.append(x)
-            strings: list[str] = []
+            build_strings: list[str] = []
+            import_strings: list[str] = []
             renderer = Renderer(environment=v.environment)
             for concept in ENVIRONMENT_CONCEPTS:
-                strings.append(
+                build_strings.append(
+                    renderer.to_string(ConceptDeclarationStatement(concept=concept))
+                )
+                import_strings.append(
                     renderer.to_string(ConceptDeclarationStatement(concept=concept))
                 )
             for statement in final:
-                strings.append(renderer.to_string(statement))
+                build_strings.append(renderer.to_string(statement))
+                import_strings.append(renderer.to_string(statement))
             for x in new_persists:
-                strings.append(renderer.to_string(x))
+                build_strings.append(renderer.to_string(x))
+                import_strings.append(renderer.to_string(x.datasource))
                 # f.write(renderer.to_string(x.datasource) + "\n\n")
 
             outputs[k] = OptimizationResult(
-                fingerprint=k, content="\n\n".join(strings), imports=v.imports
+                fingerprint=k,
+                build_content="\n\n".join(build_strings),
+                import_content="\n\n".join(import_strings),
+                imports=v.imports,
             )
 
         return outputs

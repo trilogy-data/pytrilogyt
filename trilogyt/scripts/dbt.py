@@ -40,35 +40,24 @@ def dbt_handler(
         for item in opt.glob("*.sql"):
             logger.debug(f"Removing existing {item}")
             os.remove(item)
-    for orig_file in children:
+    for orig_file in staging_path.glob("*.preql"):
         file = staging_path / orig_file.name
         logger.info(f"Generating dbt model for {file} into dbt_path {dbt_path}")
-        # don't build hidden files
         if file.stem.startswith("_"):
-            continue
-
-        optimization: OptimizationResult | None = root.get(orig_file)
-
-        if optimization:
-            with open(optimization.path) as opt_file:
-                opt_config = DBTConfig(
-                    root=PathlibPath(dbt_path), namespace=OPTIMIZATION_NAMESPACE
-                )
-                generate_model(
-                    opt_file.read(),
-                    optimization.path,
-                    dialect=dialect,
-                    config=opt_config,
-                    clear_target_dir=False,
-                    # environment = env  # type: ignore
-                )
-        config = DBTConfig(root=PathlibPath(dbt_path), namespace=file.stem)
+            config = DBTConfig(
+                root=PathlibPath(dbt_path), namespace=OPTIMIZATION_NAMESPACE
+            )
+            clear = False
+        else:
+            clear = True
+            config = DBTConfig(root=PathlibPath(dbt_path), namespace=file.stem)
         with open(file) as f:
             generate_model(
                 f.read(),
                 file,
                 dialect=dialect,
                 config=config,
+                clear_target_dir = clear
                 # environment = env  # type: ignore
             )
 
@@ -93,6 +82,7 @@ def dbt_wrapper(
             )
     else:
         children = list(preql.glob("*.preql"))
+        logger.info(f"Found children {children} children in {preql}")
         if staging_path:
             dbt_handler(staging_path, preql, dbt_path, dialect, debug, run, children)
         else:

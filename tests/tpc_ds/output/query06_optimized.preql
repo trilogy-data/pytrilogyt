@@ -3,22 +3,7 @@ import _opt_store_sales_item_af5734e0;
 MERGE store_sales.item.id into item.id;
 
 WHERE
-    store_sales.date.year = 2001 and store_sales.date.month_of_year = 1 and store_sales.item.current_price > 1.2 * avg(item.current_price) by item.category and store_sales.item.category is not null
-SELECT
-    store_sales.customer.state,
-    sum(group(1) by store_sales.ticket_number, item.id) -> customer_count,
-HAVING
-    customer_count >= 10
-
-ORDER BY
-    customer_count asc nulls first,
-    store_sales.customer.state asc nulls first
-;
-
-MERGE store_sales.item.id into item.id;
-
-WHERE
-    store_sales.date.year = 2001 and store_sales.date.month_of_year = 1 and store_sales.item.current_price > 1.2 * avg(item.current_price) by item.category and store_sales.item.category is not null
+    store_sales.date.year = 2001 and (store_sales.date.month_of_year = 1 and (store_sales.item.current_price > 1.2 * avg(item.current_price) by item.category and store_sales.item.category is not null))
 SELECT
     store_sales.customer.state,
     sum(group(1) by store_sales.ticket_number, item.id) -> customer_count,

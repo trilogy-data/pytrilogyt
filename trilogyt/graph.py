@@ -22,7 +22,7 @@ from trilogy.authoring import (
     RowsetDerivationStatement,
     Address,
 )
-from trilogy.constants import VIRTUAL_CONCEPT_PREFIX, MagicConstants
+from trilogy.constants import VIRTUAL_CONCEPT_PREFIX, MagicConstants, DEFAULT_NAMESPACE
 from trilogy.core.enums import Derivation
 from trilogy.core.ergonomics import CTE_NAMES
 from trilogy.core.models.build import (
@@ -60,9 +60,10 @@ class ProcessLoopResult:
 
 
 def name_to_short_name(x: str):
+    base = x
     if x.startswith(VIRTUAL_CONCEPT_PREFIX):
-        return "virtual"
-    return x
+        base = "virtual"
+    return base.replace('.', '_')
 
 
 # hash a
@@ -178,12 +179,14 @@ def cte_to_persist(
                 else None
             ),
         )
+    name = generate_datasource_name(select, name, env)
     datasource = select.to_datasource(
-        namespace="default",
-        name=generate_datasource_name(select, name, env),
-        address=Address(location=generate_datasource_name(select, name, env)),
+        namespace=DEFAULT_NAMESPACE,
+        name=name,
+        address=Address(location=name,),
         environment=env,
     )
+
     persist = PersistStatement(datasource=datasource, select=select)
     return persist
 
@@ -379,12 +382,13 @@ def process_loop(
                 continue
             if has_anon_concepts(cte):
                 continue
+            new_persist_stmt = cte_to_persist(cte, k, generator=generator, env=env)
             logger.info(
-                f"Creating new persist statement from cte {k} with output {[x.address for x in cte.output_columns]} grain {cte.grain.components} conditions {cte.condition}"
+                f"Creating new persist statement from cte {k} to {new_persist_stmt.datasource.address} with output {[x.address for x in cte.output_columns]} grain {cte.grain.components} conditions {cte.condition}"
             )
             print(
                 f"Creating new persist statement from cte {k} with output {[x.address for x in cte.output_columns]} grain {cte.grain.components} conditions {cte.condition}"
             )
-            new_persist.append(cte_to_persist(cte, k, generator=generator, env=env))
+            new_persist.append(new_persist_stmt)
 
     return ProcessLoopResult(new=new_persist)

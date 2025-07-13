@@ -11,6 +11,7 @@ from trilogy.core.statements.author import CopyStatement
 from trilogy.core.models.author import HasUUID
 from trilogyt.core import fingerprint_environment
 from trilogyt.io import BaseWorkspace
+from trilogyt.constants import logger
 import hashlib
 
 
@@ -37,11 +38,10 @@ class ContentToFingerprintCache:
     ) -> tuple[str, list[HasUUID], "Environment"]:
         # Generate hash of input
         content_hash = self._get_content_hash(content, workspace)
-
         # Check cache first
         if content_hash in self._cache:
             cached_result = self._cache[content_hash]
-            return (cached_result[0], cached_result[1], cached_result[2])
+            return (cached_result[0], [*cached_result[1]], cached_result[2])
 
         # If not in cache, compute the result
         local_env = workspace.get_environment()
@@ -74,7 +74,7 @@ class ContentToFingerprintCache:
         self._evict_oldest_if_needed()
         self._cache[content_hash] = result
 
-        return result
+        return (result[0], [*result[1]], result[2])
 
     def clear_cache(self):
         """Clear all cached results."""

@@ -3,7 +3,7 @@
 import generic as generic;
 
                   
-persist dim_splits_new into dim_splits_new from select 
+persist dim_splits_two into dim_splits_two from select 
     generic.split, 
         generic.scalar;
 

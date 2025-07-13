@@ -6,11 +6,8 @@ from trilogyt.dagster.generate import generate_model as generate_dagster_model
 from trilogyt.dbt.config import DBTConfig
 from trilogyt.dbt.generate import generate_model as generate_dbt_model
 from trilogyt.io import FileWorkspace, MemoryWorkspace
+from trilogyt.core_v2 import Optimizer
 
-# Do not use parameters when compiling SQL
-# TODO: make this local to environments?
-# likely requires trilogy feature request
-CONFIG.rendering.parameters = False
 
 __version__ = "0.0.15"
 
@@ -22,4 +19,5 @@ __all__ = [
     "DagsterConfig",
     "FileWorkspace",
     "MemoryWorkspace",
+    "Optimizer"
 ]

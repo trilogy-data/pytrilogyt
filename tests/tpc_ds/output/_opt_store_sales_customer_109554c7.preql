@@ -15,7 +15,7 @@ property p_cust_zip <- filter customer.zip where zip_p_count > 10;
 property final_zips <- substring(filter zips where zips in substring(p_cust_zip,1,5),1,2);
 
 WHERE
-    store_sales.date.quarter = 2 and store_sales.date.year = 1998 and substring(store_sales.store.zip,1,2) in final_zips
+    store_sales.date.quarter = 2 and (store_sales.date.year = 1998 and substring(store_sales.store.zip,1,2) in final_zips)
 SELECT
     store_sales.store.name,
     sum(store_sales.net_profit) -> store_net_profit,
@@ -24,41 +24,54 @@ ORDER BY
 LIMIT 100
 ;
 
-PERSIST default.dscustomer.id_customer.zip_3d60a895 INTO dscustomer.id_customer.zip_3d60a895 FROM SELECT
-    customer.id,
-    customer.preferred_cust_flag,
-    customer.zip,
-;
+datasource dscustomer_id_customer_zip_3d60a895 (
+    customer_id: customer.id,
+    customer_preferred_cust_flag: customer.preferred_cust_flag,
+    customer_zip: customer.zip
+    )
 
-PERSIST default.dslocal.zips_pre_b9876e7a INTO dslocal.zips_pre_b9876e7a FROM SELECT
-    zips_pre,
-;
+address dscustomer_id_customer_zip_3d60a895;
 
-PERSIST default.dscustomer.zip_78dc018d INTO dscustomer.zip_78dc018d FROM SELECT
-    customer.zip,
-    zip_p_count,
-;
+datasource dslocal_zips_pre_b9876e7a (
+    zips_pre: zips_pre
+    )
 
-PERSIST default.dscustomer.address_id_c3487e4b INTO dscustomer.address_id_c3487e4b FROM SELECT
-    customer.address_id,
-    customer.zip,
-    zip_p_count,
-;
+address dslocal_zips_pre_b9876e7a;
 
-PERSIST default.dslocal.final_zips_919671db INTO dslocal.final_zips_919671db FROM SELECT
-    final_zips,
-;
+datasource dscustomer_zip_78dc018d (
+    customer_zip: customer.zip,
+    zip_p_count: zip_p_count
+    )
 
-PERSIST default.dsstore_sales.item.id_store_sales.store.name_store_sales.ticket_number_e88a2d96_filtered_on_quarter_year_zip_final_zips INTO dsstore_sales.item.id_store_sales.store.name_store_sales.ticket_number_e88a2d96_filtered_on_quarter_year_zip_final_zips FROM WHERE
-    store_sales.date.quarter = 2 and store_sales.date.year = 1998 and substring(store_sales.store.zip,1,2) in final_zips
-SELECT
-    store_sales.item.id,
-    store_sales.net_profit,
-    store_sales.store.name,
-    store_sales.ticket_number,
-;
+address dscustomer_zip_78dc018d;
 
-PERSIST default.dsstore_sales.store.name_2b1ac618 INTO dsstore_sales.store.name_2b1ac618 FROM SELECT
-    store_net_profit,
-    store_sales.store.name,
-;
+datasource dscustomer_address_id_c3487e4b (
+    customer_address_id: customer.address_id,
+    customer_zip: customer.zip,
+    zip_p_count: zip_p_count
+    )
+
+address dscustomer_address_id_c3487e4b;
+
+datasource dslocal_final_zips_919671db (
+    final_zips: final_zips
+    )
+
+address dslocal_final_zips_919671db;
+
+datasource dsstore_sales_item_id_store_sales_store_name_store_sales_ticket_number_e88a2d96_filtered_on_quarter_year_zip_final_zips (
+    store_sales_item_id: ~store_sales.item.id,
+    store_sales_net_profit: ~store_sales.net_profit,
+    store_sales_store_name: ~store_sales.store.name,
+    store_sales_ticket_number: ~store_sales.ticket_number
+    )
+
+complete where store_sales.date.quarter = 2 and (store_sales.date.year = 1998 and substring(store_sales.store.zip,1,2) in final_zips)
+address dsstore_sales_item_id_store_sales_store_name_store_sales_ticket_number_e88a2d96_filtered_on_quarter_year_zip_final_zips;
+
+datasource dsstore_sales_store_name_2b1ac618 (
+    store_net_profit: store_net_profit,
+    store_sales_store_name: store_sales.store.name
+    )
+
+address dsstore_sales_store_name_2b1ac618;

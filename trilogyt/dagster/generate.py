@@ -13,7 +13,8 @@ from trilogy.authoring import (
 from trilogy.core.models.execute import UnionCTE
 from trilogy.core.statements.execute import ProcessedQueryPersist
 from trilogy.dialect.enums import Dialects
-
+from trilogy.constants import Rendering
+from trilogy.core.models.build import BuildDatasource
 from trilogyt.constants import logger
 from trilogyt.core import enrich_environment
 from trilogyt.dagster.config import DagsterConfig
@@ -112,6 +113,49 @@ defs = Definitions(
     with open(dagster_path / ENTRYPOINT_FILE, "w") as f:
         f.write(contents)
 
+def generate_dependency_map(pqueries, possible_dependencies, models, config, executor,
+                            outputs, output_data):
+    dependency_map = defaultdict(list)
+    output: list[ModelInput] = []
+    for _, query in enumerate(pqueries):
+        depends_on: list[ModelInput] = []
+        if isinstance(query, ProcessedQueryPersist):
+            logger.debug(f"Starting on {_}")
+            target = query.output_to.address.location
+            eligible = {k: v for k, v in possible_dependencies.items() if k != target}
+            for cte in query.ctes:
+                if isinstance(cte, UnionCTE):
+                    continue
+                # handle inlined datasources
+                logger.debug(f"checking cte {cte.name} with {eligible}")
+                if cte.base_name_override in eligible:
+                    if any(x.name == cte.base_name_override for x in depends_on):
+                        continue
+                    matched = [x for x in models if x.name == cte.base_name_override]
+                    if matched:
+                        depends_on.append(matched.pop())
+                for source in cte.source.datasources:
+                    logger.info(source.identifier)
+                    if not isinstance(source, BuildDatasource):
+                        continue
+
+                    if source.identifier in eligible:
+                        matched = [x for x in models if x.name == source.identifier]
+                        if matched:
+                            depends_on.append(matched.pop())
+            # get our names to label the model
+            key = query.output_to.address.location.split(".")[-1]
+            outputs[key] = executor.generator.compile_statement(query)
+            output_data[key] = query.datasource
+            dependency_map[key] = depends_on
+            output.append(
+                ModelInput(
+                    name=key,
+                    file_path=config.get_asset_path(key),
+                    import_path=config.get_asset_import_path(key),
+                )
+            )
+    return dependency_map, output
 
 def generate_model(
     preql_body: str,
@@ -127,7 +171,10 @@ def generate_model(
         # namespace=config.namespace,
     )
     executor = Executor(
-        dialect=dialect, engine=dialect.default_engine(), environment=env
+        dialect=dialect,
+        engine=dialect.default_engine(),
+        environment=env,
+        rendering=Rendering(parameters=False),
     )
     executor.environment = enrich_environment(executor.environment)
     possible_dependencies = {}
@@ -151,47 +198,11 @@ def generate_model(
 
     pqueries = executor.generator.generate_queries(executor.environment, parsed)
     logger.info(f"got {len(pqueries)} queries: {Counter([type(c) for c in pqueries])}")
-    dependency_map = defaultdict(list)
-    output: list[ModelInput] = []
-    for _, query in enumerate(pqueries):
-        depends_on: list[ModelInput] = []
-        if isinstance(query, ProcessedQueryPersist):
-            logger.debug(f"Starting on {_}")
-            target = query.output_to.address.location
-            eligible = {k: v for k, v in possible_dependencies.items() if k != target}
-            for cte in query.ctes:
-                if isinstance(cte, UnionCTE):
-                    continue
-                # handle inlined datasources
-                logger.debug(f"checking cte {cte.name} with {eligible}")
-                if cte.base_name_override in eligible:
-                    if any(x.name == cte.base_name_override for x in depends_on):
-                        continue
-                    matched = [x for x in models if x.name == cte.base_name_override]
-                    if matched:
-                        depends_on.append(matched.pop())
-                for source in cte.source.datasources:
-                    logger.info(source.identifier)
-                    if not isinstance(source, Datasource):
-                        continue
-
-                    if source.identifier in eligible:
-                        matched = [x for x in models if x.name == source.identifier]
-                        if matched:
-                            depends_on.append(matched.pop())
-            # get our names to label the model
-            key = query.output_to.address.location.split(".")[-1]
-            outputs[key] = executor.generator.compile_statement(query)
-            output_data[key] = query.datasource
-            dependency_map[key] = depends_on
-            output.append(
-                ModelInput(
-                    name=key,
-                    file_path=config.get_asset_path(key),
-                    import_path=config.get_asset_import_path(key),
-                )
-            )
+    
     logger.info("Writing queries to output files")
+    dependency_map, output = generate_dependency_map(
+        pqueries, possible_dependencies, models, config, executor, outputs, output_data
+    )
     logger.debug(dependency_map)
 
     existing = defaultdict(set)

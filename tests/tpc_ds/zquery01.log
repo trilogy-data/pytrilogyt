@@ -1,12 +1,12 @@
-base_prep_time = 0.0
-base_parse_time = 0.271349
-base_generation_time = 0.0
-base_exec_time = 0.032754
-optimized_prep_time = 0.0
-optimized_parse_time = 1.125543
-optimized_generation_time = 0.004043
-optimized_exec_time = 0.028105
-was_optimized = false
+base_prep_time = 0.000185
+base_parse_time = 0.228626
+base_generation_time = 0.001726
+base_exec_time = 0.041728
+optimized_prep_time = 0.000194
+optimized_parse_time = 0.256927
+optimized_generation_time = 0.000825
+optimized_exec_time = 0.032826
+was_optimized = true
 base_generated_sql = """
 
 WITH 
@@ -57,50 +57,35 @@ LIMIT (100)"""
 optimized_generated_sql = """
 
 WITH 
-thoughtful as (
+wakeful as (
 SELECT
-    \"returns_customer_customers\".\"C_CUSTOMER_ID\" as \"returns_customer_text_id\",
-    \"returns_store_returns\".\"SR_ITEM_SK\" as \"returns_item_id\",
-    \"returns_store_returns\".\"SR_RETURN_AMT\" as \"returns_return_amount\",
-    \"returns_store_returns\".\"SR_TICKET_NUMBER\" as \"returns_store_sales_ticket_number\",
-    \"returns_store_store\".\"S_STORE_SK\" as \"returns_store_id\"
+    \"dsreturns_customer_text_id_returns_item_id_returns_store_sales_ticket_number_a09b5495_filtered_on_state_year\".\"returns_customer_text_id\" as \"returns_customer_text_id\",
+    \"dsreturns_customer_text_id_returns_item_id_returns_store_sales_ticket_number_a09b5495_filtered_on_state_year\".\"returns_store_id\" as \"returns_store_id\",
+    sum(\"dsreturns_customer_text_id_returns_item_id_returns_store_sales_ticket_number_a09b5495_filtered_on_state_year\".\"returns_return_amount\") as \"total_returns\"
 FROM
-    \"memory\".\"store_returns\" as \"returns_store_returns\"
-    INNER JOIN \"memory\".\"store\" as \"returns_store_store\" on \"returns_store_returns\".\"SR_STORE_SK\" = \"returns_store_store\".\"S_STORE_SK\"
-    INNER JOIN \"memory\".\"customer\" as \"returns_customer_customers\" on \"returns_store_returns\".\"SR_CUSTOMER_SK\" = \"returns_customer_customers\".\"C_CUSTOMER_SK\"
-    INNER JOIN \"memory\".\"date_dim\" as \"returns_return_date_date\" on \"returns_store_returns\".\"SR_RETURNED_DATE_SK\" = \"returns_return_date_date\".\"D_DATE_SK\"
-WHERE
-    \"returns_store_store\".\"S_STATE\" = 'TN' and cast(\"returns_return_date_date\".\"D_YEAR\" as int) = 2000
-),
-cooperative as (
-SELECT
-    \"thoughtful\".\"returns_customer_text_id\" as \"returns_customer_text_id\",
-    \"thoughtful\".\"returns_store_id\" as \"returns_store_id\",
-    sum(\"thoughtful\".\"returns_return_amount\") as \"total_returns\"
-FROM
-    \"thoughtful\"
+    \"dsreturns_customer_text_id_returns_item_id_returns_store_sales_ticket_number_a09b5495_filtered_on_state_year\"
 GROUP BY 
-    \"thoughtful\".\"returns_customer_text_id\",
-    \"thoughtful\".\"returns_store_id\"),
-questionable as (
+    \"dsreturns_customer_text_id_returns_item_id_returns_store_sales_ticket_number_a09b5495_filtered_on_state_year\".\"returns_customer_text_id\",
+    \"dsreturns_customer_text_id_returns_item_id_returns_store_sales_ticket_number_a09b5495_filtered_on_state_year\".\"returns_store_id\"),
+cheerful as (
 SELECT
-    \"cooperative\".\"returns_store_id\" as \"returns_store_id\",
-    avg(\"cooperative\".\"total_returns\") as \"avg_store_returns\"
+    \"wakeful\".\"returns_store_id\" as \"returns_store_id\",
+    avg(\"wakeful\".\"total_returns\") as \"avg_store_returns\"
 FROM
-    \"cooperative\"
+    \"wakeful\"
 GROUP BY 
-    \"cooperative\".\"returns_store_id\")
+    \"wakeful\".\"returns_store_id\")
 SELECT
-    \"cooperative\".\"returns_customer_text_id\" as \"returns_customer_text_id\"
+    \"wakeful\".\"returns_customer_text_id\" as \"returns_customer_text_id\"
 FROM
-    \"questionable\"
-    INNER JOIN \"cooperative\" on \"questionable\".\"returns_store_id\" = \"cooperative\".\"returns_store_id\"
+    \"cheerful\"
+    INNER JOIN \"wakeful\" on \"cheerful\".\"returns_store_id\" = \"wakeful\".\"returns_store_id\"
 WHERE
-    \"cooperative\".\"total_returns\" > ( 1.2 * \"questionable\".\"avg_store_returns\" )
+    \"wakeful\".\"total_returns\" > ( 1.2 * \"cheerful\".\"avg_store_returns\" )
 
 ORDER BY 
-    \"cooperative\".\"returns_customer_text_id\" asc
+    \"wakeful\".\"returns_customer_text_id\" asc
 LIMIT (100)"""
 query_id = 1
-sql_comp_time = 1.150362
-total_time = 2.616366
+sql_comp_time = 0.618027
+total_time = 1.201357

@@ -32,7 +32,8 @@ class OptimizationInput:
 @dataclass
 class OptimizationResult:
     fingerprint: str
-    content: str
+    build_content: str
+    import_content: str
     imports: dict[str, list[Import]] | None = None
 
     @property

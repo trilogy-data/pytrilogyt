@@ -84,7 +84,7 @@ def optimized_env(engine: Executor):
         workspace, optimizations, output_workspace=output_workspace
     )
 
-    optimized_files = list(output_path.glob("**/_trilogyt_opt*.preql"))
+    optimized_files = list(output_path.glob("**/_opt*_build.preql"))
     for file in optimized_files:
         logger.info(f"Executing optimized file: {file}")
         try:

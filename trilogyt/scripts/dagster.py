@@ -47,30 +47,24 @@ def dagster_handler(
         logger.info(
             f"Generating dagster model for {file} into dagster_path {dagster_path}"
         )
-        # don't build hidden files
-        if file.stem.startswith("_"):
-            continue
 
-        optimization: OptimizationResult | None = root.get(orig_file)
-
+        optimization = file.stem.startswith("_")
+        clear = False
         if optimization:
-            with open(optimization.path) as opt_file:
-                opt_config = DagsterConfig(
-                    root=PathlibPath(dagster_path), namespace=OPTIMIZATION_NAMESPACE
-                )
-                optimization_models = generate_model(
-                    opt_file.read(),
-                    optimization.path,
-                    dialect=dialect,
-                    config=opt_config,
-                    clear_target_dir=False,
-                    # environment = env  # type: ignore
-                )
-                models += optimization_models
-        config = DagsterConfig(root=PathlibPath(dagster_path), namespace=file.stem)
+            config = DagsterConfig(
+                root=PathlibPath(dagster_path), namespace=OPTIMIZATION_NAMESPACE
+            )
+        else:
+            clear = True
+            config = DagsterConfig(root=PathlibPath(dagster_path), namespace=file.stem)
         with open(file) as f:
             base_models = generate_model(
-                f.read(), file, dialect=dialect, config=config, models=models
+                f.read(),
+                file,
+                dialect=dialect,
+                config=config,
+                models=models,
+                clear_target_dir=clear,
             )
             models += base_models
     return models

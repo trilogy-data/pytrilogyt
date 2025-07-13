@@ -89,13 +89,15 @@ def run_dagster_job(path: Path):
 
     try:
         # Run the command
-        result = subprocess.check_output(command, cwd=str(path))
+        result = subprocess.check_output(
+            command, cwd=str(path), stderr=subprocess.STDOUT, text=True
+        )
         logger.info("Dagster executed successfully.\n")
         logger.info("Output:")
         logger.info(result)
 
     except subprocess.CalledProcessError as e:
-        raise ValueError(e.output)
+        raise ValueError(f"{command} failed with error: {e.output}") from e
 
 
 def run_path(path: Path, dialect: Dialects):

@@ -34,6 +34,7 @@ def run_path_v2(
         except Exception as e:
             logger.error(f" Error executing {x} {e}")
             raise e
+    
     sorted_files: list[Path] = generate_execution_order(edges)
     for file in sorted_files:
         env = Environment(working_path=path)
@@ -50,7 +51,7 @@ def run_path(
 ):
     # initialize
     files = path.glob("*.preql")
-    edges = []
+    edges:list[tuple[str, str]] = []
     executor = dialect.default_executor()
     for x in files:
         try:
@@ -59,7 +60,11 @@ def run_path(
             executor.parse_file(x)
             for _, imp_list in env.imports.items():
                 for imp in imp_list:
-                    edges.append((imp.path, x))
+                    target = (path / imp.path).with_suffix(".preql")
+                    build_path = target.with_stem(f"{imp.path.stem}_build")
+                    if build_path.exists():
+                        edges.append((build_path, target))
+                    edges.append((target, x))
 
         except Exception as e:
             logger.error(f" Error executing {x} {e}")
@@ -73,11 +78,14 @@ def run_path(
         for script in opt_build_scripts:
             env = Environment(working_path=path)
             executor.environment = env
-            executor.execute_file(script)
+            logger.info(f"Executing optimization script: {script}")
+            executor.execute_file(script, non_interactive=True)
     sorted_files: list[Path] = generate_execution_order(edges)
+    logger.info(edges)
     for file in sorted_files:
         env = Environment(working_path=path)
         executor.environment = env
         if not file.suffix == "preql":
             file = file.with_suffix(".preql")
+        logger.info(f"Executing file: {file}")
         executor.execute_file(path / file, non_interactive=True)

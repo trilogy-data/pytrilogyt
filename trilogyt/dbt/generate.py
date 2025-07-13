@@ -135,7 +135,6 @@ def generate_model(
     existing = defaultdict(set)
     should_exist = defaultdict(set)
     for key, value in outputs.items():
-
         output_path = config.get_model_path(key)
         logger.info(f"writing {key} to {output_path} ")
         parent = str(output_path.parent)
