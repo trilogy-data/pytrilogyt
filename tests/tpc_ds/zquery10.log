@@ -1,11 +1,11 @@
-base_prep_time = 0.000276
-base_parse_time = 2.302481
-base_generation_time = 0.015683
-base_exec_time = 0.207084
-optimized_prep_time = 0.000271
-optimized_parse_time = 1.219371
-optimized_generation_time = 0.015348
-optimized_exec_time = 0.160496
+base_prep_time = 0.00018
+base_parse_time = 0.844868
+base_generation_time = 0.007103
+base_exec_time = 0.316808
+optimized_prep_time = 0.000192
+optimized_parse_time = 0.72474
+optimized_generation_time = 0.007867
+optimized_exec_time = 0.191621
 was_optimized = false
 base_generated_sql = """
 
@@ -240,5 +240,5 @@ ORDER BY
     \"sparkling\".\"base_customer_demographics_employed_dependent_count\" asc,
     \"sparkling\".\"base_customer_demographics_college_dependent_count\" asc"""
 query_id = 10
-sql_comp_time = 0.325548
-total_time = 4.251574
+sql_comp_time = 0.989733
+total_time = 3.105849

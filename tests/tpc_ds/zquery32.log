@@ -1,11 +1,11 @@
-base_prep_time = 0.000179
-base_parse_time = 0.261898
-base_generation_time = 0.008105
-base_exec_time = 0.072962
-optimized_prep_time = 0.000236
-optimized_parse_time = 0.282901
-optimized_generation_time = 0.007168
-optimized_exec_time = 0.052546
+base_prep_time = 0.000185
+base_parse_time = 0.148976
+base_generation_time = 0.004124
+base_exec_time = 0.089938
+optimized_prep_time = 0.000174
+optimized_parse_time = 0.156555
+optimized_generation_time = 0.003897
+optimized_exec_time = 0.032511
 was_optimized = false
 base_generated_sql = """
 
@@ -122,5 +122,5 @@ FROM
     \"abundant\"
 LIMIT (100)"""
 query_id = 32
-sql_comp_time = 0.048571
-total_time = 0.737153
+sql_comp_time = 0.052382
+total_time = 0.501181

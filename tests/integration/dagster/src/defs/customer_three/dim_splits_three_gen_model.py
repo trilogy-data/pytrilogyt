@@ -1,8 +1,12 @@
 from dagster_duckdb import DuckDBResource
 from dagster import asset
 
+from assets.optimization.dscte_generic_scalar_02e41b09_gen_model import dscte_generic_scalar_02e41b09
 
-@asset(deps=[])
+from assets.optimization.dscte_generic_scalar_02e41b09_gen_model import dscte_generic_scalar_02e41b09
+
+
+@asset(deps=[dscte_generic_scalar_02e41b09, dscte_generic_scalar_02e41b09])
 def dim_splits_three(duck_db: DuckDBResource) -> None:
     with duck_db.get_connection() as conn:
         conn.execute(

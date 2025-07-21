@@ -1,11 +1,11 @@
-base_prep_time = 0.000292
-base_parse_time = 1.289957
-base_generation_time = 0.005232
-base_exec_time = 0.249807
-optimized_prep_time = 0.000269
-optimized_parse_time = 2.459157
-optimized_generation_time = 0.005205
-optimized_exec_time = 0.249694
+base_prep_time = 0.000187
+base_parse_time = 2.50336
+base_generation_time = 0.002919
+base_exec_time = 0.180509
+optimized_prep_time = 0.000234
+optimized_parse_time = 0.692947
+optimized_generation_time = 0.002618
+optimized_exec_time = 0.18116
 was_optimized = false
 base_generated_sql = """
 
@@ -216,5 +216,5 @@ SELECT
 FROM
     \"juicy\""""
 query_id = 97
-sql_comp_time = 0.085349
-total_time = 4.352967
+sql_comp_time = 0.058748
+total_time = 3.635462

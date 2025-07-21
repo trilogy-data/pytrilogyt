@@ -39,7 +39,7 @@ def generate_model_text(
     model_type: str,
     model_sql: str,
     dialect: Dialects,
-    dependencies: list[ModelInput],
+    dependencies: list[str],
 ) -> str:
     if not dialect == Dialects.DUCK_DB:
         raise NotImplementedError(f"Unsupported dialect {dialect}")
@@ -58,12 +58,21 @@ def {{model_name}}({{dialect.name | lower}}: DuckDBResource) -> None:
         )
     """
     )
+    built_dependencies = [
+        ModelInput(
+            name=dep,
+            file_path=Path(f"{dep}.py"),
+            import_path=Path(f"assets.optimization.{dep}_gen_model.py"),
+        )
+        for dep in dependencies
+    ]
+
     return template.render(
         model_name=model_name,
         model_type=model_type,
         model_sql=model_sql,
         dialect=dialect,
-        deps=dependencies,
+        deps=built_dependencies,
     )
 
 
@@ -113,39 +122,46 @@ defs = Definitions(
     with open(dagster_path / ENTRYPOINT_FILE, "w") as f:
         f.write(contents)
 
-def generate_dependency_map(pqueries, possible_dependencies, models, config, executor,
-                            outputs, output_data):
+
+def generate_dependency_map(
+    pqueries,
+    possible_dependencies: dict[str, Datasource],
+    model_ds_mapping: dict[str, str],
+    config: DagsterConfig,
+    executor: Executor,
+):
     dependency_map = defaultdict(list)
     output: list[ModelInput] = []
+    output_map: dict[str, str] = {}
+    output_data: dict[str, Datasource] = {}
     for _, query in enumerate(pqueries):
         depends_on: list[ModelInput] = []
         if isinstance(query, ProcessedQueryPersist):
-            logger.debug(f"Starting on {_}")
+            logger.info(f"Starting on {_}")
             target = query.output_to.address.location
             eligible = {k: v for k, v in possible_dependencies.items() if k != target}
             for cte in query.ctes:
                 if isinstance(cte, UnionCTE):
                     continue
                 # handle inlined datasources
-                logger.debug(f"checking cte {cte.name} with {eligible}")
+                logger.info(f"checking cte {cte.name} with {eligible}")
                 if cte.base_name_override in eligible:
                     if any(x.name == cte.base_name_override for x in depends_on):
                         continue
-                    matched = [x for x in models if x.name == cte.base_name_override]
+                    matched = model_ds_mapping.get(cte.base_name_override)
                     if matched:
-                        depends_on.append(matched.pop())
+                        depends_on.append(matched)
                 for source in cte.source.datasources:
                     logger.info(source.identifier)
                     if not isinstance(source, BuildDatasource):
                         continue
 
-                    if source.identifier in eligible:
-                        matched = [x for x in models if x.name == source.identifier]
-                        if matched:
-                            depends_on.append(matched.pop())
+                    matched = model_ds_mapping.get(source.identifier)
+                    if matched:
+                        depends_on.append(matched)
             # get our names to label the model
             key = query.output_to.address.location.split(".")[-1]
-            outputs[key] = executor.generator.compile_statement(query)
+            output_map[key] = executor.generator.compile_statement(query)
             output_data[key] = query.datasource
             dependency_map[key] = depends_on
             output.append(
@@ -155,7 +171,37 @@ def generate_dependency_map(pqueries, possible_dependencies, models, config, exe
                     import_path=config.get_asset_import_path(key),
                 )
             )
-    return dependency_map, output
+            logger.info(depends_on)
+    return dependency_map, output, output_map
+
+
+def generate_name_ds_mapping(
+    file: Path, content: str, dialect: Dialects
+) -> dict[str, str]:
+    env: Environment = Environment(
+        working_path=file.parent if file else os.getcwd(),
+        # namespace=config.namespace,
+    )
+    executor = Executor(
+        dialect=dialect,
+        engine=dialect.default_engine(),
+        environment=env,
+        rendering=Rendering(parameters=False),
+    )
+    executor.environment = enrich_environment(executor.environment)
+
+    try:
+        _, statements = executor.environment.parse(content)
+    except Exception as e:
+        raise SyntaxError(f"Unable to parse {content}" + str(e))
+    output = {}
+    for query in statements:
+        if isinstance(query, PersistStatement):
+            logger.info(f"Starting on {_}")
+            key = query.datasource.address.location.split(".")[-1]
+            output[query.datasource.identifier] = key
+    return output
+
 
 def generate_model(
     preql_body: str,
@@ -164,7 +210,7 @@ def generate_model(
     config: DagsterConfig,
     environment: Environment | None = None,
     clear_target_dir: bool = True,
-    models: list[ModelInput] = [],
+    model_ds_mapping: dict[str, str] | None = None,
 ) -> list[ModelInput]:
     env: Environment = environment or Environment(
         working_path=preql_path.parent if preql_path else os.getcwd(),
@@ -177,16 +223,13 @@ def generate_model(
         rendering=Rendering(parameters=False),
     )
     executor.environment = enrich_environment(executor.environment)
-    possible_dependencies = {}
 
-    outputs: dict[str, str] = {}
-    output_data: dict[str, Datasource] = {}
     try:
         _, statements = executor.environment.parse(preql_body)
     except Exception as e:
         raise SyntaxError(f"Unable to parse {preql_body}" + str(e))
 
-    possible_dependencies = {
+    possible_dependencies: dict[str, Datasource] = {
         d.identifier: d
         for d in executor.environment.datasources.values()
         if "." not in d.identifier
@@ -198,16 +241,16 @@ def generate_model(
 
     pqueries = executor.generator.generate_queries(executor.environment, parsed)
     logger.info(f"got {len(pqueries)} queries: {Counter([type(c) for c in pqueries])}")
-    
+
     logger.info("Writing queries to output files")
-    dependency_map, output = generate_dependency_map(
-        pqueries, possible_dependencies, models, config, executor, outputs, output_data
+    dependency_map, output, output_map = generate_dependency_map(
+        pqueries, possible_dependencies, model_ds_mapping, config, executor
     )
-    logger.debug(dependency_map)
+    logger.info(f"dependency_map: {dependency_map}")
 
     existing = defaultdict(set)
     should_exist = defaultdict(set)
-    for key, value in outputs.items():
+    for key, value in output_map.items():
         output_path = config.get_asset_path(key)
         logger.info(f"writing {key} to {output_path} ")
         parent = str(output_path.parent)

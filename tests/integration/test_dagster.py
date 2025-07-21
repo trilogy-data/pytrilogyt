@@ -32,17 +32,17 @@ def test_full_model_build_dagster(logger):
         staging_path=root.parent / "preql_dagster_staging/",
     )
 
-    results = root.parent / "dagster/models"
-    # output = results.glob("**/*.py")
-    # for f in output:
-    #     # our generated file
-    #     if "dim_splits" not in str(f):
-    #         continue
-    #     if f.is_file():
-    #         with open(f) as file:
-    #             content = file.read()
-    #             # validate we are using our generated model
-    #             assert "_gen_model')" in content, content
+    results = root.parent / "dagster/assets"
+    output = results.glob("**/*.py")
+    for f in output:
+        # our generated file
+        if "dim_splits" not in str(f):
+            continue
+        if f.is_file():
+            with open(f) as file:
+                content = file.read()
+                # validate we are using our generated model
+                assert "deps=[]" not in content, content
 
     assert not fake.exists(), f"Fake file {fake} was not deleted"
 

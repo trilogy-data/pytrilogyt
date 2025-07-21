@@ -7,7 +7,7 @@ from trilogy.utility import unique
 
 from trilogyt.constants import OPTIMIZATION_NAMESPACE, logger
 from trilogyt.dagster.config import DagsterConfig
-from trilogyt.dagster.generate import ModelInput, generate_entry_file, generate_model
+from trilogyt.dagster.generate import ModelInput, generate_entry_file, generate_model, generate_name_ds_mapping
 from trilogyt.dagster.run import run_path
 from trilogyt.scripts.native import OptimizationResult, native_wrapper
 
@@ -42,8 +42,13 @@ def dagster_handler(
             logger.debug(f"Removing existing {item}")
             os.remove(item)
     models: list[ModelInput] = []
-    for orig_file in children:
-        file = staging_path / orig_file.name
+
+    inputs = list(staging_path.glob("*.preql"))
+    model_ds_mapping: dict[str, str] = {}
+    for file in inputs:
+        model_ds_mapping.update(generate_name_ds_mapping(file, file.read_text(), dialect))
+
+    for file in inputs:
         logger.info(
             f"Generating dagster model for {file} into dagster_path {dagster_path}"
         )
@@ -63,8 +68,8 @@ def dagster_handler(
                 file,
                 dialect=dialect,
                 config=config,
-                models=models,
                 clear_target_dir=clear,
+                model_ds_mapping=model_ds_mapping,
             )
             models += base_models
     return models

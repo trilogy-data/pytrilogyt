@@ -1,11 +1,11 @@
-base_prep_time = 0.000294
-base_parse_time = 0.356505
-base_generation_time = 0.01282
-base_exec_time = 0.031614
-optimized_prep_time = 0.000338
-optimized_parse_time = 0.647524
-optimized_generation_time = 0.011217
-optimized_exec_time = 0.034459
+base_prep_time = 0.000183
+base_parse_time = 0.192083
+base_generation_time = 0.00621
+base_exec_time = 0.08345
+optimized_prep_time = 0.000196
+optimized_parse_time = 1.488375
+optimized_generation_time = 0.004234
+optimized_exec_time = 0.519471
 was_optimized = true
 base_generated_sql = """
 
@@ -78,8 +78,8 @@ optimized_generated_sql = """
 WITH 
 questionable as (
 SELECT
+    \"dsitem_id_store_sales_customer_state_store_sales_ticket_number_fd3a683a\".\"store_sales_customer_state\" as \"store_sales_customer_state\",
     \"item_items\".\"I_CATEGORY\" as \"item_category\",
-    \"store_sales_customer_customer_address\".\"CA_STATE\" as \"store_sales_customer_state\",
     \"store_sales_date_date\".\"D_MOY\" as \"store_sales_date_month_of_year\",
     \"store_sales_item_items\".\"I_CATEGORY\" as \"store_sales_item_category\",
     \"store_sales_item_items\".\"I_CURRENT_PRICE\" as \"store_sales_item_current_price\",
@@ -89,10 +89,9 @@ SELECT
 FROM
     \"memory\".\"store_sales\" as \"store_sales_store_sales\"
     INNER JOIN \"memory\".\"date_dim\" as \"store_sales_date_date\" on \"store_sales_store_sales\".\"SS_SOLD_DATE_SK\" = \"store_sales_date_date\".\"D_DATE_SK\"
-    INNER JOIN \"memory\".\"customer\" as \"store_sales_customer_customers\" on \"store_sales_store_sales\".\"SS_CUSTOMER_SK\" = \"store_sales_customer_customers\".\"C_CUSTOMER_SK\"
-    INNER JOIN \"memory\".\"customer_address\" as \"store_sales_customer_customer_address\" on \"store_sales_customer_customers\".\"C_CURRENT_ADDR_SK\" = \"store_sales_customer_customer_address\".\"CA_ADDRESS_SK\"
-    INNER JOIN \"memory\".\"item\" as \"store_sales_item_items\" on \"store_sales_store_sales\".\"SS_ITEM_SK\" = \"store_sales_item_items\".\"I_ITEM_SK\"
-    INNER JOIN \"memory\".\"item\" as \"item_items\" on \"store_sales_store_sales\".\"SS_ITEM_SK\" = \"item_items\".\"I_ITEM_SK\"
+    INNER JOIN \"dsitem_id_store_sales_customer_state_store_sales_ticket_number_fd3a683a\" as \"dsitem_id_store_sales_customer_state_store_sales_ticket_number_fd3a683a\" on \"store_sales_store_sales\".\"SS_ITEM_SK\" = \"dsitem_id_store_sales_customer_state_store_sales_ticket_number_fd3a683a\".\"item_id\" AND \"store_sales_store_sales\".\"SS_TICKET_NUMBER\" = \"dsitem_id_store_sales_customer_state_store_sales_ticket_number_fd3a683a\".\"store_sales_ticket_number\"
+    INNER JOIN \"memory\".\"item\" as \"store_sales_item_items\" on \"dsitem_id_store_sales_customer_state_store_sales_ticket_number_fd3a683a\".\"item_id\" = \"store_sales_item_items\".\"I_ITEM_SK\"
+    INNER JOIN \"memory\".\"item\" as \"item_items\" on \"dsitem_id_store_sales_customer_state_store_sales_ticket_number_fd3a683a\".\"item_id\" = \"item_items\".\"I_ITEM_SK\"
 WHERE
     cast(\"store_sales_date_date\".\"D_YEAR\" as int) = 2001
 ),
@@ -140,5 +139,5 @@ ORDER BY
     sum(1) asc nulls first,
     \"yummy\".\"store_sales_customer_state\" asc nulls first"""
 query_id = 6
-sql_comp_time = 0.102174
-total_time = 1.207211
+sql_comp_time = 0.12849
+total_time = 2.476235

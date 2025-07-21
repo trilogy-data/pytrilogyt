@@ -1,11 +1,11 @@
-base_prep_time = 0.000185
-base_parse_time = 0.228626
-base_generation_time = 0.001726
-base_exec_time = 0.041728
-optimized_prep_time = 0.000194
-optimized_parse_time = 0.256927
-optimized_generation_time = 0.000825
-optimized_exec_time = 0.032826
+base_prep_time = 0.000197
+base_parse_time = 0.23431
+base_generation_time = 0.001716
+base_exec_time = 0.084488
+optimized_prep_time = 0.00019
+optimized_parse_time = 0.308991
+optimized_generation_time = 0.000709
+optimized_exec_time = 0.1569
 was_optimized = true
 base_generated_sql = """
 
@@ -87,5 +87,5 @@ ORDER BY
     \"wakeful\".\"returns_customer_text_id\" asc
 LIMIT (100)"""
 query_id = 1
-sql_comp_time = 0.618027
-total_time = 1.201357
+sql_comp_time = 2.322956
+total_time = 3.257056

@@ -1,11 +1,11 @@
-base_prep_time = 0.000248
-base_parse_time = 0.501384
-base_generation_time = 0.01184
-base_exec_time = 0.046735
-optimized_prep_time = 0.000265
-optimized_parse_time = 0.50091
-optimized_generation_time = 0.010804
-optimized_exec_time = 0.041451
+base_prep_time = 0.000199
+base_parse_time = 0.286053
+base_generation_time = 0.005858
+base_exec_time = 0.144161
+optimized_prep_time = 0.000185
+optimized_parse_time = 0.264623
+optimized_generation_time = 0.005339
+optimized_exec_time = 0.145437
 was_optimized = false
 base_generated_sql = """
 
@@ -350,5 +350,5 @@ ORDER BY
     \"concerned\".\"customer_state_returns_2002\" asc nulls first
 LIMIT (100)"""
 query_id = 30
-sql_comp_time = 0.030547
-total_time = 1.153435
+sql_comp_time = 0.245425
+total_time = 1.122738
