@@ -7,14 +7,13 @@ from trilogy import Dialects
 
 from trilogyt.scripts.main import dagster_wrapper, main
 from trilogyt.dagster.generate import ModelInput, generate_entry_file, generate_model
-
+from dagster._cli.job import _get_job_python_origin_from_cli_opts
 root = Path(__file__)
 
 
-def test_dependency_discover():
-    generate_model(preql_body=True)
 
-
+#FAILED tests/integration/test_dagster.py::test_full_model_build_dagster - ValueError: ['dagster', 'job', 'execute', '-j', 'all_job', '-d', 'c:\\Users...
+# dagster job execute -j all_job -d c:\Users\ethan\coding_projects\pypreql-etl\tests\integration\dagster -f c:\Users\ethan\coding_projects\pypreql-etl\\tests\integration\dagster\definitions.py
 def test_full_model_build_dagster(logger):
     fake = root.parent / "dagster" / "assets" / "customer_two" / "fake_gen_model.py"
     staging_path = root.parent / "preql_dagster_staging/"

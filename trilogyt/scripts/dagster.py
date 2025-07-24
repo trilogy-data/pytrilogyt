@@ -84,8 +84,9 @@ def dagster_wrapper(
     staging_path: PathlibPath | None = None,
 ):
     imports: list[ModelInput] = []
+    config = DagsterConfig(root=dagster_path, namespace=preql.stem)
     if preql.is_file():
-        config = DagsterConfig(root=dagster_path, namespace=preql.stem)
+        
         with open(preql) as f:
             imports += generate_model(
                 f.read(),
@@ -109,10 +110,10 @@ def dagster_wrapper(
     imports = unique(imports, lambda x: x.name)
     for k in imports:
         logger.info(k)
-    _ = generate_entry_file(imports, dialect, dagster_path)
+    _ = generate_entry_file(imports, dialect, dagster_path, config)
     if run:
-        print("Executing generated models")
-        run_path(PathlibPath(dagster_path), dialect=dialect)
+        print(f"Executing generated models in {dagster_path}")
+        run_path(PathlibPath(dagster_path), config=config)
     return 0
 
 
@@ -127,7 +128,7 @@ def dagster_string_command_wrapper(
         dialect=dialect,
         config=config,
     )
-    _ = generate_entry_file(imports, dialect, dagster_path)
+    _ = generate_entry_file(imports, dialect, dagster_path, config)
     if run:
         print("Executing generated models")
         run_path(PathlibPath(dagster_path), dialect=dialect)

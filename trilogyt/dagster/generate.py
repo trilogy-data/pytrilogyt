@@ -40,6 +40,7 @@ def generate_model_text(
     model_sql: str,
     dialect: Dialects,
     dependencies: list[str],
+    config: DagsterConfig,
 ) -> str:
     if not dialect == Dialects.DUCK_DB:
         raise NotImplementedError(f"Unsupported dialect {dialect}")
@@ -58,13 +59,14 @@ def {{model_name}}({{dialect.name | lower}}: DuckDBResource) -> None:
         )
     """
     )
+
     built_dependencies = [
         ModelInput(
             name=dep,
             file_path=Path(f"{dep}.py"),
-            import_path=Path(f"assets.optimization.{dep}_gen_model.py"),
+            import_path=Path(f"{config.opt_import_root}.{dep}_gen_model.py"),
         )
-        for dep in dependencies
+        for dep in sorted(list(set(dependencies)))
     ]
 
     return template.render(
@@ -80,6 +82,7 @@ def generate_entry_file(
     models: list[ModelInput],
     dialect: Dialects,  # config: DagsterConfig
     dagster_path: Path,
+    config: DagsterConfig,
 ):
     extra_kwargs: dict[str, Any] = {}
     if dialect != Dialects.DUCK_DB:
@@ -90,27 +93,27 @@ def generate_entry_file(
         extra_kwargs["connection_config"] = {"enable_external_access": False}
     template = Template(
         """
-from dagster import Definitions, define_asset_job
+from pathlib import Path
+
+import dagster as dg
 from dagster_duckdb import DuckDBResource
-{% for model in models %}
-from {{model.python_import}} import {{model.name}}{% endfor %}
-
-{{all_job_name}} = define_asset_job(name="{{all_job_name}}", selection=[{% for model in models %}{{model.name}}{% if not loop.last %}, {% endif %}{% endfor %}])
-
-{% for model in models %}
-run_{{model.name}} = define_asset_job(name="run_{{model.name}}", selection=[{{model.name}}])
-{% endfor %}
 
 
-defs = Definitions(
-    assets=[{% for model in models %}{{model.name}}{% if not loop.last %}, {% endif %}{% endfor %}],
-    resources={
-        "{{dialect.value}}": DuckDBResource(
-            database="{{extra_kwargs["database"]}}", connection_config={"enable_external_access": False}
-        )
-    },
-    jobs = [{{all_job_name}}{% for model in models %}, run_{{model.name}}{% endfor %}]
-)"""
+@dg.definitions
+def defs():
+    return dg.Definitions.merge(
+        dg.Definitions(
+            resources={
+                "{{dialect.value}}": DuckDBResource(
+                    database="{{extra_kwargs["database"]}}", connection_config={"enable_external_access": False}
+                )
+            }
+        ),
+        dg.load_from_defs_folder(
+            project_root=Path(__file__).parent.parent.parent,
+        ),
+    )
+"""
     )
     contents = template.render(
         models=models,
@@ -118,9 +121,41 @@ defs = Definitions(
         all_job_name=ALL_JOB_NAME,
         extra_kwargs=extra_kwargs,
     )
-
-    with open(dagster_path / ENTRYPOINT_FILE, "w") as f:
+    # write the module file
+    with open(dagster_path / 'src' / '__init__.py', "w") as f:
+        f.write('')
+    with open(dagster_path / config.dagster_asset_path / '__init__.py', "w") as f:
+        f.write('')
+    # write the config file
+    with open(dagster_path / config.dagster_asset_path / ENTRYPOINT_FILE, "w") as f:
         f.write(contents)
+
+    with open(dagster_path / "pyproject.toml", "w") as f:
+        f.write('''[project]
+name = "trilogy_dagster"
+requires-python = ">=3.9,<=3.13.3"
+version = "0.1.0"
+dependencies = [
+    "dagster==1.11.2",
+]
+
+[dependency-groups]
+dev = [
+    "dagster-webserver",
+    "dagster-dg-cli",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.dg]
+directory_type = "project"
+
+[tool.dg.project]
+root_module = "src"
+
+''')
 
 
 def generate_dependency_map(
@@ -269,6 +304,7 @@ def generate_model(
                     value,
                     dialect=dialect,
                     dependencies=dependency_map.get(key, []),
+                    config=config,
                 )
             )
         with open(output_path.parent / "__init__.py", "w") as f:

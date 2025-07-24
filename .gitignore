@@ -23,3 +23,6 @@ examples/dagster/my_duckdb_database.duckdb
 
 dagster.db
 temp.db
+*.db
+*.duckdb
+id.yaml

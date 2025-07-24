@@ -8,7 +8,7 @@ from trilogy import Dialects
 
 from trilogyt.constants import logger
 from trilogyt.dagster.constants import ALL_JOB_NAME, ENTRYPOINT_FILE
-
+from trilogyt.dagster.config import DagsterConfig
 
 def import_asset_from_file(filepath: Path) -> Any:
     """
@@ -63,7 +63,7 @@ def run_in_process(path: Path, imports: list[Path], dialect: Dialects):
     logger.info(f"Job result: {result}")
 
 
-def run_dagster_job(path: Path):
+def run_dagster_job(path: Path, config:DagsterConfig):
     """
     Run a Dagster job using the Dagster CLI.
 
@@ -81,24 +81,25 @@ def run_dagster_job(path: Path):
         "execute",
         "-j",
         ALL_JOB_NAME,
-        # "--config",
-        # str(config_yaml),
         "-f",
-        ENTRYPOINT_FILE,
+        str(config.get_entrypoint_path()),
     ]
-
+    env = os.environ.copy()
+    env["PYTHONPATH"] = f"{path}{os.pathsep}{env.get('PYTHONPATH', '')}"
     try:
         # Run the command
         result = subprocess.check_output(
-            command, cwd=str(path), stderr=subprocess.STDOUT, text=True
+            command, cwd=str(path), stderr=subprocess.STDOUT, text=True,
+             env=env,
         )
         logger.info("Dagster executed successfully.\n")
         logger.info("Output:")
         logger.info(result)
+        raise SyntaxError(result)
 
     except subprocess.CalledProcessError as e:
         raise ValueError(f"{command} failed with error: {e.output}") from e
 
 
-def run_path(path: Path, dialect: Dialects):
-    run_dagster_job(path)
+def run_path(path: Path, config:DagsterConfig):
+    run_dagster_job(path, config)
