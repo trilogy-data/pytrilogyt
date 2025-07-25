@@ -1,11 +1,11 @@
-base_prep_time = 0.000202
-base_parse_time = 0.210825
-base_generation_time = 0.003078
-base_exec_time = 0.161704
-optimized_prep_time = 0.000197
-optimized_parse_time = 0.191259
-optimized_generation_time = 0.000432
-optimized_exec_time = 0.00904
+base_prep_time = 0.0
+base_parse_time = 1.202545
+base_generation_time = 0.014373
+base_exec_time = 0.103751
+optimized_prep_time = 0.001026
+optimized_parse_time = 0.504464
+optimized_generation_time = 0.0
+optimized_exec_time = 0.017963
 was_optimized = true
 base_generated_sql = """
 
@@ -100,5 +100,5 @@ ORDER BY
     \"dsstore_sales_item_id_store_sales_store_name_store_sales_ticket_number_e88a2d96_filtered_on_quarter_year_zip_final_zips\".\"store_sales_store_name\" asc
 LIMIT (100)"""
 query_id = 8
-sql_comp_time = 0.344837
-total_time = 0.947169
+sql_comp_time = 0.107838
+total_time = 1.969532

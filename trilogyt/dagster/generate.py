@@ -10,11 +10,12 @@ from trilogy.authoring import (
     Datasource,
     PersistStatement,
 )
+from trilogy.constants import Rendering
+from trilogy.core.models.build import BuildDatasource
 from trilogy.core.models.execute import UnionCTE
 from trilogy.core.statements.execute import ProcessedQueryPersist
 from trilogy.dialect.enums import Dialects
-from trilogy.constants import Rendering
-from trilogy.core.models.build import BuildDatasource
+
 from trilogyt.constants import logger
 from trilogyt.core import enrich_environment
 from trilogyt.dagster.config import DagsterConfig
@@ -110,7 +111,7 @@ def defs():
             }
         ),
         dg.load_from_defs_folder(
-            project_root=Path(__file__).parent.parent.parent,
+            project_root=Path(__file__).parent.parent,
         ),
     )
 """
@@ -122,16 +123,21 @@ def defs():
         extra_kwargs=extra_kwargs,
     )
     # write the module file
-    with open(dagster_path / 'src' / '__init__.py', "w") as f:
-        f.write('')
-    with open(dagster_path / config.dagster_asset_path / '__init__.py', "w") as f:
-        f.write('')
+    with open(dagster_path / "src" / "__init__.py", "w") as f:
+        f.write("")
+    with open(dagster_path / config.dagster_asset_path / "__init__.py", "w") as f:
+        f.write("")
     # write the config file
-    with open(dagster_path / config.dagster_asset_path / ENTRYPOINT_FILE, "w") as f:
+    with open(dagster_path / "src" / ENTRYPOINT_FILE, "w") as f:
         f.write(contents)
-
+    with open(dagster_path / "dagster.yaml", "w") as f:
+        f.write(
+            """telemetry:
+  enabled: false"""
+        )
     with open(dagster_path / "pyproject.toml", "w") as f:
-        f.write('''[project]
+        f.write(
+            """[project]
 name = "trilogy_dagster"
 requires-python = ">=3.9,<=3.13.3"
 version = "0.1.0"
@@ -155,13 +161,14 @@ directory_type = "project"
 [tool.dg.project]
 root_module = "src"
 
-''')
+"""
+        )
 
 
 def generate_dependency_map(
     pqueries,
     possible_dependencies: dict[str, Datasource],
-    model_ds_mapping: dict[str, str],
+    model_ds_mapping: dict[str, ModelInput],
     config: DagsterConfig,
     executor: Executor,
 ):

@@ -1,0 +1,8 @@
+# Generated from .preql source: io.preql
+# Do not edit manually; direct changes to this file will be overwritten
+
+
+PERSIST static_one INTO static_one FROM SELECT
+    1 -> test,
+    _trilogyt._created_at,
+;

@@ -3,9 +3,10 @@ from pathlib import Path
 
 import pytest
 from click.testing import CliRunner
+from trilogy import Dialects, Environment
 
 from trilogyt.scripts.main import main, native_wrapper
-from trilogy import Dialects, Environment
+
 root = Path(__file__)
 
 
@@ -26,7 +27,7 @@ def test_full_model_build_native(logger):
     assert len(output) == 10, [f for f in output]
     for f in output:
         if f.is_file():
-            if 'customer_' not in f.stem:
+            if "customer_" not in f.stem:
                 continue
             with open(f) as file:
                 number = f.stem.split("_")[-1]
@@ -34,15 +35,18 @@ def test_full_model_build_native(logger):
                 # validate we are using our generated model
                 assert "import _opt" in content, content
                 # validate we aren't including extra files
-                checks = ['one', 'two', 'three', 'four']
+                checks = ["one", "two", "three", "four"]
                 for check in checks:
                     if check == number:
                         continue
                     assert f"dim_splits_{check}" not in content, content
 
-            exec = Dialects.DUCK_DB.default_executor(environment = Environment(working_path=f.parent))
+            exec = Dialects.DUCK_DB.default_executor(
+                environment=Environment(working_path=f.parent)
+            )
             sql = exec.generate_sql(content)[-1]
-            assert '[1,2,3,4]' not in sql, f"SQL should not contain static data: {sql}"
+            assert "[1,2,3,4]" not in sql, f"SQL should not contain static data: {sql}"
+
 
 def test_cli_string_native():
     runner = CliRunner()

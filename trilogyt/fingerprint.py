@@ -11,7 +11,6 @@ from trilogy.core.statements.author import CopyStatement
 from trilogy.core.models.author import HasUUID
 from trilogyt.core import fingerprint_environment
 from trilogyt.io import BaseWorkspace
-from trilogyt.constants import logger
 import hashlib
 
 
@@ -20,7 +19,7 @@ class ContentToFingerprintCache:
         self._cache: dict[str, tuple[str, list[HasUUID], "Environment"]] = {}
         self.max_cache_size = max_cache_size
 
-    def _get_content_hash(self, content: str, workspace:BaseWorkspace) -> str:
+    def _get_content_hash(self, content: str, workspace: BaseWorkspace) -> str:
         """Generate a hash of the input content and working path."""
         # Combine content and working_path for the hash since working_path affects the result
         combined_input = f"{workspace.id}:{content}"
@@ -34,7 +33,7 @@ class ContentToFingerprintCache:
             del self._cache[oldest_key]
 
     def content_to_fingerprint(
-        self, workspace:BaseWorkspace, content: str
+        self, workspace: BaseWorkspace, content: str
     ) -> tuple[str, list[HasUUID], "Environment"]:
         # Generate hash of input
         content_hash = self._get_content_hash(content, workspace)
@@ -55,7 +54,7 @@ class ContentToFingerprintCache:
             isinstance(statement, (SelectStatement, PersistStatement, CopyStatement))
             for statement in statements
         ):
-            result = (None, statements, new_env)
+            result = ('', statements, new_env)
         else:
             build_env = new_env.materialize_for_select({})
             human_labels = []

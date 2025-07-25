@@ -6,16 +6,16 @@ from click.testing import CliRunner
 from trilogy import Dialects
 
 from trilogyt.scripts.main import dagster_wrapper, main
-from trilogyt.dagster.generate import ModelInput, generate_entry_file, generate_model
-from dagster._cli.job import _get_job_python_origin_from_cli_opts
+
 root = Path(__file__)
 
 
-
-#FAILED tests/integration/test_dagster.py::test_full_model_build_dagster - ValueError: ['dagster', 'job', 'execute', '-j', 'all_job', '-d', 'c:\\Users...
+# FAILED tests/integration/test_dagster.py::test_full_model_build_dagster - ValueError: ['dagster', 'job', 'execute', '-j', 'all_job', '-d', 'c:\\Users...
 # dagster job execute -j all_job -d c:\Users\ethan\coding_projects\pypreql-etl\tests\integration\dagster -f c:\Users\ethan\coding_projects\pypreql-etl\\tests\integration\dagster\definitions.py
 def test_full_model_build_dagster(logger):
-    fake = root.parent / "dagster" / "assets" / "customer_two" / "fake_gen_model.py"
+    fake = (
+        root.parent / "dagster" / "src" / "defs" / "customer_two" / "fake_gen_model.py"
+    )
     staging_path = root.parent / "preql_dagster_staging/"
     os.makedirs(fake.parent, exist_ok=True)
     os.makedirs(staging_path, exist_ok=True)

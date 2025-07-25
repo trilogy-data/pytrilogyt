@@ -1,11 +1,11 @@
-base_prep_time = 0.000197
-base_parse_time = 0.146915
-base_generation_time = 0.003059
-base_exec_time = 0.145236
-optimized_prep_time = 0.000187
-optimized_parse_time = 0.197096
-optimized_generation_time = 0.00128
-optimized_exec_time = 0.122778
+base_prep_time = 0.0
+base_parse_time = 0.425355
+base_generation_time = 0.0
+base_exec_time = 0.176876
+optimized_prep_time = 0.007969
+optimized_parse_time = 0.364891
+optimized_generation_time = 0.004015
+optimized_exec_time = 0.159834
 was_optimized = true
 base_generated_sql = """
 
@@ -60,7 +60,7 @@ SELECT
     (\"thoughtful\".\"itemrevenue\" * 100.0) / \"cooperative\".\"itemclassrevenue\" as \"revenueratio\"
 FROM
     \"cooperative\"
-    LEFT OUTER JOIN \"thoughtful\" on \"cooperative\".\"itemrevenue\" = \"thoughtful\".\"itemrevenue\" AND (\"cooperative\".\"web_sales_item_class\" = \"thoughtful\".\"web_sales_item_class\" or (\"cooperative\".\"web_sales_item_class\" is null and \"thoughtful\".\"web_sales_item_class\" is null))
+    LEFT OUTER JOIN \"thoughtful\" on (\"cooperative\".\"itemrevenue\" = \"thoughtful\".\"itemrevenue\" or (\"cooperative\".\"itemrevenue\" is null and \"thoughtful\".\"itemrevenue\" is null)) AND (\"cooperative\".\"web_sales_item_class\" = \"thoughtful\".\"web_sales_item_class\" or (\"cooperative\".\"web_sales_item_class\" is null and \"thoughtful\".\"web_sales_item_class\" is null))
 ORDER BY 
     \"thoughtful\".\"web_sales_item_category\" asc,
     \"thoughtful\".\"web_sales_item_class\" asc,
@@ -104,7 +104,7 @@ SELECT
     (\"wakeful\".\"itemrevenue\" * 100.0) / \"cheerful\".\"itemclassrevenue\" as \"revenueratio\"
 FROM
     \"cheerful\"
-    LEFT OUTER JOIN \"wakeful\" on \"cheerful\".\"itemrevenue\" = \"wakeful\".\"itemrevenue\" AND (\"cheerful\".\"web_sales_item_class\" = \"wakeful\".\"web_sales_item_class\" or (\"cheerful\".\"web_sales_item_class\" is null and \"wakeful\".\"web_sales_item_class\" is null))
+    LEFT OUTER JOIN \"wakeful\" on (\"cheerful\".\"itemrevenue\" = \"wakeful\".\"itemrevenue\" or (\"cheerful\".\"itemrevenue\" is null and \"wakeful\".\"itemrevenue\" is null)) AND (\"cheerful\".\"web_sales_item_class\" = \"wakeful\".\"web_sales_item_class\" or (\"cheerful\".\"web_sales_item_class\" is null and \"wakeful\".\"web_sales_item_class\" is null))
 ORDER BY 
     \"wakeful\".\"web_sales_item_category\" asc,
     \"wakeful\".\"web_sales_item_class\" asc,
@@ -113,5 +113,5 @@ ORDER BY
     (\"wakeful\".\"itemrevenue\" * 100.0) / \"cheerful\".\"itemclassrevenue\" asc
 LIMIT (100)"""
 query_id = 12
-sql_comp_time = 0.155626
-total_time = 0.840167
+sql_comp_time = 0.296463
+total_time = 1.444886

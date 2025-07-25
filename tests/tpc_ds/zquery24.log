@@ -1,11 +1,11 @@
-base_prep_time = 0.000198
-base_parse_time = 0.680622
-base_generation_time = 0.008143
-base_exec_time = 3.446532
-optimized_prep_time = 0.000184
-optimized_parse_time = 0.678943
-optimized_generation_time = 0.008434
-optimized_exec_time = 0.273447
+base_prep_time = 0.0
+base_parse_time = 2.471662
+base_generation_time = 0.04356
+base_exec_time = 2.839226
+optimized_prep_time = 0.0
+optimized_parse_time = 1.638258
+optimized_generation_time = 0.002105
+optimized_exec_time = 0.360074
 was_optimized = false
 base_generated_sql = """
 
@@ -278,5 +278,5 @@ WHERE
     \"abhorrent\".\"peach_sales\" > 0.05 * \"young\".\"avg_store_customer_sales\"
 """
 query_id = 24
-sql_comp_time = 0.493391
-total_time = 5.613475
+sql_comp_time = 0.422916
+total_time = 7.783841

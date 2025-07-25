@@ -78,7 +78,7 @@ def generate_model(
                 SelectItem(
                     content=env.concepts[
                         f"{TRILOGY_NAMESPACE}.{PreqltMetrics.CREATED_AT.value}"
-                    ]
+                    ].reference
                 )
             )
         last_stmt = statements[idx - 1]

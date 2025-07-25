@@ -34,7 +34,7 @@ def run_path_v2(
         except Exception as e:
             logger.error(f" Error executing {x} {e}")
             raise e
-    
+
     sorted_files: list[Path] = generate_execution_order(edges)
     for file in sorted_files:
         env = Environment(working_path=path)
@@ -51,7 +51,7 @@ def run_path(
 ):
     # initialize
     files = path.glob("*.preql")
-    edges:list[tuple[str, str]] = []
+    edges: list[tuple[Path, Path]] = []
     executor = dialect.default_executor()
     for x in files:
         try:

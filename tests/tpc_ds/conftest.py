@@ -7,10 +7,10 @@ from trilogy import Dialects, Environment, Executor
 from trilogy.dialect.config import DuckDBConfig
 from trilogy.hooks.query_debugger import DebuggingHook
 
+from trilogyt import FileWorkspace
 from trilogyt.constants import logger
 from trilogyt.core_v2 import Optimizer
 from trilogyt.scripts.native import OptimizationResult
-from trilogyt import FileWorkspace
 
 working_path = Path(__file__).parent
 

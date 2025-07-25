@@ -2,10 +2,11 @@ from trilogy import Dialects, parse
 from trilogy.authoring import Environment
 from trilogy.core.enums import SourceType
 from trilogy.core.models.author import LooseConceptList
+from trilogy.core.models.build import Factory
 from trilogy.core.models.execute import CTE, QueryDatasource
 from trilogy.dialect.duckdb import DuckDBDialect
 from trilogy.parsing.render import Renderer
-from trilogy.core.models.build import Factory
+
 from trilogyt.graph import fingerprint_cte, process_raw
 
 
@@ -85,7 +86,7 @@ select split;
     instance = [
         x for x in list(env.datasources.values()) if split.address in x.output_concepts
     ][0]
-    
+
     assert split.address in [x for x in build_env.materialized_concepts]
     assert "local.split" in [x for x in build_env.materialized_concepts]
     materialized_lcl = LooseConceptList(
@@ -98,4 +99,6 @@ select split;
     assert materialized_lcl.addresses == {"local.split"}
     final = reparsed[-1]
     # check that our queries use the new datasource
-    assert final.ctes[0].source.datasources[0].name == instance.name, f'expected {instance.name} but got {final.ctes[0].source.datasources[0].name}'
+    assert (
+        final.ctes[0].source.datasources[0].name == instance.name
+    ), f"expected {instance.name} but got {final.ctes[0].source.datasources[0].name}"

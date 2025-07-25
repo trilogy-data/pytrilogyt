@@ -4,7 +4,7 @@ from trilogyt.constants import OPTIMIZATION_NAMESPACE  # noqa
 from trilogyt.dbt.generate import generate_model  # noqa
 from trilogyt.dbt.run import run_path  # noqa
 from trilogyt.dbt.config import DBTConfig  # noqa
-from trilogyt.scripts.native import native_wrapper, OptimizationResult
+from trilogyt.scripts.native import native_wrapper
 from trilogyt.constants import logger
 import os
 import tempfile
@@ -57,7 +57,7 @@ def dbt_handler(
                 file,
                 dialect=dialect,
                 config=config,
-                clear_target_dir = clear
+                clear_target_dir=clear,
                 # environment = env  # type: ignore
             )
 

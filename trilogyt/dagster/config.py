@@ -38,8 +38,7 @@ class DagsterConfig(BaseModel):
         return output_path
 
     def get_entrypoint_path(self) -> Path:
-        return  self.root / self.dagster_asset_path / DEFINITIONS_FILE
-
+        return self.root / "src" / DEFINITIONS_FILE
 
     @property
     def config_path(self) -> Path:

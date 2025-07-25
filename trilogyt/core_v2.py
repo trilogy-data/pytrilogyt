@@ -1,6 +1,5 @@
 from trilogy.dialect.enums import Dialects  # noqa
 from pathlib import Path as PathlibPath  # noqa
-import os
 from trilogy import Environment, Executor
 from trilogy.parsing.render import Renderer
 from trilogy.utility import unique
@@ -9,13 +8,11 @@ from trilogy.authoring import (
     ConceptDeclarationStatement,
     ImportStatement,
     RowsetDerivationStatement,
-    SelectStatement,
 )
 from trilogy.core.models.author import HasUUID
-from dataclasses import dataclass
 from trilogyt.core import ENVIRONMENT_CONCEPTS
 
-from trilogyt.constants import logger, OPT_PREFIX
+from trilogyt.constants import logger
 from trilogyt.graph import process_raw
 from trilogy.core.models.environment import Import
 from trilogyt.fingerprint import ContentToFingerprintCache
@@ -151,9 +148,7 @@ class Optimizer:
         ] + [
             x
             for x in statements
-            if not isinstance(
-                x, (ImportStatement, RowsetDerivationStatement)
-            )
+            if not isinstance(x, (ImportStatement, RowsetDerivationStatement))
         ]
         strings = []
         for x in statements:
@@ -195,20 +190,13 @@ class Optimizer:
                     imports=new_env.imports,
                 )
 
-        return self.optimization_inputs_to_outputs(
-            workspace, env_to_statements, dialect
-        )
+        return self.optimization_inputs_to_outputs(env_to_statements, dialect)
 
     def optimization_inputs_to_outputs(
         self,
-        workspace: BaseWorkspace,
         mapping: dict[str, OptimizationInput],
         dialect: Dialects,
     ) -> dict[str, OptimizationResult]:
-        optimize_env = workspace.get_environment()
-        exec = Executor(
-            dialect=dialect, engine=dialect.default_engine(), environment=optimize_env
-        )
 
         outputs: dict[str, OptimizationResult] = {}
 
@@ -218,7 +206,7 @@ class Optimizer:
                 inputs=v.statements,
                 env=v.environment,
                 generator=get_dialect_generator(
-                    dialect, Renderer(environment=v.environment)
+                    dialect,
                 ),
                 threshold=self.materialization_threshold,
             )

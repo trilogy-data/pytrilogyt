@@ -2,27 +2,27 @@ from dataclasses import dataclass
 from datetime import date, datetime
 from hashlib import sha256
 from random import choice
-from typing import List
+from typing import List, Any
 
 from trilogy import Environment
 from trilogy.authoring import (
+    Address,
     Comparison,
     Concept,
     ConceptRef,
     Conditional,
     Datasource,
     Function,
+    Grain,
     Parenthetical,
     PersistStatement,
+    RowsetDerivationStatement,
     SelectItem,
     SelectStatement,
-    WhereClause,
-    Grain,
     SubselectComparison,
-    RowsetDerivationStatement,
-    Address,
+    WhereClause,
 )
-from trilogy.constants import VIRTUAL_CONCEPT_PREFIX, MagicConstants, DEFAULT_NAMESPACE
+from trilogy.constants import DEFAULT_NAMESPACE, VIRTUAL_CONCEPT_PREFIX, MagicConstants
 from trilogy.core.enums import Derivation
 from trilogy.core.ergonomics import CTE_NAMES
 from trilogy.core.models.build import (
@@ -33,10 +33,10 @@ from trilogy.core.models.build import (
     BuildFunction,
     BuildParenthetical,
     BuildSubselectComparison,
+    BuildGrain,
 )
 from trilogy.core.models.core import ListWrapper, MapWrapper, TupleWrapper
 from trilogy.core.models.execute import CTE, QueryDatasource, UnionCTE
-
 from trilogy.core.statements.execute import (
     ProcessedQuery,
     ProcessedQueryPersist,
@@ -63,11 +63,11 @@ def name_to_short_name(x: str):
     base = x
     if x.startswith(VIRTUAL_CONCEPT_PREFIX):
         base = "virtual"
-    return base.replace('.', '_')
+    return base.replace(".", "_")
 
 
 # hash a
-def hash_concepts(concepts: list[Concept]) -> str:
+def hash_concepts(concepts: list[ConceptRef]) -> str:
     return sha256("".join(sorted([x.address for x in concepts])).encode()).hexdigest()
 
 
@@ -102,7 +102,7 @@ def generate_datasource_name(
     return base
 
 
-def convert_build_to_author(input: any):
+def convert_build_to_author(input: Any):
     if isinstance(input, BuildConcept):
         return ConceptRef(address=input.address)
     if isinstance(input, BuildConditional):
@@ -183,7 +183,9 @@ def cte_to_persist(
     datasource = select.to_datasource(
         namespace=DEFAULT_NAMESPACE,
         name=name,
-        address=Address(location=name,),
+        address=Address(
+            location=name,
+        ),
         environment=env,
     )
 
@@ -207,7 +209,7 @@ def fingerprint_concept(concept: Concept) -> str:
     return concept.address
 
 
-def fingerprint_grain(grain: Grain) -> str:
+def fingerprint_grain(grain: Grain | BuildGrain) -> str:
     return "-".join([x for x in grain.components])
 
 
@@ -219,7 +221,7 @@ def fingerprint_source(source: QueryDatasource | BuildDatasource) -> str:
     )
 
 
-def fingerprint_filter(filter: Conditional | Comparison | Parenthetical) -> str:
+def fingerprint_filter(filter: Conditional | Comparison | Parenthetical | BuildConditional | BuildComparison | BuildParenthetical) -> str:
     return str(filter)
 
 

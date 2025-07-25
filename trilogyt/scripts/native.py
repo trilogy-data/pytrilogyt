@@ -3,10 +3,11 @@ from pathlib import Path as PathlibPath  # noqa
 import os
 from trilogyt.native.generate import generate_model
 from trilogyt.native.run import run_path
-from trilogyt.scripts.core import optimize_multiple, OptimizationResult
+from trilogyt.scripts.core import OptimizationResult
 from trilogyt.constants import logger
 from trilogyt.core_v2 import Optimizer
 from trilogyt.io import FileWorkspace
+
 
 def native_wrapper(
     preql: PathlibPath,

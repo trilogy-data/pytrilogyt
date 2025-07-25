@@ -1,7 +1,7 @@
-import pytest
-from pathlib import Path
 import tempfile
-import os
+from pathlib import Path
+
+import pytest
 
 from trilogyt.io import BaseWorkspace, FileWorkspace, MemoryWorkspace
 
@@ -57,7 +57,7 @@ class TestFileWorkspace:
             working_path = Path(tmp_dir)
             test_file = working_path / "test.txt"
             test_file.write_text("content")
-            
+
             workspace = FileWorkspace(working_path, [])
             assert workspace.file_exists(Path("test.txt"))
 
@@ -73,7 +73,7 @@ class TestFileWorkspace:
             test_file = working_path / "test.txt"
             test_content = "test content"
             test_file.write_text(test_content)
-            
+
             workspace = FileWorkspace(working_path, [])
             assert workspace.get_file(Path("test.txt")) == test_content
 
@@ -84,7 +84,7 @@ class TestFileWorkspace:
             file2 = working_path / "file2.txt"
             file1.write_text("content1")
             file2.write_text("content2")
-            
+
             workspace = FileWorkspace(working_path, [file1, file2])
             files = workspace.get_files()
             assert files[file1] == "content1"
@@ -93,9 +93,9 @@ class TestFileWorkspace:
     def test_get_environment(self):
         working_path = Path("/tmp")
         workspace = FileWorkspace(working_path, [])
-        
+
         env = workspace.get_environment()
-        
+
         assert env.working_path == working_path
 
     def test_write_file(self):
@@ -103,10 +103,10 @@ class TestFileWorkspace:
             working_path = Path(tmp_dir)
             test_file = working_path / "test.txt"
             test_content = "test content"
-            
+
             workspace = FileWorkspace(working_path, [])
             workspace.write_file(test_file, test_content)
-            
+
             assert test_file.read_text() == test_content
             assert test_file in workspace.paths
 
@@ -117,10 +117,10 @@ class TestFileWorkspace:
             test_file.write_text("content")
             test_dir = working_path / "subdir"
             test_dir.mkdir()
-            
+
             workspace = FileWorkspace(working_path, [])
             workspace.wipe()
-            
+
             assert not test_file.exists()
             assert not test_dir.exists()
 
@@ -153,7 +153,7 @@ class TestMemoryWorkspace:
         workspace = MemoryWorkspace()
         workspace.files["file1.txt"] = "content1"
         workspace.files["file2.txt"] = "content2"
-        
+
         files = workspace.get_files()
         assert files[Path("file1.txt")] == "content1"
         assert files[Path("file2.txt")] == "content2"
@@ -166,26 +166,25 @@ class TestMemoryWorkspace:
     def test_get_environment(self):
         workspace = MemoryWorkspace()
         workspace.files["test.txt"] = "content"
-        
+
         env = workspace.get_environment()
-        
+
         assert env.working_path == Path.cwd()
-  
 
     def test_write_file(self):
         workspace = MemoryWorkspace()
         path = Path("test.txt")
         content = "test content"
-        
+
         result = workspace.write_file(path, content)
-        
+
         assert workspace.files["test.txt"] == content
         assert result == path
 
     def test_wipe(self):
         workspace = MemoryWorkspace()
         workspace.files["test.txt"] = "content"
-        
+
         workspace.wipe()
-        
+
         assert workspace.files == {}
