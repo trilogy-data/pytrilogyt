@@ -1,27 +1,21 @@
 from trilogy.dialect.enums import Dialects  # noqa
 from pathlib import Path as PathlibPath  # noqa
-import os
-from sys import path as sys_path
 from trilogy import Environment, Executor
-from trilogy.parser import parse_text
+from trilogy.parsing.parse_engine import parse_text
 from trilogy.parsing.render import Renderer
 from trilogy.utility import unique
 from trilogy.authoring import (
     PersistStatement,
     SelectStatement,
     ConceptDeclarationStatement,
+    HasUUID,
+    ImportStatement,
+    CopyStatement,
 )
-from trilogy.core.statements.author import ImportStatement, CopyStatement, HasUUID
 from dataclasses import dataclass
 from trilogyt.core import ENVIRONMENT_CONCEPTS, fingerprint_environment
-
-# handles development cases
-nb_path = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
-sys_path.insert(0, nb_path)
-
-from trilogyt.constants import OPTIMIZATION_NAMESPACE, OPTIMIZATION_FILE  # noqa
-from trilogyt.graph import process_raw  # noqa
-from trilogyt.exceptions import OptimizationError  # noqa
+from trilogyt.constants import OPTIMIZATION_NAMESPACE, OPTIMIZATION_FILE
+from trilogyt.graph import process_raw
 
 
 @dataclass

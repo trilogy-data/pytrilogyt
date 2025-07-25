@@ -15,8 +15,3 @@ PERSIST dsgeneric_scalar_445831a9 INTO dsgeneric_scalar_445831a9 FROM SELECT
     generic.int_array,
     generic.scalar,
 ;
-
-PERSIST dsgeneric_scalar_0c9429cc INTO dsgeneric_scalar_0c9429cc FROM SELECT
-    generic.scalar,
-    generic.split,
-;

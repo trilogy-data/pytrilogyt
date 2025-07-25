@@ -1,6 +1,5 @@
-import _opt_generic_c159bd00;
+import generic as generic;
 
-COPY INTO CSV '.\tests\integration\output\test.csv' FROM SELECT
-    generic.scalar,
-    generic.split,
-;
+
+copy into csv '.\tests\integration\output\test.csv' from select
+generic.scalar, generic.split;

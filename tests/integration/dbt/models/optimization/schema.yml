@@ -8,13 +8,4 @@ models:
     tests: []
   description: Automatically generated model from trilogy
   name: dsgeneric_scalar_445831a9_gen_model
-- columns:
-  - description: No description provided
-    name: generic_scalar
-    tests: []
-  - description: No description provided
-    name: generic_split
-    tests: []
-  description: Automatically generated model from trilogy
-  name: dsgeneric_scalar_0c9429cc_gen_model
 version: 2

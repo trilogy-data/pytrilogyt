@@ -17,10 +17,3 @@ datasource dsgeneric_scalar_445831a9 (
     )
 
 address dsgeneric_scalar_445831a9;
-
-datasource dsgeneric_scalar_0c9429cc (
-    generic_scalar: generic.scalar,
-    generic_split: generic.split
-    )
-
-address dsgeneric_scalar_0c9429cc;
