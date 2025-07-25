@@ -19,4 +19,5 @@ __all__ = [
     "FileWorkspace",
     "MemoryWorkspace",
     "Optimizer",
+    "CONFIG",
 ]

@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from datetime import date, datetime
 from hashlib import sha256
 from random import choice
-from typing import List, Any
+from typing import Any, List
 
 from trilogy import Environment
 from trilogy.authoring import (
@@ -31,9 +31,9 @@ from trilogy.core.models.build import (
     BuildConditional,
     BuildDatasource,
     BuildFunction,
+    BuildGrain,
     BuildParenthetical,
     BuildSubselectComparison,
-    BuildGrain,
 )
 from trilogy.core.models.core import ListWrapper, MapWrapper, TupleWrapper
 from trilogy.core.models.execute import CTE, QueryDatasource, UnionCTE
@@ -221,7 +221,16 @@ def fingerprint_source(source: QueryDatasource | BuildDatasource) -> str:
     )
 
 
-def fingerprint_filter(filter: Conditional | Comparison | Parenthetical | BuildConditional | BuildComparison | BuildParenthetical) -> str:
+def fingerprint_filter(
+    filter: (
+        Conditional
+        | Comparison
+        | Parenthetical
+        | BuildConditional
+        | BuildComparison
+        | BuildParenthetical
+    ),
+) -> str:
     return str(filter)
 
 

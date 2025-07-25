@@ -56,7 +56,7 @@ class FileWorkspace(BaseWorkspace):
         with open(self.working_path / path, "r") as f:
             return f.read()
 
-    def get_files(self):
+    def get_files(self) -> dict[Path, str]:
         output: dict[Path, str] = {}
         for path in self.paths:
             output[path] = path.read_text()
@@ -85,11 +85,11 @@ class FileWorkspace(BaseWorkspace):
             if item.is_file():
                 item.unlink()
             elif item.is_dir():
-                shutil.rmtree(item)  # Recursively removes directory and all contents
+                shutil.rmtree(item)
 
 
 class MemoryWorkspace(BaseWorkspace):
-    def __init__(self):
+    def __init__(self) -> None:
         self.files: dict[str, str] = {}
         super().__init__()
 

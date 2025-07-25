@@ -6,10 +6,7 @@ from typing import Any
 
 from jinja2 import Template
 from trilogy import Environment, Executor
-from trilogy.authoring import (
-    Datasource,
-    PersistStatement,
-)
+from trilogy.authoring import Address, Datasource, PersistStatement
 from trilogy.constants import Rendering
 from trilogy.core.models.build import BuildDatasource
 from trilogy.core.models.execute import UnionCTE
@@ -168,7 +165,7 @@ root_module = "src"
 def generate_dependency_map(
     pqueries,
     possible_dependencies: dict[str, Datasource],
-    model_ds_mapping: dict[str, ModelInput],
+    model_ds_mapping: dict[str, str],
     config: DagsterConfig,
     executor: Executor,
 ):
@@ -177,7 +174,7 @@ def generate_dependency_map(
     output_map: dict[str, str] = {}
     output_data: dict[str, Datasource] = {}
     for _, query in enumerate(pqueries):
-        depends_on: list[ModelInput] = []
+        depends_on: list[str] = []
         if isinstance(query, ProcessedQueryPersist):
             logger.info(f"Starting on {_}")
             target = query.output_to.address.location
@@ -188,7 +185,7 @@ def generate_dependency_map(
                 # handle inlined datasources
                 logger.info(f"checking cte {cte.name} with {eligible}")
                 if cte.base_name_override in eligible:
-                    if any(x.name == cte.base_name_override for x in depends_on):
+                    if any(x == cte.base_name_override for x in depends_on):
                         continue
                     matched = model_ds_mapping.get(cte.base_name_override)
                     if matched:
@@ -239,8 +236,10 @@ def generate_name_ds_mapping(
     output = {}
     for query in statements:
         if isinstance(query, PersistStatement):
-            logger.info(f"Starting on {_}")
-            key = query.datasource.address.location.split(".")[-1]
+            if isinstance(query.datasource.address, Address):
+                key = query.datasource.address.location.split(".")[-1]
+            else:
+                key = query.datasource.address.split(".")[-1]
             output[query.datasource.identifier] = key
     return output
 
@@ -250,9 +249,9 @@ def generate_model(
     preql_path: Path | None,
     dialect: Dialects,
     config: DagsterConfig,
+    model_ds_mapping: dict[str, str],
     environment: Environment | None = None,
     clear_target_dir: bool = True,
-    model_ds_mapping: dict[str, str] | None = None,
 ) -> list[ModelInput]:
     env: Environment = environment or Environment(
         working_path=preql_path.parent if preql_path else os.getcwd(),

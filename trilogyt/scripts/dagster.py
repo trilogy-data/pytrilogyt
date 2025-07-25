@@ -88,13 +88,13 @@ def dagster_wrapper(
     imports: list[ModelInput] = []
     config = DagsterConfig(root=dagster_path, namespace=preql.stem)
     if preql.is_file():
-
         with open(preql) as f:
             imports += generate_model(
                 f.read(),
                 preql,
                 dialect=dialect,
                 config=config,
+                model_ds_mapping={},
                 # environment = env  # type: ignore
             )
     else:
@@ -128,6 +128,7 @@ def dagster_string_command_wrapper(
         dagster_path / "io.preql",
         dialect=dialect,
         config=config,
+        model_ds_mapping={},
     )
     _ = generate_entry_file(imports, dialect, dagster_path, config)
     if run:

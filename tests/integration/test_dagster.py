@@ -63,7 +63,12 @@ def test_cli_string_dagster():
     assert result.exit_code == 0
 
     with open(
-        root.parent / "dagster" / "assets" / "io" / "static_one_gen_model.py"
+        root.parent
+        / "dagster_static"
+        / "src"
+        / "defs"
+        / "io"
+        / "static_one_gen_model.py"
     ) as f:
         content = f.read()
         assert "def static_one(duck_db: DuckDBResource)" in content, content

@@ -1,6 +1,6 @@
 from trilogy.dialect.enums import Dialects  # noqa
 from pathlib import Path as PathlibPath  # noqa
-from trilogy import Environment, Executor
+from trilogy import Environment
 from trilogy.parsing.render import Renderer
 from trilogy.utility import unique
 from trilogy.authoring import (

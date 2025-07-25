@@ -1,17 +1,17 @@
-from trilogy.dialect.enums import Dialects  # noqa
-from pathlib import Path as PathlibPath  # noqa
+import hashlib
+
 from trilogy import Environment
-from trilogy.parsing.parse_engine import parse_text
 from trilogy.authoring import (
+    ImportStatement,
     PersistStatement,
     SelectStatement,
-    ImportStatement,
 )
-from trilogy.core.statements.author import CopyStatement
 from trilogy.core.models.author import HasUUID
+from trilogy.core.statements.author import CopyStatement
+from trilogy.parsing.parse_engine import parse_text
+
 from trilogyt.core import fingerprint_environment
 from trilogyt.io import BaseWorkspace
-import hashlib
 
 
 class ContentToFingerprintCache:
@@ -44,9 +44,10 @@ class ContentToFingerprintCache:
 
         # If not in cache, compute the result
         local_env = workspace.get_environment()
-
+        statements: list[HasUUID] = []
         try:
-            new_env, statements = parse_text(content, environment=local_env)
+            new_env, raw_statements = parse_text(content, environment=local_env)
+            statements = [s for s in raw_statements if isinstance(s, HasUUID)]
         except Exception as e:
             raise e
 
@@ -54,7 +55,7 @@ class ContentToFingerprintCache:
             isinstance(statement, (SelectStatement, PersistStatement, CopyStatement))
             for statement in statements
         ):
-            result = ('', statements, new_env)
+            result = ("", statements, new_env)
         else:
             build_env = new_env.materialize_for_select({})
             human_labels = []

@@ -23,7 +23,7 @@ def native_wrapper(
         logger.debug(f"Removing existing {item}")
         os.remove(item)
 
-    env_to_optimization = {}
+    env_to_optimization: dict[PathlibPath, OptimizationResult] = {}
     if preql.is_file():
         base = FileWorkspace(working_path=preql.parent, paths=[preql])
     else:

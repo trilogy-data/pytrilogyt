@@ -21,15 +21,12 @@ def dbt_handler(
 ):
     logger.info("Optimizing trilogy files...")
 
-    root = (
-        native_wrapper(
-            preql=preql,
-            output_path=staging_path,
-            dialect=dialect,
-            debug=debug,
-            run=False,
-        )
-        or {}
+    native_wrapper(
+        preql=preql,
+        output_path=staging_path,
+        dialect=dialect,
+        debug=debug,
+        run=False,
     )
 
     logger.info("Generating dbt models...")

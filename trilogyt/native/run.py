@@ -8,40 +8,10 @@ from trilogyt.scripts.core import OptimizationResult
 
 
 def generate_execution_order(edges) -> list[Path]:
-    graph = DiGraph()
+    graph: DiGraph = DiGraph()
     for edge in edges:
         graph.add_edge(*edge)
-    return topological_sort(graph)  # type: ignore
-
-
-def run_path_v2(
-    path: Path,
-    dialect: Dialects,
-):
-    # initialize
-    files = path.glob("*.preql")
-    edges = []
-    executor = dialect.default_executor()
-    for x in files:
-        try:
-            env = Environment(working_path=path)
-            executor.environment = env
-            executor.parse_file(x)
-            for _, imp_list in env.imports.items():
-                for imp in imp_list:
-                    edges.append((imp.path, x))
-
-        except Exception as e:
-            logger.error(f" Error executing {x} {e}")
-            raise e
-
-    sorted_files: list[Path] = generate_execution_order(edges)
-    for file in sorted_files:
-        env = Environment(working_path=path)
-        executor.environment = env
-        if not file.suffix == "preql":
-            file = file.with_suffix(".preql")
-        executor.execute_file(path / file, non_interactive=True)
+    return list(topological_sort(graph))
 
 
 def run_path(
