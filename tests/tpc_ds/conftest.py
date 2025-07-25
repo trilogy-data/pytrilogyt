@@ -14,7 +14,7 @@ from trilogyt.scripts.native import OptimizationResult
 
 working_path = Path(__file__).parent
 
-SCALE_FACTOR = 0.5
+SCALE_FACTOR = 0.1
 
 
 @pytest.fixture(scope="session")
