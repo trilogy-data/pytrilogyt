@@ -195,7 +195,7 @@ def cte_to_persist(
 
 def remap_dictionary(d: dict, remap: list[str]) -> tuple[dict, dict]:
     new: dict[str, str] = {}
-    mapping: dict[str, CTE] = {}
+    mapping: dict[str, str] = {}
     for k, v in d.items():
         alias = None
         while alias is None or alias in new:

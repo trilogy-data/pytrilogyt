@@ -8,7 +8,7 @@ from trilogyt.dbt.config import DBTConfig
 from trilogyt.dbt.generate import generate_model as generate_dbt_model
 from trilogyt.io import FileWorkspace, MemoryWorkspace
 
-__version__ = "0.0.15"
+__version__ = "0.0.16"
 
 __all__ = [
     "enrich_environment",
