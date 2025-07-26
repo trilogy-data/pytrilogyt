@@ -9,8 +9,9 @@ from trilogy.authoring import (
     Datasource,
     PersistStatement,
 )
+from trilogy.core.models.build import BuildDatasource
 from trilogy.core.models.datasource import Address
-from trilogy.core.models.execute import UnionCTE
+from trilogy.core.models.execute import CTE, QueryDatasource, UnionCTE
 from trilogy.core.statements.execute import ProcessedQuery, ProcessedQueryPersist
 from trilogy.dialect.enums import Dialects
 from yaml import dump, safe_load
@@ -42,6 +43,27 @@ def generate_model_text(model_name: str, model_type: str, model_sql: str) -> str
     )
 
 
+def add_datasource_reference(
+    source: BuildDatasource | QueryDatasource, eligible: dict[str, Datasource]
+):
+    if not isinstance(source, BuildDatasource):
+        return
+    if source.identifier in eligible:
+        if isinstance(source.address, Address):
+            source.address.location = f"{{{{ ref('{source.identifier}_gen_model') }}}}"
+            source.address.is_query = True
+        elif isinstance(source.address, str):
+            source.address = f"{{{{ ref('{source.identifier}_gen_model') }}}}"
+
+
+def add_cte_reference(cte: CTE, eligible: dict[str, Datasource]):
+    if cte.base_name_override in eligible:
+        cte.base_name_override = f"{{{{ ref('{cte.base_name_override}_gen_model') }}}}"
+
+    for source in cte.source.datasources:
+        add_datasource_reference(source, eligible)
+
+
 def handle_processed_query(
     query: ProcessedQueryPersist,
     possible_dependencies: dict[str, Datasource],
@@ -54,23 +76,10 @@ def handle_processed_query(
         logger.info(f"checking cte {cte.name} with {eligible}")
         if isinstance(cte, UnionCTE):
             continue
-        if cte.base_name_override in eligible:
-            cte.base_name_override = (
-                f"{{{{ ref('{cte.base_name_override}_gen_model') }}}}"
-            )
-        for source in cte.source.datasources:
-            logger.info(source.identifier)
-            if not isinstance(source, Datasource):
-                continue
-
-            if source.identifier in eligible:
-                if isinstance(source.address, Address):
-                    source.address.location = (
-                        f"{{{{ ref('{source.identifier}_gen_model') }}}}"
-                    )
-                    source.address.quoted = False
-                elif isinstance(source.address, str):
-                    source.address = f"{{{{ ref('{source.identifier}_gen_model') }}}}"
+        add_cte_reference(
+            cte,
+            eligible,
+        )
     base = ProcessedQuery(
         output_columns=query.output_columns,
         ctes=query.ctes,
