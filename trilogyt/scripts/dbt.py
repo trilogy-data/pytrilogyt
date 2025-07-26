@@ -16,8 +16,6 @@ def dbt_handler(
     dbt_path: PathlibPath,
     dialect: Dialects,
     debug: bool,
-    run: bool,
-    children: list[PathlibPath],
 ):
     logger.info("Optimizing trilogy files...")
 
@@ -78,14 +76,12 @@ def dbt_wrapper(
                 # environment = env  # type: ignore
             )
     else:
-        children = list(preql.glob("*.preql"))
-        logger.info(f"Found children {children} children in {preql}")
         if staging_path:
-            dbt_handler(staging_path, preql, dbt_path, dialect, debug, run, children)
+            dbt_handler(staging_path, preql, dbt_path, dialect, debug)
         else:
             with tempfile.TemporaryDirectory() as tmpdirname:
                 new_path = PathlibPath(tmpdirname)
-                dbt_handler(new_path, preql, dbt_path, dialect, debug, run, children)
+                dbt_handler(new_path, preql, dbt_path, dialect, debug)
 
     if run:
         print("Executing generated models")

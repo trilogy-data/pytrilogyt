@@ -44,6 +44,23 @@ def test_full_model_build_dbt(logger):
     assert not fake.exists(), f"Fake file {fake} was not deleted"
 
 
+def test_cli_string_dbt_folder():
+    runner = CliRunner()
+    result = runner.invoke(
+        main,
+        [
+            "dbt",
+            "tests/integration/preql/nested",
+            "tests/integration/dbt_folder",
+            "duck_db",
+            "--run",
+        ],
+    )
+    if result.exception:
+        raise result.exception
+    assert result.exit_code == 0
+
+
 def test_cli_string_dbt():
     runner = CliRunner()
     result = runner.invoke(

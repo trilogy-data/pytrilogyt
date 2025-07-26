@@ -81,6 +81,23 @@ def test_file_build_native():
     assert result.exit_code == 0
 
 
+def test_file_build_native_folder():
+    runner = CliRunner()
+    path = Path(__file__).parent / "preql" / "nested"
+    result = runner.invoke(
+        main,
+        [
+            "trilogy",
+            str(path),
+            str(root.parent / "native_multi_file"),
+            "duck_db",
+        ],
+    )
+    if result.exception:
+        raise result.exception
+    assert result.exit_code == 0
+
+
 @pytest.mark.skip(reason="Need fixes to get this working in CI")
 def test_entrypoint(script_runner):
     result = script_runner.run(

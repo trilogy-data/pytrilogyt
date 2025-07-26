@@ -397,9 +397,6 @@ def process_loop(
             logger.info(
                 f"Creating new persist statement from cte {k} to {new_persist_stmt.datasource.address} with output {[x.address for x in cte.output_columns]} grain {cte.grain.components} conditions {cte.condition}"
             )
-            print(
-                f"Creating new persist statement from cte {k} with output {[x.address for x in cte.output_columns]} grain {cte.grain.components} conditions {cte.condition}"
-            )
             new_persist.append(new_persist_stmt)
 
     return ProcessLoopResult(new=new_persist)

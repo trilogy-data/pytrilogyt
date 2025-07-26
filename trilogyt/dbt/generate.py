@@ -68,6 +68,7 @@ def handle_processed_query(
                     source.address.location = (
                         f"{{{{ ref('{source.identifier}_gen_model') }}}}"
                     )
+                    source.address.quoted = False
                 elif isinstance(source.address, str):
                     source.address = f"{{{{ ref('{source.identifier}_gen_model') }}}}"
     base = ProcessedQuery(
