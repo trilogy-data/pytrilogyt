@@ -1,0 +1,69 @@
+const _trilogyt._created_at <- current_datetime();
+
+import web_sales as web_sales;
+
+WHERE
+    (web_sales.date.date >= '1999-02-22'::date and web_sales.date.date <= '1999-03-24'::date) and web_sales.item.category in ('Sports', 'Books', 'Home')
+SELECT
+    web_sales.item.name,
+    web_sales.item.desc,
+    web_sales.item.category,
+    web_sales.item.class,
+    web_sales.item.current_price,
+    sum(web_sales.extra_sales_price) -> itemrevenue,
+    --sum itemrevenue over web_sales.item.class -> itemclassrevenue,
+    (itemrevenue * 100.0) / itemclassrevenue -> revenueratio,
+ORDER BY
+    web_sales.item.category asc,
+    web_sales.item.class asc,
+    web_sales.item.name asc,
+    web_sales.item.desc asc,
+    revenueratio asc
+LIMIT 100
+;
+
+datasource dsweb_sales_item_id_web_sales_order_number_ae9e8881_filtered_on_date_date_category (
+    web_sales_extra_sales_price: ~web_sales.extra_sales_price,
+    web_sales_item_category: ~web_sales.item.category,
+    web_sales_item_class: ~web_sales.item.class,
+    web_sales_item_current_price: ~web_sales.item.current_price,
+    web_sales_item_desc: ~web_sales.item.desc,
+    web_sales_item_id: ~web_sales.item.id,
+    web_sales_item_name: ~web_sales.item.name,
+    web_sales_order_number: ~web_sales.order_number
+    )
+
+complete where (web_sales.date.date >= '1999-02-22'::date and web_sales.date.date <= '1999-03-24'::date) and web_sales.item.category in ('Sports', 'Books', 'Home')
+address dsweb_sales_item_id_web_sales_order_number_ae9e8881_filtered_on_date_date_category;
+
+datasource dsweb_sales_item_category_web_sales_item_class_web_sales_item_current_price_web_sales_item_desc_web_sales_item_name_93d6159c (
+    itemrevenue: itemrevenue,
+    web_sales_item_category: web_sales.item.category,
+    web_sales_item_class: web_sales.item.class,
+    web_sales_item_current_price: web_sales.item.current_price,
+    web_sales_item_desc: web_sales.item.desc,
+    web_sales_item_name: web_sales.item.name
+    )
+
+address dsweb_sales_item_category_web_sales_item_class_web_sales_item_current_price_web_sales_item_desc_web_sales_item_name_93d6159c;
+
+datasource dsweb_sales_item_class_df37a239 (
+    itemclassrevenue: itemclassrevenue,
+    itemrevenue: itemrevenue,
+    web_sales_item_class: web_sales.item.class
+    )
+
+address dsweb_sales_item_class_df37a239;
+
+datasource dsweb_sales_item_category_web_sales_item_class_web_sales_item_current_price_web_sales_item_desc_web_sales_item_name_1c30e378 (
+    itemclassrevenue: itemclassrevenue,
+    itemrevenue: itemrevenue,
+    revenueratio: revenueratio,
+    web_sales_item_category: web_sales.item.category,
+    web_sales_item_class: web_sales.item.class,
+    web_sales_item_current_price: web_sales.item.current_price,
+    web_sales_item_desc: web_sales.item.desc,
+    web_sales_item_name: web_sales.item.name
+    )
+
+address dsweb_sales_item_category_web_sales_item_class_web_sales_item_current_price_web_sales_item_desc_web_sales_item_name_1c30e378;

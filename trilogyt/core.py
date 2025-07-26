@@ -1,9 +1,10 @@
 from hashlib import sha256
 
+from trilogy.authoring import Concept, DataType, Environment
 from trilogy.core.enums import Purpose
 from trilogy.core.env_processor import generate_graph
 from trilogy.core.functions import CurrentDatetime
-from trilogy.core.models import Concept, DataType, Environment
+from trilogy.core.models.build_environment import BuildEnvironment
 
 from trilogyt.constants import TRILOGY_NAMESPACE
 from trilogyt.enums import PreqltMetrics
@@ -28,7 +29,7 @@ def enrich_environment(env: Environment):
     return env
 
 
-def fingerprint_environment(env: Environment) -> str:
+def fingerprint_environment(env: BuildEnvironment) -> str:
     graph = generate_graph(env)
     edges = "-".join([str(x) for x in sorted(list(graph.edges))])
     return sha256(edges.encode()).hexdigest()

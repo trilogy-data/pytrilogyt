@@ -1,17 +1,15 @@
-# Generated from preql source: c:\Users\ethan\coding_projects\pypreql-etl\tests\integration\preql\generic.preql
-# Do not edit manually
-
 
 key scalar int;
 property scalar.int_array list<int>;
-key split <- unnest(int_array);
-
+auto split <- unnest(int_array);
 
 datasource avalues (
-    int_array: int_array,
-    scalar: scalar
-    )
+    int_array:int_array,
+    scalar:scalar
+
+)
 grain (scalar)
-query '''(
+query '''
 select [1,2,3,4] as int_array, 2 as scalar
-)''';
+''';
+

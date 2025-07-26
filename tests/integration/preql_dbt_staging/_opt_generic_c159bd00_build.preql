@@ -1,0 +1,17 @@
+const _trilogyt._created_at <- current_datetime();
+
+import generic as generic;
+
+SELECT
+    generic.split,
+;
+
+SELECT
+    generic.split,
+    generic.scalar,
+;
+
+PERSIST dsgeneric_scalar_445831a9 INTO dsgeneric_scalar_445831a9 FROM SELECT
+    generic.int_array,
+    generic.scalar,
+;

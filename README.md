@@ -27,11 +27,11 @@ Currently supported backends:
 
 ## How to Run
 
-preqlt <backend> <preql_path> <output_path> <backend> --run
+trilogyt <backend> <preql_path> <output_path> <backend> --run
 
 ## Trilogy
 
-Optimize and execute a trilogy script (or set of scripts)
+Optimize and (optionally) execute a trilogy script (or set of scripts)
 
 ```bash
 trilogyt trilogy trilogy/scripts trilogy/build bigquery --run

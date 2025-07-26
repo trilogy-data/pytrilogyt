@@ -1,26 +1,51 @@
-import os
-from pathlib import Path as PathlibPath
-from sys import path as sys_path
+from pathlib import Path
+from typing import Union
 
-from click import Path, argument, group, option
+from click import Path as ClickPath
+from click import argument, group, option
 from trilogy.dialect.enums import Dialects
 from trilogy.parsing.render import Renderer
 
-# handles development cases
-nb_path = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
-sys_path.insert(0, nb_path)
-
-from trilogyt.scripts.dbt import dbt_wrapper, dbt_string_command_wrapper  # noqa
-from trilogyt.scripts.native import (  # noqa
-    native_wrapper,
-    native_string_command_wrapper,
-)
-from trilogyt.scripts.dagster import (  # noqa
-    dagster_wrapper,
+from trilogyt.scripts.dagster import (
     dagster_string_command_wrapper,
+    dagster_wrapper,
+)
+from trilogyt.scripts.dbt import dbt_string_command_wrapper, dbt_wrapper
+from trilogyt.scripts.native import (
+    native_string_command_wrapper,
+    native_wrapper,
 )
 
 renderer = Renderer()
+
+
+def setup_output_directory(output_path: Union[str, Path]) -> Path:
+    """
+    Ensure output directory exists and return resolved Path object.
+    """
+    output = Path(output_path).resolve()
+    output.mkdir(exist_ok=True, parents=True)
+    return output
+
+
+def execute_command(
+    preql_input: Union[str, Path],
+    output_path: Path,
+    dialect: Dialects,
+    debug: bool,
+    run: bool,
+    file_wrapper,
+    string_wrapper,
+):
+    """
+    Common execution logic for all commands.
+    """
+    preql_path = Path(preql_input)
+    if preql_path.exists():
+        return file_wrapper(preql_path.resolve(), output_path, dialect, debug, run)
+
+    # If no file found, treat as string command
+    return string_wrapper(str(preql_input), output_path, dialect, debug, run)
 
 
 @group()
@@ -30,56 +55,75 @@ def main():
 
 
 @main.command()
-@argument("preql", type=Path())
-@argument("output_path", type=Path(exists=False))
-# @argument("write_path", type=Path(exists=True))
+@argument("preql", type=ClickPath())
+@argument("output_path", type=ClickPath(exists=False))
 @argument("dialect", type=str)
 @option("--run", is_flag=True, type=bool, default=False)
 @option("--debug", type=bool, default=False)
-def dbt(preql: str | Path, output_path: Path, dialect: str, debug: bool, run: bool):
-    output = PathlibPath(str(output_path))
-    if not output.exists():
-        output.mkdir()
+def dbt(
+    preql: Union[str, Path], output_path: Path, dialect: str, debug: bool, run: bool
+):
+    """DBT command with multiple location checking for preql files."""
+    output = setup_output_directory(output_path)
     edialect = Dialects(dialect)
-    preqlt: PathlibPath = PathlibPath(str(preql))
-    if preqlt.exists():
-        return dbt_wrapper(preqlt, output, edialect, debug, run)
-    return dbt_string_command_wrapper(str(preql), output, edialect, debug, run)
+
+    return execute_command(
+        preql,
+        output,
+        edialect,
+        debug,
+        run,
+        dbt_wrapper,
+        dbt_string_command_wrapper,
+    )
 
 
 @main.command()
-@argument("preql", type=Path())
-@argument("output_path", type=Path(exists=False))
-# @argument("write_path", type=Path(exists=True))
+@argument("preql", type=ClickPath())
+@argument("output_path", type=ClickPath(exists=False))
 @argument("dialect", type=str)
 @option("--run", is_flag=True, type=bool, default=False)
 @option("--debug", type=bool, default=False)
-def trilogy(preql: str | Path, output_path: Path, dialect: str, debug: bool, run: bool):
-    output = PathlibPath(str(output_path))
-    if not output.exists():
-        output.mkdir()
+def trilogy(
+    preql: Union[str, Path], output_path: Path, dialect: str, debug: bool, run: bool
+):
+    """Trilogy/native command."""
+    output = setup_output_directory(output_path)
     edialect = Dialects(dialect)
-    preqlt: PathlibPath = PathlibPath(str(preql))
-    if preqlt.exists():
-        return native_wrapper(preqlt, output, edialect, debug, run)
-    return native_string_command_wrapper(str(preql), output, edialect, debug, run)
+
+    return execute_command(
+        preql,
+        output,
+        edialect,
+        debug,
+        run,
+        native_wrapper,
+        native_string_command_wrapper,
+    )
 
 
 @main.command()
-@argument("preql", type=Path())
-@argument("output_path", type=Path(exists=True))
+@argument("preql", type=ClickPath())
+@argument("output_path", type=ClickPath(exists=True))  # Note: exists=True for dagster
 @argument("dialect", type=str)
 @option("--run", is_flag=True, type=bool, default=False)
 @option("--debug", type=bool, default=False)
-def dagster(preql: str | Path, output_path: Path, dialect: str, debug: bool, run: bool):
-    output = PathlibPath(str(output_path))
-    if not output.exists():
-        output.mkdir()
+def dagster(
+    preql: Union[str, Path], output_path: Path, dialect: str, debug: bool, run: bool
+):
+    """Dagster command."""
+    output = setup_output_directory(output_path)
     edialect = Dialects(dialect)
-    preqlt: PathlibPath = PathlibPath(str(preql))
-    if preqlt.exists():
-        return dagster_wrapper(preqlt, output, edialect, debug, run)
-    return dagster_string_command_wrapper(str(preql), output, edialect, debug, run)
+
+    return execute_command(
+        preql,
+        output,
+        edialect,
+        debug,
+        run,
+        dagster_wrapper,
+        dagster_string_command_wrapper,
+    )
 
 
 if __name__ == "__main__":

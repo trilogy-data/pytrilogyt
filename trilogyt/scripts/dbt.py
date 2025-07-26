@@ -4,7 +4,7 @@ from trilogyt.constants import OPTIMIZATION_NAMESPACE  # noqa
 from trilogyt.dbt.generate import generate_model  # noqa
 from trilogyt.dbt.run import run_path  # noqa
 from trilogyt.dbt.config import DBTConfig  # noqa
-from trilogyt.scripts.native import native_wrapper, OptimizationResult
+from trilogyt.scripts.native import native_wrapper
 from trilogyt.constants import logger
 import os
 import tempfile
@@ -16,20 +16,15 @@ def dbt_handler(
     dbt_path: PathlibPath,
     dialect: Dialects,
     debug: bool,
-    run: bool,
-    children: list[PathlibPath],
 ):
     logger.info("Optimizing trilogy files...")
 
-    root = (
-        native_wrapper(
-            preql=preql,
-            output_path=staging_path,
-            dialect=dialect,
-            debug=debug,
-            run=False,
-        )
-        or {}
+    native_wrapper(
+        preql=preql,
+        output_path=staging_path,
+        dialect=dialect,
+        debug=debug,
+        run=False,
     )
 
     logger.info("Generating dbt models...")
@@ -40,35 +35,24 @@ def dbt_handler(
         for item in opt.glob("*.sql"):
             logger.debug(f"Removing existing {item}")
             os.remove(item)
-    for orig_file in children:
+    for orig_file in staging_path.glob("*.preql"):
         file = staging_path / orig_file.name
         logger.info(f"Generating dbt model for {file} into dbt_path {dbt_path}")
-        # don't build hidden files
         if file.stem.startswith("_"):
-            continue
-
-        optimization: OptimizationResult | None = root.get(orig_file)
-
-        if optimization:
-            with open(optimization.path) as opt_file:
-                opt_config = DBTConfig(
-                    root=PathlibPath(dbt_path), namespace=OPTIMIZATION_NAMESPACE
-                )
-                generate_model(
-                    opt_file.read(),
-                    optimization.path,
-                    dialect=dialect,
-                    config=opt_config,
-                    clear_target_dir=False,
-                    # environment = env  # type: ignore
-                )
-        config = DBTConfig(root=PathlibPath(dbt_path), namespace=file.stem)
+            config = DBTConfig(
+                root=PathlibPath(dbt_path), namespace=OPTIMIZATION_NAMESPACE
+            )
+            clear = False
+        else:
+            clear = True
+            config = DBTConfig(root=PathlibPath(dbt_path), namespace=file.stem)
         with open(file) as f:
             generate_model(
                 f.read(),
                 file,
                 dialect=dialect,
                 config=config,
+                clear_target_dir=clear,
                 # environment = env  # type: ignore
             )
 
@@ -92,13 +76,12 @@ def dbt_wrapper(
                 # environment = env  # type: ignore
             )
     else:
-        children = list(preql.glob("*.preql"))
         if staging_path:
-            dbt_handler(staging_path, preql, dbt_path, dialect, debug, run, children)
+            dbt_handler(staging_path, preql, dbt_path, dialect, debug)
         else:
             with tempfile.TemporaryDirectory() as tmpdirname:
                 new_path = PathlibPath(tmpdirname)
-                dbt_handler(new_path, preql, dbt_path, dialect, debug, run, children)
+                dbt_handler(new_path, preql, dbt_path, dialect, debug)
 
     if run:
         print("Executing generated models")

@@ -1,0 +1,16 @@
+const _trilogyt._created_at <- current_datetime();
+
+import orders;
+
+PERSIST default.ds5ee65fd281280e35a3494d4b6afd637f0acc6789427d738c7e8c87fba26ebdb4 INTO ds5ee65fd281280e35a3494d4b6afd637f0acc6789427d738c7e8c87fba26ebdb4 FROM SELECT
+    revenue,
+    qty,
+    product.id,
+    order_id,
+;
+
+PERSIST default.dse3d22ec1228b66460e9f3afa191645b11d10b682378c0fd3fc0681a0c1efb461 INTO dse3d22ec1228b66460e9f3afa191645b11d10b682378c0fd3fc0681a0c1efb461 FROM SELECT
+    customer.id,
+    order_id,
+    store.id,
+;

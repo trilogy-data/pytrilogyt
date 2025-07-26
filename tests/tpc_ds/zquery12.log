@@ -1,0 +1,117 @@
+base_prep_time = 0.0
+base_parse_time = 0.425355
+base_generation_time = 0.0
+base_exec_time = 0.176876
+optimized_prep_time = 0.007969
+optimized_parse_time = 0.364891
+optimized_generation_time = 0.004015
+optimized_exec_time = 0.159834
+was_optimized = true
+base_generated_sql = """
+
+WITH 
+cheerful as (
+SELECT
+    \"web_sales_item_items\".\"I_CATEGORY\" as \"web_sales_item_category\",
+    \"web_sales_item_items\".\"I_CLASS\" as \"web_sales_item_class\",
+    \"web_sales_item_items\".\"I_CURRENT_PRICE\" as \"web_sales_item_current_price\",
+    \"web_sales_item_items\".\"I_ITEM_DESC\" as \"web_sales_item_desc\",
+    \"web_sales_item_items\".\"I_ITEM_ID\" as \"web_sales_item_name\",
+    \"web_sales_item_items\".\"I_ITEM_SK\" as \"web_sales_item_id\",
+    \"web_sales_web_sales\".\"WS_EXT_SALES_PRICE\" as \"web_sales_extra_sales_price\",
+    \"web_sales_web_sales\".\"WS_ORDER_NUMBER\" as \"web_sales_order_number\"
+FROM
+    \"memory\".\"web_sales\" as \"web_sales_web_sales\"
+    INNER JOIN \"memory\".\"date_dim\" as \"web_sales_date_date\" on \"web_sales_web_sales\".\"WS_SOLD_DATE_SK\" = \"web_sales_date_date\".\"D_DATE_SK\"
+    INNER JOIN \"memory\".\"item\" as \"web_sales_item_items\" on \"web_sales_web_sales\".\"WS_ITEM_SK\" = \"web_sales_item_items\".\"I_ITEM_SK\"
+WHERE
+    cast(\"web_sales_date_date\".\"D_DATE\" as date) >= date '1999-02-22' and cast(\"web_sales_date_date\".\"D_DATE\" as date) <= date '1999-03-24' and \"web_sales_item_items\".\"I_CATEGORY\" in ('Sports','Books','Home')
+),
+thoughtful as (
+SELECT
+    \"cheerful\".\"web_sales_item_category\" as \"web_sales_item_category\",
+    \"cheerful\".\"web_sales_item_class\" as \"web_sales_item_class\",
+    \"cheerful\".\"web_sales_item_current_price\" as \"web_sales_item_current_price\",
+    \"cheerful\".\"web_sales_item_desc\" as \"web_sales_item_desc\",
+    \"cheerful\".\"web_sales_item_name\" as \"web_sales_item_name\",
+    sum(\"cheerful\".\"web_sales_extra_sales_price\") as \"itemrevenue\"
+FROM
+    \"cheerful\"
+GROUP BY 
+    \"cheerful\".\"web_sales_item_category\",
+    \"cheerful\".\"web_sales_item_class\",
+    \"cheerful\".\"web_sales_item_current_price\",
+    \"cheerful\".\"web_sales_item_desc\",
+    \"cheerful\".\"web_sales_item_name\"),
+cooperative as (
+SELECT
+    \"thoughtful\".\"itemrevenue\" as \"itemrevenue\",
+    \"thoughtful\".\"web_sales_item_class\" as \"web_sales_item_class\",
+    sum(\"thoughtful\".\"itemrevenue\") over (partition by \"thoughtful\".\"web_sales_item_class\") as \"itemclassrevenue\"
+FROM
+    \"thoughtful\")
+SELECT
+    \"thoughtful\".\"web_sales_item_name\" as \"web_sales_item_name\",
+    \"thoughtful\".\"web_sales_item_desc\" as \"web_sales_item_desc\",
+    \"thoughtful\".\"web_sales_item_category\" as \"web_sales_item_category\",
+    \"thoughtful\".\"web_sales_item_class\" as \"web_sales_item_class\",
+    \"thoughtful\".\"web_sales_item_current_price\" as \"web_sales_item_current_price\",
+    \"thoughtful\".\"itemrevenue\" as \"itemrevenue\",
+    (\"thoughtful\".\"itemrevenue\" * 100.0) / \"cooperative\".\"itemclassrevenue\" as \"revenueratio\"
+FROM
+    \"cooperative\"
+    LEFT OUTER JOIN \"thoughtful\" on (\"cooperative\".\"itemrevenue\" = \"thoughtful\".\"itemrevenue\" or (\"cooperative\".\"itemrevenue\" is null and \"thoughtful\".\"itemrevenue\" is null)) AND (\"cooperative\".\"web_sales_item_class\" = \"thoughtful\".\"web_sales_item_class\" or (\"cooperative\".\"web_sales_item_class\" is null and \"thoughtful\".\"web_sales_item_class\" is null))
+ORDER BY 
+    \"thoughtful\".\"web_sales_item_category\" asc,
+    \"thoughtful\".\"web_sales_item_class\" asc,
+    \"thoughtful\".\"web_sales_item_name\" asc,
+    \"thoughtful\".\"web_sales_item_desc\" asc,
+    (\"thoughtful\".\"itemrevenue\" * 100.0) / \"cooperative\".\"itemclassrevenue\" asc
+LIMIT (100)"""
+optimized_generated_sql = """
+
+WITH 
+wakeful as (
+SELECT
+    \"dsweb_sales_item_id_web_sales_order_number_ae9e8881_filtered_on_date_date_category\".\"web_sales_item_category\" as \"web_sales_item_category\",
+    \"dsweb_sales_item_id_web_sales_order_number_ae9e8881_filtered_on_date_date_category\".\"web_sales_item_class\" as \"web_sales_item_class\",
+    \"dsweb_sales_item_id_web_sales_order_number_ae9e8881_filtered_on_date_date_category\".\"web_sales_item_current_price\" as \"web_sales_item_current_price\",
+    \"dsweb_sales_item_id_web_sales_order_number_ae9e8881_filtered_on_date_date_category\".\"web_sales_item_desc\" as \"web_sales_item_desc\",
+    \"dsweb_sales_item_id_web_sales_order_number_ae9e8881_filtered_on_date_date_category\".\"web_sales_item_name\" as \"web_sales_item_name\",
+    sum(\"dsweb_sales_item_id_web_sales_order_number_ae9e8881_filtered_on_date_date_category\".\"web_sales_extra_sales_price\") as \"itemrevenue\"
+FROM
+    \"dsweb_sales_item_id_web_sales_order_number_ae9e8881_filtered_on_date_date_category\"
+GROUP BY 
+    \"dsweb_sales_item_id_web_sales_order_number_ae9e8881_filtered_on_date_date_category\".\"web_sales_item_category\",
+    \"dsweb_sales_item_id_web_sales_order_number_ae9e8881_filtered_on_date_date_category\".\"web_sales_item_class\",
+    \"dsweb_sales_item_id_web_sales_order_number_ae9e8881_filtered_on_date_date_category\".\"web_sales_item_current_price\",
+    \"dsweb_sales_item_id_web_sales_order_number_ae9e8881_filtered_on_date_date_category\".\"web_sales_item_desc\",
+    \"dsweb_sales_item_id_web_sales_order_number_ae9e8881_filtered_on_date_date_category\".\"web_sales_item_name\"),
+cheerful as (
+SELECT
+    \"wakeful\".\"itemrevenue\" as \"itemrevenue\",
+    \"wakeful\".\"web_sales_item_class\" as \"web_sales_item_class\",
+    sum(\"wakeful\".\"itemrevenue\") over (partition by \"wakeful\".\"web_sales_item_class\") as \"itemclassrevenue\"
+FROM
+    \"wakeful\")
+SELECT
+    \"wakeful\".\"web_sales_item_name\" as \"web_sales_item_name\",
+    \"wakeful\".\"web_sales_item_desc\" as \"web_sales_item_desc\",
+    \"wakeful\".\"web_sales_item_category\" as \"web_sales_item_category\",
+    \"wakeful\".\"web_sales_item_class\" as \"web_sales_item_class\",
+    \"wakeful\".\"web_sales_item_current_price\" as \"web_sales_item_current_price\",
+    \"wakeful\".\"itemrevenue\" as \"itemrevenue\",
+    (\"wakeful\".\"itemrevenue\" * 100.0) / \"cheerful\".\"itemclassrevenue\" as \"revenueratio\"
+FROM
+    \"cheerful\"
+    LEFT OUTER JOIN \"wakeful\" on (\"cheerful\".\"itemrevenue\" = \"wakeful\".\"itemrevenue\" or (\"cheerful\".\"itemrevenue\" is null and \"wakeful\".\"itemrevenue\" is null)) AND (\"cheerful\".\"web_sales_item_class\" = \"wakeful\".\"web_sales_item_class\" or (\"cheerful\".\"web_sales_item_class\" is null and \"wakeful\".\"web_sales_item_class\" is null))
+ORDER BY 
+    \"wakeful\".\"web_sales_item_category\" asc,
+    \"wakeful\".\"web_sales_item_class\" asc,
+    \"wakeful\".\"web_sales_item_name\" asc,
+    \"wakeful\".\"web_sales_item_desc\" asc,
+    (\"wakeful\".\"itemrevenue\" * 100.0) / \"cheerful\".\"itemclassrevenue\" asc
+LIMIT (100)"""
+query_id = 12
+sql_comp_time = 0.296463
+total_time = 1.444886

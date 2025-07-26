@@ -1,0 +1,19 @@
+const _trilogyt._created_at <- current_datetime();
+
+import generic as generic;
+
+SELECT
+    generic.split,
+;
+
+SELECT
+    generic.split,
+    generic.scalar,
+;
+
+datasource dsgeneric_scalar_445831a9 (
+    generic_int_array: generic.int_array,
+    generic_scalar: generic.scalar
+    )
+
+address dsgeneric_scalar_445831a9;

@@ -1,0 +1,54 @@
+const _trilogyt._created_at <- current_datetime();
+
+import store_returns as returns;
+
+WHERE
+    returns.store.state = 'TN' and returns.return_date.year = 2000
+SELECT
+    returns.customer.text_id,
+    --sum(returns.return_amount) -> total_returns,
+    --returns.store.id,
+    --avg(total_returns) by returns.store.id -> avg_store_returns,
+HAVING
+    total_returns > (1.2 * avg_store_returns)
+
+ORDER BY
+    returns.customer.text_id asc
+LIMIT 100
+;
+
+datasource dsreturns_customer_text_id_returns_item_id_returns_store_sales_ticket_number_a09b5495_filtered_on_state_year (
+    returns_customer_text_id: ~returns.customer.text_id,
+    returns_item_id: ~returns.item.id,
+    returns_return_amount: ~returns.return_amount,
+    returns_store_id: ~returns.store.id,
+    returns_store_sales_ticket_number: ~returns.store_sales.ticket_number
+    )
+
+complete where returns.store.state = 'TN' and returns.return_date.year = 2000
+address dsreturns_customer_text_id_returns_item_id_returns_store_sales_ticket_number_a09b5495_filtered_on_state_year;
+
+datasource dsreturns_customer_text_id_returns_store_id_076b41e9 (
+    total_returns: total_returns,
+    returns_customer_text_id: returns.customer.text_id,
+    returns_store_id: returns.store.id
+    )
+
+address dsreturns_customer_text_id_returns_store_id_076b41e9;
+
+datasource dsreturns_store_id_54404a33 (
+    avg_store_returns: avg_store_returns,
+    returns_store_id: returns.store.id
+    )
+
+address dsreturns_store_id_54404a33;
+
+datasource dsreturns_customer_text_id_returns_store_id_3beaaf57_filtered_on_total_returns_avg_store_returns (
+    avg_store_returns: ~avg_store_returns,
+    total_returns: ~total_returns,
+    returns_customer_text_id: ~returns.customer.text_id,
+    returns_store_id: ~returns.store.id
+    )
+
+complete where total_returns > (1.2 * avg_store_returns)
+address dsreturns_customer_text_id_returns_store_id_3beaaf57_filtered_on_total_returns_avg_store_returns;

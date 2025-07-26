@@ -1,22 +1,9 @@
 -- Generated from preql source: customer_four
 -- Do not edit manually
 {{ config(materialized='table') }}
-
-WITH 
-quizzical as (
 SELECT
-    cast(get_current_timestamp() as datetime) as "_trilogyt__created_at"
-),
-dynamic as (
-SELECT
-    ds2a1b9ef4ddfd30b8a720fd5891233a0df824a60bcbb6553d4acd76e27d402670."cte_generic_split" as "cte_generic_split"
+    "dscte_generic_scalar_02e41b09"."cte_generic_split" as "cte_generic_split"
 FROM
-    {{ ref('ds2a1b9ef4ddfd30b8a720fd5891233a0df824a60bcbb6553d4acd76e27d402670_gen_model') }} as ds2a1b9ef4ddfd30b8a720fd5891233a0df824a60bcbb6553d4acd76e27d402670
+    "{{ ref('dscte_generic_scalar_02e41b09_gen_model') }}" as "dscte_generic_scalar_02e41b09"
 GROUP BY 
-    ds2a1b9ef4ddfd30b8a720fd5891233a0df824a60bcbb6553d4acd76e27d402670."cte_generic_split")
-SELECT
-    dynamic."cte_generic_split" as "cte_generic_split",
-    quizzical."_trilogyt__created_at" as "_trilogyt__created_at"
-FROM
-    dynamic
-    FULL JOIN quizzical on 1=1
+    "dscte_generic_scalar_02e41b09"."cte_generic_split"

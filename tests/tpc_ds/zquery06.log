@@ -1,0 +1,143 @@
+base_prep_time = 0.0
+base_parse_time = 0.472171
+base_generation_time = 0.010619
+base_exec_time = 0.111459
+optimized_prep_time = 0.002012
+optimized_parse_time = 0.961153
+optimized_generation_time = 0.021938
+optimized_exec_time = 0.394281
+was_optimized = true
+base_generated_sql = """
+
+WITH 
+questionable as (
+SELECT
+    \"item_items\".\"I_CATEGORY\" as \"item_category\",
+    \"store_sales_customer_customer_address\".\"CA_STATE\" as \"store_sales_customer_state\",
+    \"store_sales_date_date\".\"D_MOY\" as \"store_sales_date_month_of_year\",
+    \"store_sales_item_items\".\"I_CATEGORY\" as \"store_sales_item_category\",
+    \"store_sales_item_items\".\"I_CURRENT_PRICE\" as \"store_sales_item_current_price\",
+    \"store_sales_item_items\".\"I_ITEM_SK\" as \"item_id\",
+    \"store_sales_store_sales\".\"SS_TICKET_NUMBER\" as \"store_sales_ticket_number\",
+    cast(\"store_sales_date_date\".\"D_YEAR\" as int) as \"store_sales_date_year\"
+FROM
+    \"memory\".\"store_sales\" as \"store_sales_store_sales\"
+    INNER JOIN \"memory\".\"date_dim\" as \"store_sales_date_date\" on \"store_sales_store_sales\".\"SS_SOLD_DATE_SK\" = \"store_sales_date_date\".\"D_DATE_SK\"
+    INNER JOIN \"memory\".\"customer\" as \"store_sales_customer_customers\" on \"store_sales_store_sales\".\"SS_CUSTOMER_SK\" = \"store_sales_customer_customers\".\"C_CUSTOMER_SK\"
+    INNER JOIN \"memory\".\"customer_address\" as \"store_sales_customer_customer_address\" on \"store_sales_customer_customers\".\"C_CURRENT_ADDR_SK\" = \"store_sales_customer_customer_address\".\"CA_ADDRESS_SK\"
+    INNER JOIN \"memory\".\"item\" as \"store_sales_item_items\" on \"store_sales_store_sales\".\"SS_ITEM_SK\" = \"store_sales_item_items\".\"I_ITEM_SK\"
+    INNER JOIN \"memory\".\"item\" as \"item_items\" on \"store_sales_store_sales\".\"SS_ITEM_SK\" = \"item_items\".\"I_ITEM_SK\"
+WHERE
+    cast(\"store_sales_date_date\".\"D_YEAR\" as int) = 2001 and \"store_sales_date_date\".\"D_MOY\" = 1 and \"store_sales_item_items\".\"I_CATEGORY\" is not null
+),
+abundant as (
+SELECT
+    \"item_items\".\"I_CATEGORY\" as \"item_category\",
+    avg(\"item_items\".\"I_CURRENT_PRICE\") as \"_virt_agg_avg_5942253052406187\"
+FROM
+    \"memory\".\"item\" as \"item_items\"
+GROUP BY 
+    \"item_items\".\"I_CATEGORY\"),
+uneven as (
+SELECT
+    \"questionable\".\"item_id\" as \"item_id\",
+    \"questionable\".\"store_sales_customer_state\" as \"store_sales_customer_state\",
+    \"questionable\".\"store_sales_ticket_number\" as \"store_sales_ticket_number\"
+FROM
+    \"questionable\"
+    INNER JOIN \"abundant\" on (\"questionable\".\"item_category\" = \"abundant\".\"item_category\" or (\"questionable\".\"item_category\" is null and \"abundant\".\"item_category\" is null))
+WHERE
+    \"questionable\".\"store_sales_date_year\" = 2001 and \"questionable\".\"store_sales_date_month_of_year\" = 1 and \"questionable\".\"store_sales_item_current_price\" > 1.2 * \"abundant\".\"_virt_agg_avg_5942253052406187\" and \"questionable\".\"store_sales_item_category\" is not null
+),
+yummy as (
+SELECT
+    \"uneven\".\"item_id\" as \"item_id\",
+    \"uneven\".\"store_sales_customer_state\" as \"store_sales_customer_state\",
+    \"uneven\".\"store_sales_ticket_number\" as \"store_sales_ticket_number\"
+FROM
+    \"uneven\"
+GROUP BY 
+    \"uneven\".\"item_id\",
+    \"uneven\".\"store_sales_customer_state\",
+    \"uneven\".\"store_sales_ticket_number\")
+SELECT
+    \"yummy\".\"store_sales_customer_state\" as \"store_sales_customer_state\",
+    sum(1) as \"customer_count\"
+FROM
+    \"yummy\"
+GROUP BY 
+    \"yummy\".\"store_sales_customer_state\"
+HAVING
+    sum(1) >= 10
+
+ORDER BY 
+    sum(1) asc nulls first,
+    \"yummy\".\"store_sales_customer_state\" asc nulls first"""
+optimized_generated_sql = """
+
+WITH 
+questionable as (
+SELECT
+    \"dsitem_id_store_sales_customer_state_store_sales_ticket_number_fd3a683a\".\"store_sales_customer_state\" as \"store_sales_customer_state\",
+    \"item_items\".\"I_CATEGORY\" as \"item_category\",
+    \"store_sales_date_date\".\"D_MOY\" as \"store_sales_date_month_of_year\",
+    \"store_sales_item_items\".\"I_CATEGORY\" as \"store_sales_item_category\",
+    \"store_sales_item_items\".\"I_CURRENT_PRICE\" as \"store_sales_item_current_price\",
+    \"store_sales_item_items\".\"I_ITEM_SK\" as \"item_id\",
+    \"store_sales_store_sales\".\"SS_TICKET_NUMBER\" as \"store_sales_ticket_number\",
+    cast(\"store_sales_date_date\".\"D_YEAR\" as int) as \"store_sales_date_year\"
+FROM
+    \"memory\".\"store_sales\" as \"store_sales_store_sales\"
+    INNER JOIN \"memory\".\"date_dim\" as \"store_sales_date_date\" on \"store_sales_store_sales\".\"SS_SOLD_DATE_SK\" = \"store_sales_date_date\".\"D_DATE_SK\"
+    INNER JOIN \"dsitem_id_store_sales_customer_state_store_sales_ticket_number_fd3a683a\" as \"dsitem_id_store_sales_customer_state_store_sales_ticket_number_fd3a683a\" on \"store_sales_store_sales\".\"SS_ITEM_SK\" = \"dsitem_id_store_sales_customer_state_store_sales_ticket_number_fd3a683a\".\"item_id\" AND \"store_sales_store_sales\".\"SS_TICKET_NUMBER\" = \"dsitem_id_store_sales_customer_state_store_sales_ticket_number_fd3a683a\".\"store_sales_ticket_number\"
+    INNER JOIN \"memory\".\"item\" as \"store_sales_item_items\" on \"dsitem_id_store_sales_customer_state_store_sales_ticket_number_fd3a683a\".\"item_id\" = \"store_sales_item_items\".\"I_ITEM_SK\"
+    INNER JOIN \"memory\".\"item\" as \"item_items\" on \"dsitem_id_store_sales_customer_state_store_sales_ticket_number_fd3a683a\".\"item_id\" = \"item_items\".\"I_ITEM_SK\"
+WHERE
+    cast(\"store_sales_date_date\".\"D_YEAR\" as int) = 2001
+),
+abundant as (
+SELECT
+    \"item_items\".\"I_CATEGORY\" as \"item_category\",
+    avg(\"item_items\".\"I_CURRENT_PRICE\") as \"_virt_agg_avg_5942253052406187\"
+FROM
+    \"memory\".\"item\" as \"item_items\"
+GROUP BY 
+    \"item_items\".\"I_CATEGORY\"),
+uneven as (
+SELECT
+    \"questionable\".\"item_id\" as \"item_id\",
+    \"questionable\".\"store_sales_customer_state\" as \"store_sales_customer_state\",
+    \"questionable\".\"store_sales_ticket_number\" as \"store_sales_ticket_number\"
+FROM
+    \"questionable\"
+    INNER JOIN \"abundant\" on (\"questionable\".\"item_category\" = \"abundant\".\"item_category\" or (\"questionable\".\"item_category\" is null and \"abundant\".\"item_category\" is null))
+WHERE
+    \"questionable\".\"store_sales_date_year\" = 2001 and ( \"questionable\".\"store_sales_date_month_of_year\" = 1 and ( \"questionable\".\"store_sales_item_current_price\" > 1.2 * \"abundant\".\"_virt_agg_avg_5942253052406187\" and \"questionable\".\"store_sales_item_category\" is not null ) )
+),
+yummy as (
+SELECT
+    \"uneven\".\"item_id\" as \"item_id\",
+    \"uneven\".\"store_sales_customer_state\" as \"store_sales_customer_state\",
+    \"uneven\".\"store_sales_ticket_number\" as \"store_sales_ticket_number\"
+FROM
+    \"uneven\"
+GROUP BY 
+    \"uneven\".\"item_id\",
+    \"uneven\".\"store_sales_customer_state\",
+    \"uneven\".\"store_sales_ticket_number\")
+SELECT
+    \"yummy\".\"store_sales_customer_state\" as \"store_sales_customer_state\",
+    sum(1) as \"customer_count\"
+FROM
+    \"yummy\"
+GROUP BY 
+    \"yummy\".\"store_sales_customer_state\"
+HAVING
+    sum(1) >= 10
+
+ORDER BY 
+    sum(1) asc nulls first,
+    \"yummy\".\"store_sales_customer_state\" asc nulls first"""
+query_id = 6
+sql_comp_time = 0.142848
+total_time = 2.128489

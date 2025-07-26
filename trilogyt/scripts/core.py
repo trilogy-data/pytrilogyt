@@ -1,29 +1,21 @@
 from trilogy.dialect.enums import Dialects  # noqa
 from pathlib import Path as PathlibPath  # noqa
-import os
-from sys import path as sys_path
 from trilogy import Environment, Executor
-from trilogy.parser import parse_text
+from trilogy.parsing.parse_engine import parse_text
 from trilogy.parsing.render import Renderer
 from trilogy.utility import unique
-from trilogy.core.models import (
-    ImportStatement,
+from trilogy.authoring import (
     PersistStatement,
     SelectStatement,
     ConceptDeclarationStatement,
-    CopyStatement,
     HasUUID,
+    ImportStatement,
+    CopyStatement,
 )
 from dataclasses import dataclass
 from trilogyt.core import ENVIRONMENT_CONCEPTS, fingerprint_environment
-
-# handles development cases
-nb_path = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
-sys_path.insert(0, nb_path)
-
-from trilogyt.constants import OPTIMIZATION_NAMESPACE, OPTIMIZATION_FILE  # noqa
-from trilogyt.graph import process_raw  # noqa
-from trilogyt.exceptions import OptimizationError  # noqa
+from trilogyt.constants import OPTIMIZATION_NAMESPACE, OPTIMIZATION_FILE
+from trilogyt.graph import process_raw
 
 
 @dataclass
@@ -81,7 +73,8 @@ def optimize_multiple(
                 for statement in statements
             ):
                 continue
-            fingerprint = fingerprint_environment(new_env)
+            build_env = new_env.materialize_for_select({})
+            fingerprint = fingerprint_environment(build_env)
             file_to_fingerprint[path] = fingerprint
             if fingerprint in env_to_statements:
                 opt: OptimizationInput = env_to_statements[fingerprint]
@@ -136,6 +129,7 @@ def optimize_multiple(
             datasource_path=datasource_file,
             new_import=ImportStatement(
                 alias=OPTIMIZATION_NAMESPACE,
+                input_path=OPTIMIZATION_FILE + f"_{k}",
                 path=output_file,
             ),
             fingerprint=k,

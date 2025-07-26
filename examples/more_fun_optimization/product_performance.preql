@@ -1,0 +1,10 @@
+import orders;
+
+
+select
+    product.id,
+    product.name,
+    sum(revenue) as total_revenue,
+    count(customer.id) as total_customers,
+    sum(qty) as total_qty
+;

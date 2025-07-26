@@ -1,0 +1,29 @@
+const _trilogyt._created_at <- current_datetime();
+
+import generic as generic;
+
+rowset cte <- WHERE
+    generic.split in (1, 2, 3)
+SELECT
+    generic.split,
+    generic.scalar,
+;
+
+SELECT
+    cte.generic.split,
+;
+
+PERSIST dsgeneric_scalar_445831a9 INTO dsgeneric_scalar_445831a9 FROM SELECT
+    generic.int_array,
+    generic.scalar,
+;
+
+PERSIST dsgeneric_scalar_0c9429cc INTO dsgeneric_scalar_0c9429cc FROM SELECT
+    generic.scalar,
+    generic.split,
+;
+
+PERSIST dscte_generic_scalar_02e41b09 INTO dscte_generic_scalar_02e41b09 FROM SELECT
+    cte.generic.scalar,
+    cte.generic.split,
+;

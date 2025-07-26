@@ -10,8 +10,12 @@ from trilogyt.scripts.main import dagster_wrapper, main
 root = Path(__file__)
 
 
+# FAILED tests/integration/test_dagster.py::test_full_model_build_dagster - ValueError: ['dagster', 'job', 'execute', '-j', 'all_job', '-d', 'c:\\Users...
+# dagster job execute -j all_job -d c:\Users\ethan\coding_projects\pypreql-etl\tests\integration\dagster -f c:\Users\ethan\coding_projects\pypreql-etl\\tests\integration\dagster\definitions.py
 def test_full_model_build_dagster(logger):
-    fake = root.parent / "dagster" / "assets" / "customer_two" / "fake_gen_model.py"
+    fake = (
+        root.parent / "dagster" / "src" / "defs" / "customer_two" / "fake_gen_model.py"
+    )
     staging_path = root.parent / "preql_dagster_staging/"
     os.makedirs(fake.parent, exist_ok=True)
     os.makedirs(staging_path, exist_ok=True)
@@ -27,8 +31,8 @@ def test_full_model_build_dagster(logger):
         staging_path=root.parent / "preql_dagster_staging/",
     )
 
-    results = root.parent / "dagster/models"
-    output = results.glob("**/*.sql")
+    results = root.parent / "dagster/assets"
+    output = results.glob("**/*.py")
     for f in output:
         # our generated file
         if "dim_splits" not in str(f):
@@ -37,7 +41,7 @@ def test_full_model_build_dagster(logger):
             with open(f) as file:
                 content = file.read()
                 # validate we are using our generated model
-                assert "_gen_model')" in content, content
+                assert "deps=[]" not in content, content
 
     assert not fake.exists(), f"Fake file {fake} was not deleted"
 
@@ -59,7 +63,12 @@ def test_cli_string_dagster():
     assert result.exit_code == 0
 
     with open(
-        root.parent / "dagster" / "assets" / "io" / "static_one_gen_model.py"
+        root.parent
+        / "dagster_static"
+        / "src"
+        / "defs"
+        / "io"
+        / "static_one_gen_model.py"
     ) as f:
         content = f.read()
         assert "def static_one(duck_db: DuckDBResource)" in content, content

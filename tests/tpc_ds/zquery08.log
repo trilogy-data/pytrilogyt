@@ -1,0 +1,104 @@
+base_prep_time = 0.0
+base_parse_time = 1.202545
+base_generation_time = 0.014373
+base_exec_time = 0.103751
+optimized_prep_time = 0.001026
+optimized_parse_time = 0.504464
+optimized_generation_time = 0.0
+optimized_exec_time = 0.017963
+was_optimized = true
+base_generated_sql = """
+
+WITH 
+questionable as (
+SELECT
+    \"customer_customer_address\".\"CA_ZIP\" as \"customer_zip\",
+    \"customer_customers\".\"C_CUSTOMER_SK\" as \"customer_id\",
+    \"customer_customers\".\"C_PREFERRED_CUST_FLAG\" as \"customer_preferred_cust_flag\"
+FROM
+    \"memory\".\"customer_address\" as \"customer_customer_address\"
+    INNER JOIN \"memory\".\"customer\" as \"customer_customers\" on \"customer_customer_address\".\"CA_ADDRESS_SK\" = \"customer_customers\".\"C_CURRENT_ADDR_SK\"),
+cheerful as (
+SELECT
+    unnest(:_virt_7180871482901048) as \"zips_pre\"
+),
+abundant as (
+SELECT
+    \"questionable\".\"customer_id\" as \"customer_id\",
+    \"questionable\".\"customer_zip\" as \"customer_zip\",
+    CASE WHEN \"questionable\".\"customer_preferred_cust_flag\" = 'Y' THEN \"questionable\".\"customer_id\" ELSE NULL END as \"_virt_filter_id_8603331542397217\"
+FROM
+    \"questionable\"),
+uneven as (
+SELECT
+    \"abundant\".\"customer_zip\" as \"customer_zip\",
+    count(\"abundant\".\"_virt_filter_id_8603331542397217\") as \"zip_p_count\"
+FROM
+    \"abundant\"
+GROUP BY 
+    \"abundant\".\"customer_zip\"),
+yummy as (
+SELECT
+    \"customer_customer_address\".\"CA_ADDRESS_SK\" as \"customer_address_id\",
+    \"customer_customer_address\".\"CA_ZIP\" as \"customer_zip\",
+    \"uneven\".\"zip_p_count\" as \"zip_p_count\"
+FROM
+    \"uneven\"
+    INNER JOIN \"memory\".\"customer_address\" as \"customer_customer_address\" on \"uneven\".\"customer_zip\" = \"customer_customer_address\".\"CA_ZIP\"),
+juicy as (
+SELECT
+    SUBSTRING(CASE WHEN \"yummy\".\"zip_p_count\" > 10 THEN \"yummy\".\"customer_zip\" ELSE NULL END,1,5) as \"_virt_func_substring_4293448550966409\"
+FROM
+    \"yummy\"),
+vacuous as (
+SELECT
+    SUBSTRING(SUBSTRING(cast(\"cheerful\".\"zips_pre\" as string),1,5),1,2) as \"final_zips\"
+FROM
+    \"cheerful\"
+WHERE
+    SUBSTRING(cast(\"cheerful\".\"zips_pre\" as string),1,5) in (select juicy.\"_virt_func_substring_4293448550966409\" from juicy where juicy.\"_virt_func_substring_4293448550966409\" is not null)
+),
+concerned as (
+SELECT
+    \"vacuous\".\"final_zips\" as \"final_zips\"
+FROM
+    \"vacuous\"
+GROUP BY 
+    \"vacuous\".\"final_zips\"),
+young as (
+SELECT
+    \"store_sales_store_sales\".\"SS_ITEM_SK\" as \"store_sales_item_id\",
+    \"store_sales_store_sales\".\"SS_NET_PROFIT\" as \"store_sales_net_profit\",
+    \"store_sales_store_sales\".\"SS_TICKET_NUMBER\" as \"store_sales_ticket_number\",
+    \"store_sales_store_store\".\"S_STORE_NAME\" as \"store_sales_store_name\"
+FROM
+    \"memory\".\"store_sales\" as \"store_sales_store_sales\"
+    INNER JOIN \"memory\".\"date_dim\" as \"store_sales_date_date\" on \"store_sales_store_sales\".\"SS_SOLD_DATE_SK\" = \"store_sales_date_date\".\"D_DATE_SK\"
+    INNER JOIN \"memory\".\"store\" as \"store_sales_store_store\" on \"store_sales_store_sales\".\"SS_STORE_SK\" = \"store_sales_store_store\".\"S_STORE_SK\"
+WHERE
+    \"store_sales_date_date\".\"D_QOY\" = 2 and cast(\"store_sales_date_date\".\"D_YEAR\" as int) = 1998 and SUBSTRING(\"store_sales_store_store\".\"S_ZIP\",1,2) in (select concerned.\"final_zips\" from concerned where concerned.\"final_zips\" is not null)
+)
+SELECT
+    \"young\".\"store_sales_store_name\" as \"store_sales_store_name\",
+    sum(\"young\".\"store_sales_net_profit\") as \"store_net_profit\"
+FROM
+    \"young\"
+GROUP BY 
+    \"young\".\"store_sales_store_name\"
+ORDER BY 
+    \"young\".\"store_sales_store_name\" asc
+LIMIT (100)"""
+optimized_generated_sql = """
+SELECT
+    \"dsstore_sales_item_id_store_sales_store_name_store_sales_ticket_number_e88a2d96_filtered_on_quarter_year_zip_final_zips\".\"store_sales_store_name\" as \"store_sales_store_name\",
+    sum(\"dsstore_sales_item_id_store_sales_store_name_store_sales_ticket_number_e88a2d96_filtered_on_quarter_year_zip_final_zips\".\"store_sales_net_profit\") as \"store_net_profit\"
+FROM
+    \"dsstore_sales_item_id_store_sales_store_name_store_sales_ticket_number_e88a2d96_filtered_on_quarter_year_zip_final_zips\"
+GROUP BY 
+    \"dsstore_sales_item_id_store_sales_store_name_store_sales_ticket_number_e88a2d96_filtered_on_quarter_year_zip_final_zips\".\"store_sales_store_name\"
+ORDER BY 
+    \"dsstore_sales_item_id_store_sales_store_name_store_sales_ticket_number_e88a2d96_filtered_on_quarter_year_zip_final_zips\".\"store_sales_store_name\" asc
+LIMIT (100)"""
+query_id = 8
+sql_comp_time = 0.107838
+total_time = 1.969532

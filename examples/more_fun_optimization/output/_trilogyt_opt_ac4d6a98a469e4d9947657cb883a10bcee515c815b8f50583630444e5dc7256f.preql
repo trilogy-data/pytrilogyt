@@ -1,0 +1,38 @@
+const _trilogyt._created_at <- current_datetime();
+
+import orders;
+
+PERSIST default.ds0ab0aad0b6a68d8c1e0dda47df9cecd87652e08131e0dfcc65e6d578d227e439_filtered_on_name INTO ds0ab0aad0b6a68d8c1e0dda47df9cecd87652e08131e0dfcc65e6d578d227e439_filtered_on_name FROM WHERE
+    store.name = 'aspen'
+SELECT
+    store.id,
+    store.name,
+;
+
+PERSIST default.ds5ee65fd281280e35a3494d4b6afd637f0acc6789427d738c7e8c87fba26ebdb4 INTO ds5ee65fd281280e35a3494d4b6afd637f0acc6789427d738c7e8c87fba26ebdb4 FROM SELECT
+    revenue,
+    qty,
+    product.id,
+    order_id,
+;
+
+PERSIST default.dsffefd9d2cd6adc41e2d11ebc4b77d3c122cb83b7791b211b17235ab56815916d INTO dsffefd9d2cd6adc41e2d11ebc4b77d3c122cb83b7791b211b17235ab56815916d FROM SELECT
+    customer.id,
+    store.id,
+    order_id,
+;
+
+PERSIST default.dsd95bd47f33ed9fe5a7fea40d99a909a98e1791732bff4432ad4d77ffc35db304_filtered_on_name INTO dsd95bd47f33ed9fe5a7fea40d99a909a98e1791732bff4432ad4d77ffc35db304_filtered_on_name FROM WHERE
+    store.name = 'aspen'
+SELECT
+    customer.id,
+    order_id,
+    qty,
+    revenue,
+    product.id,
+;
+
+PERSIST default.ds88d6561983b52730892357289064c798604c7066e4b1b38c3a9c1a13af2fcfad INTO ds88d6561983b52730892357289064c798604c7066e4b1b38c3a9c1a13af2fcfad FROM SELECT
+    product.id,
+    product.name,
+;

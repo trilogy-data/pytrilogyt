@@ -1,19 +1,5 @@
-# Generated from preql source: c:\Users\ethan\coding_projects\pytrilogyt\tests\integration\preql\customer_four.preql
-# Do not edit manually
-# import shared CTE persists into local namespace 
-import _internal_cached_intermediates_318aa3be58aecbf062e14ff6ee69c778f5f3b01959b2ebec2e5c58e27ae4b480_datasources;
-
-
-import generic as generic;
-
-
-rowset cte <- WHERE
-    generic.split in (1, 2, 3)
-SELECT
-    generic.split,
-    generic.scalar,;
-
+import _opt_generic_136f6db6;
 
 PERSIST dim_splits_four INTO dim_splits_four FROM SELECT
     cte.generic.split,
-    _trilogyt._created_at,;
+;

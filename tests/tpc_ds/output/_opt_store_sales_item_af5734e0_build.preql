@@ -1,0 +1,46 @@
+const _trilogyt._created_at <- current_datetime();
+
+import store_sales as store_sales;
+
+import item as item;
+
+MERGE store_sales.item.id into item.id;
+
+WHERE
+    store_sales.date.year = 2001 and (store_sales.date.month_of_year = 1 and (store_sales.item.current_price > 1.2 * avg(item.current_price) by item.category and store_sales.item.category is not null))
+SELECT
+    store_sales.customer.state,
+    sum(group(1) by store_sales.ticket_number, item.id) -> customer_count,
+HAVING
+    customer_count >= 10
+
+ORDER BY
+    customer_count asc nulls first,
+    store_sales.customer.state asc nulls first
+;
+
+PERSIST dsitem_id_store_sales_customer_state_store_sales_date_month_of_year_store_sales_date_year_store_sales_ticket_number_8c6c8978_filtered_on_year_month_of_year_category INTO dsitem_id_store_sales_customer_state_store_sales_date_month_of_year_store_sales_date_year_store_sales_ticket_number_8c6c8978_filtered_on_year_month_of_year_category FROM WHERE
+    (store_sales.date.year = 2001 and store_sales.date.month_of_year = 1) and store_sales.item.category is not null
+SELECT
+    item.category,
+    item.id,
+    store_sales.customer.state,
+    store_sales.date.month_of_year,
+    store_sales.date.year,
+    store_sales.item.category,
+    store_sales.item.current_price,
+    store_sales.ticket_number,
+;
+
+PERSIST dsitem_id_store_sales_customer_state_store_sales_ticket_number_fd3a683a INTO dsitem_id_store_sales_customer_state_store_sales_ticket_number_fd3a683a FROM SELECT
+    item.id,
+    store_sales.customer.state,
+    store_sales.ticket_number,
+;
+
+PERSIST dsstore_sales_customer_state_854fd24c_filtered_on_customer_count INTO dsstore_sales_customer_state_854fd24c_filtered_on_customer_count FROM WHERE
+    customer_count >= 10
+SELECT
+    customer_count,
+    store_sales.customer.state,
+;

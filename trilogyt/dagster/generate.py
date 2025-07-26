@@ -6,12 +6,11 @@ from typing import Any
 
 from jinja2 import Template
 from trilogy import Environment, Executor
-from trilogy.core.models import (
-    Datasource,
-    PersistStatement,
-    ProcessedQueryPersist,
-    UnionCTE,
-)
+from trilogy.authoring import Address, Datasource, PersistStatement
+from trilogy.constants import Rendering
+from trilogy.core.models.build import BuildDatasource
+from trilogy.core.models.execute import UnionCTE
+from trilogy.core.statements.execute import ProcessedQueryPersist
 from trilogy.dialect.enums import Dialects
 
 from trilogyt.constants import logger
@@ -38,7 +37,8 @@ def generate_model_text(
     model_type: str,
     model_sql: str,
     dialect: Dialects,
-    dependencies: list[ModelInput],
+    dependencies: list[str],
+    config: DagsterConfig,
 ) -> str:
     if not dialect == Dialects.DUCK_DB:
         raise NotImplementedError(f"Unsupported dialect {dialect}")
@@ -57,12 +57,22 @@ def {{model_name}}({{dialect.name | lower}}: DuckDBResource) -> None:
         )
     """
     )
+
+    built_dependencies = [
+        ModelInput(
+            name=dep,
+            file_path=Path(f"{dep}.py"),
+            import_path=Path(f"{config.opt_import_root}.{dep}_gen_model.py"),
+        )
+        for dep in sorted(list(set(dependencies)))
+    ]
+
     return template.render(
         model_name=model_name,
         model_type=model_type,
         model_sql=model_sql,
         dialect=dialect,
-        deps=dependencies,
+        deps=built_dependencies,
     )
 
 
@@ -70,6 +80,7 @@ def generate_entry_file(
     models: list[ModelInput],
     dialect: Dialects,  # config: DagsterConfig
     dagster_path: Path,
+    config: DagsterConfig,
 ):
     extra_kwargs: dict[str, Any] = {}
     if dialect != Dialects.DUCK_DB:
@@ -80,27 +91,27 @@ def generate_entry_file(
         extra_kwargs["connection_config"] = {"enable_external_access": False}
     template = Template(
         """
-from dagster import Definitions, define_asset_job
+from pathlib import Path
+
+import dagster as dg
 from dagster_duckdb import DuckDBResource
-{% for model in models %}
-from {{model.python_import}} import {{model.name}}{% endfor %}
-
-{{all_job_name}} = define_asset_job(name="{{all_job_name}}", selection=[{% for model in models %}{{model.name}}{% if not loop.last %}, {% endif %}{% endfor %}])
-
-{% for model in models %}
-run_{{model.name}} = define_asset_job(name="run_{{model.name}}", selection=[{{model.name}}])
-{% endfor %}
 
 
-defs = Definitions(
-    assets=[{% for model in models %}{{model.name}}{% if not loop.last %}, {% endif %}{% endfor %}],
-    resources={
-        "{{dialect.value}}": DuckDBResource(
-            database="{{extra_kwargs["database"]}}", connection_config={"enable_external_access": False}
-        )
-    },
-    jobs = [{{all_job_name}}{% for model in models %}, run_{{model.name}}{% endfor %}]
-)"""
+@dg.definitions
+def defs():
+    return dg.Definitions.merge(
+        dg.Definitions(
+            resources={
+                "{{dialect.value}}": DuckDBResource(
+                    database="{{extra_kwargs["database"]}}", connection_config={"enable_external_access": False}
+                )
+            }
+        ),
+        dg.load_from_defs_folder(
+            project_root=Path(__file__).parent.parent,
+        ),
+    )
+"""
     )
     contents = template.render(
         models=models,
@@ -108,9 +119,129 @@ defs = Definitions(
         all_job_name=ALL_JOB_NAME,
         extra_kwargs=extra_kwargs,
     )
-
-    with open(dagster_path / ENTRYPOINT_FILE, "w") as f:
+    # write the module file
+    with open(dagster_path / "src" / "__init__.py", "w") as f:
+        f.write("")
+    with open(dagster_path / config.dagster_asset_path / "__init__.py", "w") as f:
+        f.write("")
+    # write the config file
+    with open(dagster_path / "src" / ENTRYPOINT_FILE, "w") as f:
         f.write(contents)
+    with open(dagster_path / "dagster.yaml", "w") as f:
+        f.write(
+            """telemetry:
+  enabled: false"""
+        )
+    with open(dagster_path / "pyproject.toml", "w") as f:
+        f.write(
+            """[project]
+name = "trilogy_dagster"
+requires-python = ">=3.9,<=3.13.3"
+version = "0.1.0"
+dependencies = [
+    "dagster==1.11.2",
+]
+
+[dependency-groups]
+dev = [
+    "dagster-webserver",
+    "dagster-dg-cli",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.dg]
+directory_type = "project"
+
+[tool.dg.project]
+root_module = "src"
+
+"""
+        )
+
+
+def generate_dependency_map(
+    pqueries,
+    possible_dependencies: dict[str, Datasource],
+    model_ds_mapping: dict[str, str],
+    config: DagsterConfig,
+    executor: Executor,
+):
+    dependency_map = defaultdict(list)
+    output: list[ModelInput] = []
+    output_map: dict[str, str] = {}
+    output_data: dict[str, Datasource] = {}
+    for _, query in enumerate(pqueries):
+        depends_on: list[str] = []
+        if isinstance(query, ProcessedQueryPersist):
+            logger.info(f"Starting on {_}")
+            target = query.output_to.address.location
+            eligible = {k: v for k, v in possible_dependencies.items() if k != target}
+            for cte in query.ctes:
+                if isinstance(cte, UnionCTE):
+                    continue
+                # handle inlined datasources
+                logger.info(f"checking cte {cte.name} with {eligible}")
+                if cte.base_name_override in eligible:
+                    if any(x == cte.base_name_override for x in depends_on):
+                        continue
+                    matched = model_ds_mapping.get(cte.base_name_override)
+                    if matched:
+                        depends_on.append(matched)
+                for source in cte.source.datasources:
+                    logger.info(source.identifier)
+                    if not isinstance(source, BuildDatasource):
+                        continue
+
+                    matched = model_ds_mapping.get(source.identifier)
+                    if matched:
+                        depends_on.append(matched)
+            # get our names to label the model
+            key = query.output_to.address.location.split(".")[-1]
+            output_map[key] = executor.generator.compile_statement(query)
+            output_data[key] = query.datasource
+            dependency_map[key] = depends_on
+            output.append(
+                ModelInput(
+                    name=key,
+                    file_path=config.get_asset_path(key),
+                    import_path=config.get_asset_import_path(key),
+                )
+            )
+            logger.info(depends_on)
+    return dependency_map, output, output_map
+
+
+def generate_name_ds_mapping(
+    file: Path, content: str, dialect: Dialects
+) -> dict[str, str]:
+    env: Environment = Environment(
+        working_path=file.parent if file else os.getcwd(),
+        # namespace=config.namespace,
+    )
+    executor = Executor(
+        dialect=dialect,
+        engine=dialect.default_engine(),
+        environment=env,
+        rendering=Rendering(parameters=False),
+    )
+    executor.environment = enrich_environment(executor.environment)
+
+    try:
+        _, statements = executor.environment.parse(content)
+    except Exception as e:
+        raise SyntaxError(f"Unable to parse {content}" + str(e))
+    output = {}
+    for query in statements:
+        if isinstance(query, PersistStatement):
+            if isinstance(query.datasource.address, Address):
+                key = query.datasource.address.location.split(".")[-1]
+            else:
+                key = query.datasource.address.split(".")[-1]
+            output[query.datasource.identifier] = key
+    return output
 
 
 def generate_model(
@@ -118,28 +249,28 @@ def generate_model(
     preql_path: Path | None,
     dialect: Dialects,
     config: DagsterConfig,
+    model_ds_mapping: dict[str, str],
     environment: Environment | None = None,
     clear_target_dir: bool = True,
-    models: list[ModelInput] = [],
 ) -> list[ModelInput]:
     env: Environment = environment or Environment(
         working_path=preql_path.parent if preql_path else os.getcwd(),
         # namespace=config.namespace,
     )
     executor = Executor(
-        dialect=dialect, engine=dialect.default_engine(), environment=env
+        dialect=dialect,
+        engine=dialect.default_engine(),
+        environment=env,
+        rendering=Rendering(parameters=False),
     )
     executor.environment = enrich_environment(executor.environment)
-    possible_dependencies = {}
 
-    outputs: dict[str, str] = {}
-    output_data: dict[str, Datasource] = {}
     try:
         _, statements = executor.environment.parse(preql_body)
     except Exception as e:
         raise SyntaxError(f"Unable to parse {preql_body}" + str(e))
 
-    possible_dependencies = {
+    possible_dependencies: dict[str, Datasource] = {
         d.identifier: d
         for d in executor.environment.datasources.values()
         if "." not in d.identifier
@@ -151,52 +282,16 @@ def generate_model(
 
     pqueries = executor.generator.generate_queries(executor.environment, parsed)
     logger.info(f"got {len(pqueries)} queries: {Counter([type(c) for c in pqueries])}")
-    dependency_map = defaultdict(list)
-    output: list[ModelInput] = []
-    for _, query in enumerate(pqueries):
-        depends_on: list[ModelInput] = []
-        if isinstance(query, ProcessedQueryPersist):
-            logger.debug(f"Starting on {_}")
-            target = query.output_to.address.location
-            eligible = {k: v for k, v in possible_dependencies.items() if k != target}
-            for cte in query.ctes:
-                if isinstance(cte, UnionCTE):
-                    continue
-                # handle inlined datasources
-                logger.debug(f"checking cte {cte.name} with {eligible}")
-                if cte.base_name_override in eligible:
-                    if any(x.name == cte.base_name_override for x in depends_on):
-                        continue
-                    matched = [x for x in models if x.name == cte.base_name_override]
-                    if matched:
-                        depends_on.append(matched.pop())
-                for source in cte.source.datasources:
-                    logger.info(source.identifier)
-                    if not isinstance(source, Datasource):
-                        continue
 
-                    if source.identifier in eligible:
-                        matched = [x for x in models if x.name == source.identifier]
-                        if matched:
-                            depends_on.append(matched.pop())
-            # get our names to label the model
-            key = query.output_to.address.location.split(".")[-1]
-            outputs[key] = executor.generator.compile_statement(query)
-            output_data[key] = query.datasource
-            dependency_map[key] = depends_on
-            output.append(
-                ModelInput(
-                    name=key,
-                    file_path=config.get_asset_path(key),
-                    import_path=config.get_asset_import_path(key),
-                )
-            )
     logger.info("Writing queries to output files")
-    logger.debug(dependency_map)
+    dependency_map, output, output_map = generate_dependency_map(
+        pqueries, possible_dependencies, model_ds_mapping, config, executor
+    )
+    logger.info(f"dependency_map: {dependency_map}")
 
     existing = defaultdict(set)
     should_exist = defaultdict(set)
-    for key, value in outputs.items():
+    for key, value in output_map.items():
         output_path = config.get_asset_path(key)
         logger.info(f"writing {key} to {output_path} ")
         parent = str(output_path.parent)
@@ -215,6 +310,7 @@ def generate_model(
                     value,
                     dialect=dialect,
                     dependencies=dependency_map.get(key, []),
+                    config=config,
                 )
             )
         with open(output_path.parent / "__init__.py", "w") as f:

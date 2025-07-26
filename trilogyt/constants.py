@@ -6,5 +6,9 @@ OPTIMIZATION_NAMESPACE = "optimization"
 
 OPTIMIZATION_FILE = "_internal_cached_intermediates"
 
+OPT_PREFIX = "_opt_"
+
+IGNORED_PREFIX = "_internal"
+
 
 logger: Logger = getLogger("trilogyt")
