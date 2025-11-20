@@ -38,11 +38,11 @@ from trilogy.core.models.build import (
 from trilogy.core.models.core import ListWrapper, MapWrapper, TupleWrapper
 from trilogy.core.models.execute import CTE, QueryDatasource, UnionCTE
 from trilogy.core.statements.execute import (
+    ProcessedCopyStatement,
     ProcessedQuery,
     ProcessedQueryPersist,
     ProcessedRawSQLStatement,
     ProcessedShowStatement,
-    ProcessedCopyStatement,
     ProcessedValidateStatement,
 )
 from trilogy.dialect.base import BaseDialect
