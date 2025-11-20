@@ -38,10 +38,12 @@ from trilogy.core.models.build import (
 from trilogy.core.models.core import ListWrapper, MapWrapper, TupleWrapper
 from trilogy.core.models.execute import CTE, QueryDatasource, UnionCTE
 from trilogy.core.statements.execute import (
+    ProcessedCopyStatement,
     ProcessedQuery,
     ProcessedQueryPersist,
     ProcessedRawSQLStatement,
     ProcessedShowStatement,
+    ProcessedValidateStatement,
 )
 from trilogy.dialect.base import BaseDialect
 
@@ -374,6 +376,8 @@ def process_loop(
         | ProcessedQueryPersist
         | ProcessedShowStatement
         | ProcessedRawSQLStatement
+        | ProcessedCopyStatement
+        | ProcessedValidateStatement
     ],
     env: Environment,
     generator: BaseDialect,

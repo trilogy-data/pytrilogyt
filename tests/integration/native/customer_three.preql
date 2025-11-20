@@ -1,4 +1,4 @@
-import _opt_generic_136f6db6;
+import _opt_generic_87073dc2;
 
 PERSIST dim_splits_three INTO dim_splits_three FROM SELECT
     cte.generic.split,

@@ -128,7 +128,6 @@ def generate_model(
 
     logger.info("generating queries")
     logger.info(f"possible dependencies are {list(possible_dependencies.keys())}")
-    logger.info([str(c) for c in executor.environment.materialized_concepts])
 
     pqueries = executor.generator.generate_queries(executor.environment, parsed)
     logger.info(f"got {len(pqueries)} queries")

@@ -1,11 +1,11 @@
-base_prep_time = 0.001414
-base_parse_time = 0.43423
-base_generation_time = 0.002257
-base_exec_time = 0.11031
-optimized_prep_time = 0.0
-optimized_parse_time = 0.282185
-optimized_generation_time = 0.006717
-optimized_exec_time = 0.108851
+base_prep_time = 0.000199
+base_parse_time = 0.156433
+base_generation_time = 0.001704
+base_exec_time = 0.009044
+optimized_prep_time = 0.000198
+optimized_parse_time = 0.151632
+optimized_generation_time = 0.002563
+optimized_exec_time = 0.008801
 was_optimized = false
 base_generated_sql = """
 
@@ -17,9 +17,7 @@ SELECT
     \"store_sales_item_items\".\"I_CURRENT_PRICE\" as \"store_sales_item_current_price\",
     \"store_sales_item_items\".\"I_ITEM_DESC\" as \"store_sales_item_desc\",
     \"store_sales_item_items\".\"I_ITEM_ID\" as \"store_sales_item_name\",
-    \"store_sales_item_items\".\"I_ITEM_SK\" as \"store_sales_item_id\",
-    \"store_sales_store_sales\".\"SS_EXT_SALES_PRICE\" as \"store_sales_ext_sales_price\",
-    \"store_sales_store_sales\".\"SS_TICKET_NUMBER\" as \"store_sales_ticket_number\"
+    \"store_sales_store_sales\".\"SS_EXT_SALES_PRICE\" as \"store_sales_ext_sales_price\"
 FROM
     \"memory\".\"store_sales\" as \"store_sales_store_sales\"
     INNER JOIN \"memory\".\"date_dim\" as \"store_sales_date_date\" on \"store_sales_store_sales\".\"SS_SOLD_DATE_SK\" = \"store_sales_date_date\".\"D_DATE_SK\"
@@ -62,7 +60,7 @@ SELECT
     \"thoughtful\".\"store_sales_item_name\" as \"store_sales_item_name\"
 FROM
     \"thoughtful\"
-    INNER JOIN \"cooperative\" on (\"thoughtful\".\"store_sales_item_class\" = \"cooperative\".\"store_sales_item_class\" or (\"thoughtful\".\"store_sales_item_class\" is null and \"cooperative\".\"store_sales_item_class\" is null)))
+    INNER JOIN \"cooperative\" on \"thoughtful\".\"store_sales_item_class\" is not distinct from \"cooperative\".\"store_sales_item_class\")
 SELECT
     \"questionable\".\"store_sales_item_name\" as \"store_sales_item_name\",
     \"questionable\".\"store_sales_item_desc\" as \"store_sales_item_desc\",
@@ -73,7 +71,7 @@ SELECT
     \"questionable\".\"revenueratio\" as \"revenueratio\"
 FROM
     \"questionable\"
-    INNER JOIN \"thoughtful\" on \"questionable\".\"store_sales_item_name\" = \"thoughtful\".\"store_sales_item_name\" AND (\"questionable\".\"store_sales_item_category\" = \"thoughtful\".\"store_sales_item_category\" or (\"questionable\".\"store_sales_item_category\" is null and \"thoughtful\".\"store_sales_item_category\" is null)) AND (\"questionable\".\"store_sales_item_class\" = \"thoughtful\".\"store_sales_item_class\" or (\"questionable\".\"store_sales_item_class\" is null and \"thoughtful\".\"store_sales_item_class\" is null)) AND (\"questionable\".\"store_sales_item_current_price\" = \"thoughtful\".\"store_sales_item_current_price\" or (\"questionable\".\"store_sales_item_current_price\" is null and \"thoughtful\".\"store_sales_item_current_price\" is null)) AND (\"questionable\".\"store_sales_item_desc\" = \"thoughtful\".\"store_sales_item_desc\" or (\"questionable\".\"store_sales_item_desc\" is null and \"thoughtful\".\"store_sales_item_desc\" is null))
+    INNER JOIN \"thoughtful\" on \"questionable\".\"store_sales_item_category\" is not distinct from \"thoughtful\".\"store_sales_item_category\" AND \"questionable\".\"store_sales_item_class\" is not distinct from \"thoughtful\".\"store_sales_item_class\" AND \"questionable\".\"store_sales_item_current_price\" is not distinct from \"thoughtful\".\"store_sales_item_current_price\" AND \"questionable\".\"store_sales_item_desc\" is not distinct from \"thoughtful\".\"store_sales_item_desc\" AND \"questionable\".\"store_sales_item_name\" = \"thoughtful\".\"store_sales_item_name\"
 ORDER BY 
     \"questionable\".\"store_sales_item_category\" asc nulls first,
     \"questionable\".\"store_sales_item_class\" asc nulls first,
@@ -90,9 +88,7 @@ SELECT
     \"store_sales_item_items\".\"I_CURRENT_PRICE\" as \"store_sales_item_current_price\",
     \"store_sales_item_items\".\"I_ITEM_DESC\" as \"store_sales_item_desc\",
     \"store_sales_item_items\".\"I_ITEM_ID\" as \"store_sales_item_name\",
-    \"store_sales_item_items\".\"I_ITEM_SK\" as \"store_sales_item_id\",
-    \"store_sales_store_sales\".\"SS_EXT_SALES_PRICE\" as \"store_sales_ext_sales_price\",
-    \"store_sales_store_sales\".\"SS_TICKET_NUMBER\" as \"store_sales_ticket_number\"
+    \"store_sales_store_sales\".\"SS_EXT_SALES_PRICE\" as \"store_sales_ext_sales_price\"
 FROM
     \"memory\".\"store_sales\" as \"store_sales_store_sales\"
     INNER JOIN \"memory\".\"date_dim\" as \"store_sales_date_date\" on \"store_sales_store_sales\".\"SS_SOLD_DATE_SK\" = \"store_sales_date_date\".\"D_DATE_SK\"
@@ -135,7 +131,7 @@ SELECT
     \"thoughtful\".\"store_sales_item_name\" as \"store_sales_item_name\"
 FROM
     \"thoughtful\"
-    INNER JOIN \"cooperative\" on (\"thoughtful\".\"store_sales_item_class\" = \"cooperative\".\"store_sales_item_class\" or (\"thoughtful\".\"store_sales_item_class\" is null and \"cooperative\".\"store_sales_item_class\" is null)))
+    INNER JOIN \"cooperative\" on \"thoughtful\".\"store_sales_item_class\" is not distinct from \"cooperative\".\"store_sales_item_class\")
 SELECT
     \"questionable\".\"store_sales_item_name\" as \"store_sales_item_name\",
     \"questionable\".\"store_sales_item_desc\" as \"store_sales_item_desc\",
@@ -146,7 +142,7 @@ SELECT
     \"questionable\".\"revenueratio\" as \"revenueratio\"
 FROM
     \"questionable\"
-    INNER JOIN \"thoughtful\" on \"questionable\".\"store_sales_item_name\" = \"thoughtful\".\"store_sales_item_name\" AND (\"questionable\".\"store_sales_item_category\" = \"thoughtful\".\"store_sales_item_category\" or (\"questionable\".\"store_sales_item_category\" is null and \"thoughtful\".\"store_sales_item_category\" is null)) AND (\"questionable\".\"store_sales_item_class\" = \"thoughtful\".\"store_sales_item_class\" or (\"questionable\".\"store_sales_item_class\" is null and \"thoughtful\".\"store_sales_item_class\" is null)) AND (\"questionable\".\"store_sales_item_current_price\" = \"thoughtful\".\"store_sales_item_current_price\" or (\"questionable\".\"store_sales_item_current_price\" is null and \"thoughtful\".\"store_sales_item_current_price\" is null)) AND (\"questionable\".\"store_sales_item_desc\" = \"thoughtful\".\"store_sales_item_desc\" or (\"questionable\".\"store_sales_item_desc\" is null and \"thoughtful\".\"store_sales_item_desc\" is null))
+    INNER JOIN \"thoughtful\" on \"questionable\".\"store_sales_item_category\" is not distinct from \"thoughtful\".\"store_sales_item_category\" AND \"questionable\".\"store_sales_item_class\" is not distinct from \"thoughtful\".\"store_sales_item_class\" AND \"questionable\".\"store_sales_item_current_price\" is not distinct from \"thoughtful\".\"store_sales_item_current_price\" AND \"questionable\".\"store_sales_item_desc\" is not distinct from \"thoughtful\".\"store_sales_item_desc\" AND \"questionable\".\"store_sales_item_name\" = \"thoughtful\".\"store_sales_item_name\"
 ORDER BY 
     \"questionable\".\"store_sales_item_category\" asc nulls first,
     \"questionable\".\"store_sales_item_class\" asc nulls first,
@@ -154,5 +150,5 @@ ORDER BY
     \"questionable\".\"store_sales_item_desc\" asc nulls first,
     \"questionable\".\"revenueratio\" asc nulls first"""
 query_id = 98
-sql_comp_time = 0.327491
-total_time = 1.444424
+sql_comp_time = 0.029209
+total_time = 0.368357

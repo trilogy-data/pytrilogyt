@@ -5,6 +5,7 @@ from random import randint
 from trilogy.core.models.environment import (
     DictImportResolver,
     Environment,
+    EnvironmentOptions,
     FileSystemImportResolver,
 )
 
@@ -65,7 +66,9 @@ class FileWorkspace(BaseWorkspace):
     def get_environment(self) -> Environment:
         return Environment(
             working_path=self.working_path,
-            import_resolver=FileSystemImportResolver(),
+            config=EnvironmentOptions(
+                import_resolver=FileSystemImportResolver(),
+            ),
         )
 
     def write_file(
@@ -108,7 +111,9 @@ class MemoryWorkspace(BaseWorkspace):
     def get_environment(self) -> Environment:
         return Environment(
             working_path=Path.cwd(),
-            import_resolver=DictImportResolver(content=self.files),
+            config=EnvironmentOptions(
+                import_resolver=DictImportResolver(content=self.files),
+            ),
         )
 
     def write_file(
