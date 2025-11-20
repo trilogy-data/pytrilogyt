@@ -103,6 +103,7 @@ def test_one(engine, optimized_env):
 def test_two(engine, optimized_env):
     run_query(engine, 2, optimized_env)
 
+
 @pytest.mark.skip(reason="Missing group by - this is broken")
 def test_three(engine, optimized_env):
     run_query(engine, 3, optimized_env)
@@ -132,6 +133,7 @@ def test_eight(engine, optimized_env):
 
 def test_ten(engine, optimized_env):
     run_query(engine, 10, optimized_env)
+
 
 @pytest.mark.skip(reason="Missing group by - this is broken")
 def test_twelve(engine, optimized_env):

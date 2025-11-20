@@ -1,12 +1,12 @@
-from dagster_duckdb import DuckDBResource
 from dagster import asset
+from dagster_duckdb import DuckDBResource
 
 
 @asset(deps=[])
 def dscte_generic_scalar_02e41b09(duck_db: DuckDBResource) -> None:
     with duck_db.get_connection() as conn:
         conn.execute(
-           ''' 
+            """ 
 CREATE OR REPLACE TABLE dscte_generic_scalar_02e41b09 AS
 
 WITH 
@@ -31,6 +31,5 @@ FROM
     "highfalutin"
 WHERE
     "highfalutin"."generic_split" in (1,2,3)
- '''
+ """
         )
-    

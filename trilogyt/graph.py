@@ -42,6 +42,8 @@ from trilogy.core.statements.execute import (
     ProcessedQueryPersist,
     ProcessedRawSQLStatement,
     ProcessedShowStatement,
+    ProcessedCopyStatement,
+    ProcessedValidateStatement,
 )
 from trilogy.dialect.base import BaseDialect
 
@@ -374,6 +376,8 @@ def process_loop(
         | ProcessedQueryPersist
         | ProcessedShowStatement
         | ProcessedRawSQLStatement
+        | ProcessedCopyStatement
+        | ProcessedValidateStatement
     ],
     env: Environment,
     generator: BaseDialect,
