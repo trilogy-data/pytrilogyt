@@ -1,11 +1,11 @@
-base_prep_time = 0.0
-base_parse_time = 0.256789
-base_generation_time = 0.010444
-base_exec_time = 0.109856
-optimized_prep_time = 0.0
-optimized_parse_time = 0.760291
-optimized_generation_time = 0.0
-optimized_exec_time = 0.106406
+base_prep_time = 0.000339
+base_parse_time = 0.118207
+base_generation_time = 0.001711
+base_exec_time = 0.013691
+optimized_prep_time = 0.000199
+optimized_parse_time = 0.133074
+optimized_generation_time = 0.001644
+optimized_exec_time = 0.013213
 was_optimized = false
 base_generated_sql = """
 
@@ -14,11 +14,9 @@ cooperative as (
 SELECT
     \"cs_catalog_sales\".\"CS_COUPON_AMT\" as \"cs_coupon_amt\",
     \"cs_catalog_sales\".\"CS_LIST_PRICE\" as \"cs_list_price\",
-    \"cs_catalog_sales\".\"CS_ORDER_NUMBER\" as \"cs_order_number\",
     \"cs_catalog_sales\".\"CS_QUANTITY\" as \"cs_quantity\",
     \"cs_catalog_sales\".\"CS_SALES_PRICE\" as \"cs_sales_price\",
-    \"cs_item_items\".\"I_ITEM_ID\" as \"cs_item_name\",
-    \"cs_item_items\".\"I_ITEM_SK\" as \"cs_item_id\"
+    \"cs_item_items\".\"I_ITEM_ID\" as \"cs_item_name\"
 FROM
     \"memory\".\"catalog_sales\" as \"cs_catalog_sales\"
     INNER JOIN \"memory\".\"date_dim\" as \"cs_date_date\" on \"cs_catalog_sales\".\"CS_SOLD_DATE_SK\" = \"cs_date_date\".\"D_DATE_SK\"
@@ -48,11 +46,9 @@ cooperative as (
 SELECT
     \"cs_catalog_sales\".\"CS_COUPON_AMT\" as \"cs_coupon_amt\",
     \"cs_catalog_sales\".\"CS_LIST_PRICE\" as \"cs_list_price\",
-    \"cs_catalog_sales\".\"CS_ORDER_NUMBER\" as \"cs_order_number\",
     \"cs_catalog_sales\".\"CS_QUANTITY\" as \"cs_quantity\",
     \"cs_catalog_sales\".\"CS_SALES_PRICE\" as \"cs_sales_price\",
-    \"cs_item_items\".\"I_ITEM_ID\" as \"cs_item_name\",
-    \"cs_item_items\".\"I_ITEM_SK\" as \"cs_item_id\"
+    \"cs_item_items\".\"I_ITEM_ID\" as \"cs_item_name\"
 FROM
     \"memory\".\"catalog_sales\" as \"cs_catalog_sales\"
     INNER JOIN \"memory\".\"date_dim\" as \"cs_date_date\" on \"cs_catalog_sales\".\"CS_SOLD_DATE_SK\" = \"cs_date_date\".\"D_DATE_SK\"
@@ -76,5 +72,5 @@ ORDER BY
     \"cooperative\".\"cs_item_name\" asc
 LIMIT (100)"""
 query_id = 26
-sql_comp_time = 0.151268
-total_time = 1.416038
+sql_comp_time = 0.012495
+total_time = 0.297136

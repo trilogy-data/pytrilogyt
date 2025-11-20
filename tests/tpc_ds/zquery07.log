@@ -1,11 +1,11 @@
-base_prep_time = 0.0
-base_parse_time = 0.324046
-base_generation_time = 0.022356
-base_exec_time = 0.393632
-optimized_prep_time = 0.0
-optimized_parse_time = 0.408468
-optimized_generation_time = 0.00974
-optimized_exec_time = 0.229192
+base_prep_time = 0.000185
+base_parse_time = 0.708802
+base_generation_time = 0.002098
+base_exec_time = 0.020806
+optimized_prep_time = 0.000187
+optimized_parse_time = 0.152647
+optimized_generation_time = 0.002039
+optimized_exec_time = 0.021667
 was_optimized = false
 base_generated_sql = """
 
@@ -13,12 +13,10 @@ WITH
 cooperative as (
 SELECT
     \"store_sales_item_items\".\"I_ITEM_ID\" as \"filtered_sales_store_sales_item_name\",
-    \"store_sales_item_items\".\"I_ITEM_SK\" as \"filtered_sales_store_sales_item_id\",
     \"store_sales_store_sales\".\"SS_COUPON_AMT\" as \"filtered_sales_store_sales_coupon_amt\",
     \"store_sales_store_sales\".\"SS_LIST_PRICE\" as \"filtered_sales_store_sales_list_price\",
     \"store_sales_store_sales\".\"SS_QUANTITY\" as \"filtered_sales_store_sales_quantity\",
-    \"store_sales_store_sales\".\"SS_SALES_PRICE\" as \"filtered_sales_store_sales_sales_price\",
-    \"store_sales_store_sales\".\"SS_TICKET_NUMBER\" as \"filtered_sales_store_sales_ticket_number\"
+    \"store_sales_store_sales\".\"SS_SALES_PRICE\" as \"filtered_sales_store_sales_sales_price\"
 FROM
     \"memory\".\"store_sales\" as \"store_sales_store_sales\"
     INNER JOIN \"memory\".\"date_dim\" as \"store_sales_date_date\" on \"store_sales_store_sales\".\"SS_SOLD_DATE_SK\" = \"store_sales_date_date\".\"D_DATE_SK\"
@@ -55,12 +53,10 @@ WITH
 cooperative as (
 SELECT
     \"store_sales_item_items\".\"I_ITEM_ID\" as \"filtered_sales_store_sales_item_name\",
-    \"store_sales_item_items\".\"I_ITEM_SK\" as \"filtered_sales_store_sales_item_id\",
     \"store_sales_store_sales\".\"SS_COUPON_AMT\" as \"filtered_sales_store_sales_coupon_amt\",
     \"store_sales_store_sales\".\"SS_LIST_PRICE\" as \"filtered_sales_store_sales_list_price\",
     \"store_sales_store_sales\".\"SS_QUANTITY\" as \"filtered_sales_store_sales_quantity\",
-    \"store_sales_store_sales\".\"SS_SALES_PRICE\" as \"filtered_sales_store_sales_sales_price\",
-    \"store_sales_store_sales\".\"SS_TICKET_NUMBER\" as \"filtered_sales_store_sales_ticket_number\"
+    \"store_sales_store_sales\".\"SS_SALES_PRICE\" as \"filtered_sales_store_sales_sales_price\"
 FROM
     \"memory\".\"store_sales\" as \"store_sales_store_sales\"
     INNER JOIN \"memory\".\"date_dim\" as \"store_sales_date_date\" on \"store_sales_store_sales\".\"SS_SOLD_DATE_SK\" = \"store_sales_date_date\".\"D_DATE_SK\"
@@ -92,5 +88,5 @@ ORDER BY
     \"cooperative\".\"filtered_sales_store_sales_item_name\" asc
 LIMIT (100)"""
 query_id = 7
-sql_comp_time = 0.475992
-total_time = 1.865094
+sql_comp_time = 0.012578
+total_time = 0.923938

@@ -1,91 +1,180 @@
-base_prep_time = 0.0
-base_parse_time = 0.415324
-base_generation_time = 0.0
-base_exec_time = 0.087433
-optimized_prep_time = 0.0
-optimized_parse_time = 1.029989
-optimized_generation_time = 0.000578
-optimized_exec_time = 0.085875
-was_optimized = true
+base_prep_time = 0.00022
+base_parse_time = 0.185841
+base_generation_time = 0.002132
+base_exec_time = 0.01259
+optimized_prep_time = 0.000206
+optimized_parse_time = 0.190204
+optimized_generation_time = 0.001798
+optimized_exec_time = 0.013743
+was_optimized = false
 base_generated_sql = """
 
 WITH 
-thoughtful as (
+questionable as (
 SELECT
-    \"returns_customer_customers\".\"C_CUSTOMER_ID\" as \"returns_customer_text_id\",
-    \"returns_store_returns\".\"SR_ITEM_SK\" as \"returns_item_id\",
+    \"returns_store_returns\".\"SR_CUSTOMER_SK\" as \"returns_customer_id\",
     \"returns_store_returns\".\"SR_RETURN_AMT\" as \"returns_return_amount\",
-    \"returns_store_returns\".\"SR_TICKET_NUMBER\" as \"returns_store_sales_ticket_number\",
     \"returns_store_store\".\"S_STORE_SK\" as \"returns_store_id\"
 FROM
     \"memory\".\"store_returns\" as \"returns_store_returns\"
     INNER JOIN \"memory\".\"store\" as \"returns_store_store\" on \"returns_store_returns\".\"SR_STORE_SK\" = \"returns_store_store\".\"S_STORE_SK\"
-    INNER JOIN \"memory\".\"customer\" as \"returns_customer_customers\" on \"returns_store_returns\".\"SR_CUSTOMER_SK\" = \"returns_customer_customers\".\"C_CUSTOMER_SK\"
     INNER JOIN \"memory\".\"date_dim\" as \"returns_return_date_date\" on \"returns_store_returns\".\"SR_RETURNED_DATE_SK\" = \"returns_return_date_date\".\"D_DATE_SK\"
 WHERE
     \"returns_store_store\".\"S_STATE\" = 'TN' and cast(\"returns_return_date_date\".\"D_YEAR\" as int) = 2000
 ),
-cooperative as (
+thoughtful as (
 SELECT
-    \"thoughtful\".\"returns_customer_text_id\" as \"returns_customer_text_id\",
-    \"thoughtful\".\"returns_store_id\" as \"returns_store_id\",
-    sum(\"thoughtful\".\"returns_return_amount\") as \"total_returns\"
+    \"returns_store_returns\".\"SR_CUSTOMER_SK\" as \"returns_customer_id\",
+    \"returns_store_returns\".\"SR_RETURNED_DATE_SK\" as \"returns_return_date_id\",
+    \"returns_store_returns\".\"SR_STORE_SK\" as \"returns_store_id\"
 FROM
-    \"thoughtful\"
+    \"memory\".\"store_returns\" as \"returns_store_returns\"
 GROUP BY 
-    \"thoughtful\".\"returns_customer_text_id\",
-    \"thoughtful\".\"returns_store_id\"),
-questionable as (
+    \"returns_store_returns\".\"SR_CUSTOMER_SK\",
+    \"returns_store_returns\".\"SR_RETURNED_DATE_SK\",
+    \"returns_store_returns\".\"SR_STORE_SK\"),
+abundant as (
 SELECT
-    \"cooperative\".\"returns_store_id\" as \"returns_store_id\",
-    avg(\"cooperative\".\"total_returns\") as \"avg_store_returns\"
-FROM
-    \"cooperative\"
-GROUP BY 
-    \"cooperative\".\"returns_store_id\")
-SELECT
-    \"cooperative\".\"returns_customer_text_id\" as \"returns_customer_text_id\"
+    \"questionable\".\"returns_customer_id\" as \"returns_customer_id\",
+    \"questionable\".\"returns_store_id\" as \"returns_store_id\",
+    sum(\"questionable\".\"returns_return_amount\") as \"total_returns\"
 FROM
     \"questionable\"
-    INNER JOIN \"cooperative\" on \"questionable\".\"returns_store_id\" = \"cooperative\".\"returns_store_id\"
+GROUP BY 
+    \"questionable\".\"returns_customer_id\",
+    \"questionable\".\"returns_store_id\"),
+cooperative as (
+SELECT
+    \"returns_customer_customers\".\"C_CUSTOMER_ID\" as \"returns_customer_text_id\",
+    \"returns_customer_customers\".\"C_CUSTOMER_SK\" as \"returns_customer_id\",
+    \"returns_store_store\".\"S_STORE_SK\" as \"returns_store_id\"
+FROM
+    \"thoughtful\"
+    INNER JOIN \"memory\".\"store\" as \"returns_store_store\" on \"thoughtful\".\"returns_store_id\" = \"returns_store_store\".\"S_STORE_SK\"
+    INNER JOIN \"memory\".\"customer\" as \"returns_customer_customers\" on \"thoughtful\".\"returns_customer_id\" = \"returns_customer_customers\".\"C_CUSTOMER_SK\"
+    INNER JOIN \"memory\".\"date_dim\" as \"returns_return_date_date\" on \"thoughtful\".\"returns_return_date_id\" = \"returns_return_date_date\".\"D_DATE_SK\"
 WHERE
-    \"cooperative\".\"total_returns\" > ( 1.2 * \"questionable\".\"avg_store_returns\" )
+    \"returns_store_store\".\"S_STATE\" = 'TN' and cast(\"returns_return_date_date\".\"D_YEAR\" as int) = 2000
+
+GROUP BY 
+    \"returns_customer_customers\".\"C_CUSTOMER_ID\",
+    \"returns_customer_customers\".\"C_CUSTOMER_SK\",
+    \"returns_store_store\".\"S_STORE_SK\"),
+yummy as (
+SELECT
+    \"abundant\".\"returns_store_id\" as \"returns_store_id\",
+    avg(\"abundant\".\"total_returns\") as \"avg_store_returns\"
+FROM
+    \"abundant\"
+GROUP BY 
+    \"abundant\".\"returns_store_id\"),
+uneven as (
+SELECT
+    \"abundant\".\"total_returns\" as \"total_returns\",
+    \"cooperative\".\"returns_customer_text_id\" as \"returns_customer_text_id\",
+    \"cooperative\".\"returns_store_id\" as \"returns_store_id\"
+FROM
+    \"cooperative\"
+    INNER JOIN \"abundant\" on \"cooperative\".\"returns_customer_id\" = \"abundant\".\"returns_customer_id\" AND \"cooperative\".\"returns_store_id\" = \"abundant\".\"returns_store_id\"
+GROUP BY 
+    \"abundant\".\"total_returns\",
+    \"cooperative\".\"returns_customer_text_id\",
+    \"cooperative\".\"returns_store_id\")
+SELECT
+    \"uneven\".\"returns_customer_text_id\" as \"returns_customer_text_id\"
+FROM
+    \"uneven\"
+    INNER JOIN \"yummy\" on \"uneven\".\"returns_store_id\" = \"yummy\".\"returns_store_id\"
+WHERE
+    \"uneven\".\"total_returns\" > ( 1.2 * \"yummy\".\"avg_store_returns\" )
 
 ORDER BY 
-    \"cooperative\".\"returns_customer_text_id\" asc
+    \"uneven\".\"returns_customer_text_id\" asc
 LIMIT (100)"""
 optimized_generated_sql = """
 
 WITH 
-wakeful as (
+questionable as (
 SELECT
-    \"dsreturns_customer_text_id_returns_item_id_returns_store_sales_ticket_number_a09b5495_filtered_on_state_year\".\"returns_customer_text_id\" as \"returns_customer_text_id\",
-    \"dsreturns_customer_text_id_returns_item_id_returns_store_sales_ticket_number_a09b5495_filtered_on_state_year\".\"returns_store_id\" as \"returns_store_id\",
-    sum(\"dsreturns_customer_text_id_returns_item_id_returns_store_sales_ticket_number_a09b5495_filtered_on_state_year\".\"returns_return_amount\") as \"total_returns\"
+    \"returns_store_returns\".\"SR_CUSTOMER_SK\" as \"returns_customer_id\",
+    \"returns_store_returns\".\"SR_RETURN_AMT\" as \"returns_return_amount\",
+    \"returns_store_store\".\"S_STORE_SK\" as \"returns_store_id\"
 FROM
-    \"dsreturns_customer_text_id_returns_item_id_returns_store_sales_ticket_number_a09b5495_filtered_on_state_year\"
-GROUP BY 
-    \"dsreturns_customer_text_id_returns_item_id_returns_store_sales_ticket_number_a09b5495_filtered_on_state_year\".\"returns_customer_text_id\",
-    \"dsreturns_customer_text_id_returns_item_id_returns_store_sales_ticket_number_a09b5495_filtered_on_state_year\".\"returns_store_id\"),
-cheerful as (
-SELECT
-    \"wakeful\".\"returns_store_id\" as \"returns_store_id\",
-    avg(\"wakeful\".\"total_returns\") as \"avg_store_returns\"
-FROM
-    \"wakeful\"
-GROUP BY 
-    \"wakeful\".\"returns_store_id\")
-SELECT
-    \"wakeful\".\"returns_customer_text_id\" as \"returns_customer_text_id\"
-FROM
-    \"cheerful\"
-    INNER JOIN \"wakeful\" on \"cheerful\".\"returns_store_id\" = \"wakeful\".\"returns_store_id\"
+    \"memory\".\"store_returns\" as \"returns_store_returns\"
+    INNER JOIN \"memory\".\"store\" as \"returns_store_store\" on \"returns_store_returns\".\"SR_STORE_SK\" = \"returns_store_store\".\"S_STORE_SK\"
+    INNER JOIN \"memory\".\"date_dim\" as \"returns_return_date_date\" on \"returns_store_returns\".\"SR_RETURNED_DATE_SK\" = \"returns_return_date_date\".\"D_DATE_SK\"
 WHERE
-    \"wakeful\".\"total_returns\" > ( 1.2 * \"cheerful\".\"avg_store_returns\" )
+    \"returns_store_store\".\"S_STATE\" = 'TN' and cast(\"returns_return_date_date\".\"D_YEAR\" as int) = 2000
+),
+thoughtful as (
+SELECT
+    \"returns_store_returns\".\"SR_CUSTOMER_SK\" as \"returns_customer_id\",
+    \"returns_store_returns\".\"SR_RETURNED_DATE_SK\" as \"returns_return_date_id\",
+    \"returns_store_returns\".\"SR_STORE_SK\" as \"returns_store_id\"
+FROM
+    \"memory\".\"store_returns\" as \"returns_store_returns\"
+GROUP BY 
+    \"returns_store_returns\".\"SR_CUSTOMER_SK\",
+    \"returns_store_returns\".\"SR_RETURNED_DATE_SK\",
+    \"returns_store_returns\".\"SR_STORE_SK\"),
+abundant as (
+SELECT
+    \"questionable\".\"returns_customer_id\" as \"returns_customer_id\",
+    \"questionable\".\"returns_store_id\" as \"returns_store_id\",
+    sum(\"questionable\".\"returns_return_amount\") as \"total_returns\"
+FROM
+    \"questionable\"
+GROUP BY 
+    \"questionable\".\"returns_customer_id\",
+    \"questionable\".\"returns_store_id\"),
+cooperative as (
+SELECT
+    \"returns_customer_customers\".\"C_CUSTOMER_ID\" as \"returns_customer_text_id\",
+    \"returns_customer_customers\".\"C_CUSTOMER_SK\" as \"returns_customer_id\",
+    \"returns_store_store\".\"S_STORE_SK\" as \"returns_store_id\"
+FROM
+    \"thoughtful\"
+    INNER JOIN \"memory\".\"store\" as \"returns_store_store\" on \"thoughtful\".\"returns_store_id\" = \"returns_store_store\".\"S_STORE_SK\"
+    INNER JOIN \"memory\".\"customer\" as \"returns_customer_customers\" on \"thoughtful\".\"returns_customer_id\" = \"returns_customer_customers\".\"C_CUSTOMER_SK\"
+    INNER JOIN \"memory\".\"date_dim\" as \"returns_return_date_date\" on \"thoughtful\".\"returns_return_date_id\" = \"returns_return_date_date\".\"D_DATE_SK\"
+WHERE
+    \"returns_store_store\".\"S_STATE\" = 'TN' and cast(\"returns_return_date_date\".\"D_YEAR\" as int) = 2000
+
+GROUP BY 
+    \"returns_customer_customers\".\"C_CUSTOMER_ID\",
+    \"returns_customer_customers\".\"C_CUSTOMER_SK\",
+    \"returns_store_store\".\"S_STORE_SK\"),
+yummy as (
+SELECT
+    \"abundant\".\"returns_store_id\" as \"returns_store_id\",
+    avg(\"abundant\".\"total_returns\") as \"avg_store_returns\"
+FROM
+    \"abundant\"
+GROUP BY 
+    \"abundant\".\"returns_store_id\"),
+uneven as (
+SELECT
+    \"abundant\".\"total_returns\" as \"total_returns\",
+    \"cooperative\".\"returns_customer_text_id\" as \"returns_customer_text_id\",
+    \"cooperative\".\"returns_store_id\" as \"returns_store_id\"
+FROM
+    \"cooperative\"
+    INNER JOIN \"abundant\" on \"cooperative\".\"returns_customer_id\" = \"abundant\".\"returns_customer_id\" AND \"cooperative\".\"returns_store_id\" = \"abundant\".\"returns_store_id\"
+GROUP BY 
+    \"abundant\".\"total_returns\",
+    \"cooperative\".\"returns_customer_text_id\",
+    \"cooperative\".\"returns_store_id\")
+SELECT
+    \"uneven\".\"returns_customer_text_id\" as \"returns_customer_text_id\"
+FROM
+    \"uneven\"
+    INNER JOIN \"yummy\" on \"uneven\".\"returns_store_id\" = \"yummy\".\"returns_store_id\"
+WHERE
+    \"uneven\".\"total_returns\" > ( 1.2 * \"yummy\".\"avg_store_returns\" )
 
 ORDER BY 
-    \"wakeful\".\"returns_customer_text_id\" asc
+    \"uneven\".\"returns_customer_text_id\" asc
 LIMIT (100)"""
 query_id = 1
-sql_comp_time = 3.11157
-total_time = 4.765759
+sql_comp_time = 1.261625
+total_time = 1.6712

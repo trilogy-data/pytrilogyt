@@ -27,3 +27,7 @@ PERSIST dscte_generic_scalar_02e41b09 INTO dscte_generic_scalar_02e41b09 FROM SE
     cte.generic.scalar,
     cte.generic.split,
 ;
+
+PERSIST dscte_generic_split_4a0c66ea INTO dscte_generic_split_4a0c66ea FROM SELECT
+    cte.generic.split,
+;

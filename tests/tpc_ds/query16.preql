@@ -5,7 +5,7 @@ auto multi_warehouse_sales <- filter cs.order_number where count(cs.warehouse.id
 
 SELECT
     count_distinct(cs.order_number) -> order_count,
-    sum(cs.extra_ship_cost) -> total_shipping_cost,
+    sum(cs.ext_ship_cost) -> total_shipping_cost,
     sum(cs.net_profit) -> total_net_profit
 WHERE
     cs.ship_date.date  BETWEEN cast('2002-02-01' as date) AND cast('2002-04-02' AS date) 

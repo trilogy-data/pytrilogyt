@@ -3,14 +3,14 @@ const _trilogyt._created_at <- current_datetime();
 import web_sales as web_sales;
 
 WHERE
-    (web_sales.date.date >= '1999-02-22'::date and web_sales.date.date <= '1999-03-24'::date) and web_sales.item.category in ('Sports', 'Books', 'Home')
+    web_sales.date.date >= '1999-02-22'::date and web_sales.date.date <= '1999-03-24'::date and web_sales.item.category in ('Sports', 'Books', 'Home')
 SELECT
     web_sales.item.name,
     web_sales.item.desc,
     web_sales.item.category,
     web_sales.item.class,
     web_sales.item.current_price,
-    sum(web_sales.extra_sales_price) -> itemrevenue,
+    sum(web_sales.ext_sales_price) -> itemrevenue,
     --sum itemrevenue over web_sales.item.class -> itemclassrevenue,
     (itemrevenue * 100.0) / itemclassrevenue -> revenueratio,
 ORDER BY
@@ -22,10 +22,11 @@ ORDER BY
 LIMIT 100
 ;
 
-PERSIST dsweb_sales_item_id_web_sales_order_number_ae9e8881_filtered_on_date_date_category INTO dsweb_sales_item_id_web_sales_order_number_ae9e8881_filtered_on_date_date_category FROM WHERE
-    (web_sales.date.date >= '1999-02-22'::date and web_sales.date.date <= '1999-03-24'::date) and web_sales.item.category in ('Sports', 'Books', 'Home')
+PERSIST dsweb_sales_date_date_web_sales_item_id_web_sales_order_number_1c2539e1_filtered_on_date_date_category INTO dsweb_sales_date_date_web_sales_item_id_web_sales_order_number_1c2539e1_filtered_on_date_date_category FROM WHERE
+    web_sales.date.date >= '1999-02-22'::date and web_sales.date.date <= '1999-03-24'::date and web_sales.item.category in ('Sports', 'Books', 'Home')
 SELECT
-    web_sales.extra_sales_price,
+    web_sales.date.date,
+    web_sales.ext_sales_price,
     web_sales.item.category,
     web_sales.item.class,
     web_sales.item.current_price,
