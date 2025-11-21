@@ -182,6 +182,7 @@ def cte_to_persist(
             ),
         )
     name = generate_datasource_name(select, name, env)
+    grain = select.calculate_grain(env, select.local_concepts)
     datasource = select.to_datasource(
         namespace=DEFAULT_NAMESPACE,
         name=name,
@@ -189,6 +190,7 @@ def cte_to_persist(
             location=name,
         ),
         environment=env,
+        grain=grain,
     )
 
     persist = PersistStatement(datasource=datasource, select=select)
