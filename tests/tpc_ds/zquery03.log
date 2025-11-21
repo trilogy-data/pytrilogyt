@@ -1,11 +1,11 @@
-base_prep_time = 0.000554
-base_parse_time = 0.408973
-base_generation_time = 0.008308
-base_exec_time = 0.08241
-optimized_prep_time = 0.0
-optimized_parse_time = 0.383687
-optimized_generation_time = 0.002377
-optimized_exec_time = 0.030682
+base_prep_time = 0.000183
+base_parse_time = 0.111489
+base_generation_time = 0.000956
+base_exec_time = 0.005625
+optimized_prep_time = 0.000173
+optimized_parse_time = 0.135843
+optimized_generation_time = 0.000564
+optimized_exec_time = 0.004332
 was_optimized = true
 base_generated_sql = """
 
@@ -14,9 +14,7 @@ cheerful as (
 SELECT
     \"store_sales_item_items\".\"I_BRAND\" as \"store_sales_item_brand_name\",
     \"store_sales_item_items\".\"I_BRAND_ID\" as \"store_sales_item_brand_id\",
-    \"store_sales_item_items\".\"I_ITEM_SK\" as \"store_sales_item_id\",
     \"store_sales_store_sales\".\"SS_EXT_SALES_PRICE\" as \"store_sales_ext_sales_price\",
-    \"store_sales_store_sales\".\"SS_TICKET_NUMBER\" as \"store_sales_ticket_number\",
     cast(\"store_sales_date_date\".\"D_YEAR\" as int) as \"store_sales_date_year\"
 FROM
     \"memory\".\"store_sales\" as \"store_sales_store_sales\"
@@ -38,26 +36,43 @@ GROUP BY
     \"cheerful\".\"store_sales_item_brand_name\"
 ORDER BY 
     \"cheerful\".\"store_sales_date_year\" asc,
-    sum(\"cheerful\".\"store_sales_ext_sales_price\") desc,
+    \"sum_agg\" desc,
     \"cheerful\".\"store_sales_item_brand_id\" asc
 LIMIT (100)"""
 optimized_generated_sql = """
+
+WITH 
+highfalutin as (
 SELECT
-    \"dsstore_sales_date_year_store_sales_item_id_store_sales_ticket_number_e8c5b59e_filtered_on_month_of_year_manufacturer_id\".\"store_sales_date_year\" as \"store_sales_date_year\",
-    \"dsstore_sales_date_year_store_sales_item_id_store_sales_ticket_number_e8c5b59e_filtered_on_month_of_year_manufacturer_id\".\"store_sales_item_brand_id\" as \"store_sales_item_brand_id\",
-    \"dsstore_sales_date_year_store_sales_item_id_store_sales_ticket_number_e8c5b59e_filtered_on_month_of_year_manufacturer_id\".\"store_sales_item_brand_name\" as \"store_sales_item_brand_name\",
-    sum(\"dsstore_sales_date_year_store_sales_item_id_store_sales_ticket_number_e8c5b59e_filtered_on_month_of_year_manufacturer_id\".\"store_sales_ext_sales_price\") as \"sum_agg\"
+    \"dsstore_sales_date_month_of_year_store_sales_date_year_store_sales_item_id_store_sales_ticket_number_7c04f90c_filtered_on_month_of_year_manufacturer_id\".\"store_sales_date_year\" as \"store_sales_date_year\",
+    \"dsstore_sales_date_month_of_year_store_sales_date_year_store_sales_item_id_store_sales_ticket_number_7c04f90c_filtered_on_month_of_year_manufacturer_id\".\"store_sales_ext_sales_price\" as \"store_sales_ext_sales_price\",
+    \"dsstore_sales_date_month_of_year_store_sales_date_year_store_sales_item_id_store_sales_ticket_number_7c04f90c_filtered_on_month_of_year_manufacturer_id\".\"store_sales_item_brand_id\" as \"store_sales_item_brand_id\",
+    \"dsstore_sales_date_month_of_year_store_sales_date_year_store_sales_item_id_store_sales_ticket_number_7c04f90c_filtered_on_month_of_year_manufacturer_id\".\"store_sales_item_brand_name\" as \"store_sales_item_brand_name\"
 FROM
-    \"dsstore_sales_date_year_store_sales_item_id_store_sales_ticket_number_e8c5b59e_filtered_on_month_of_year_manufacturer_id\"
+    \"dsstore_sales_date_month_of_year_store_sales_date_year_store_sales_item_id_store_sales_ticket_number_7c04f90c_filtered_on_month_of_year_manufacturer_id\"
 GROUP BY 
-    \"dsstore_sales_date_year_store_sales_item_id_store_sales_ticket_number_e8c5b59e_filtered_on_month_of_year_manufacturer_id\".\"store_sales_date_year\",
-    \"dsstore_sales_date_year_store_sales_item_id_store_sales_ticket_number_e8c5b59e_filtered_on_month_of_year_manufacturer_id\".\"store_sales_item_brand_id\",
-    \"dsstore_sales_date_year_store_sales_item_id_store_sales_ticket_number_e8c5b59e_filtered_on_month_of_year_manufacturer_id\".\"store_sales_item_brand_name\"
+    \"dsstore_sales_date_month_of_year_store_sales_date_year_store_sales_item_id_store_sales_ticket_number_7c04f90c_filtered_on_month_of_year_manufacturer_id\".\"store_sales_date_year\",
+    \"dsstore_sales_date_month_of_year_store_sales_date_year_store_sales_item_id_store_sales_ticket_number_7c04f90c_filtered_on_month_of_year_manufacturer_id\".\"store_sales_ext_sales_price\",
+    \"dsstore_sales_date_month_of_year_store_sales_date_year_store_sales_item_id_store_sales_ticket_number_7c04f90c_filtered_on_month_of_year_manufacturer_id\".\"store_sales_item_brand_id\",
+    \"dsstore_sales_date_month_of_year_store_sales_date_year_store_sales_item_id_store_sales_ticket_number_7c04f90c_filtered_on_month_of_year_manufacturer_id\".\"store_sales_item_brand_name\",
+    \"dsstore_sales_date_month_of_year_store_sales_date_year_store_sales_item_id_store_sales_ticket_number_7c04f90c_filtered_on_month_of_year_manufacturer_id\".\"store_sales_item_id\",
+    \"dsstore_sales_date_month_of_year_store_sales_date_year_store_sales_item_id_store_sales_ticket_number_7c04f90c_filtered_on_month_of_year_manufacturer_id\".\"store_sales_ticket_number\")
+SELECT
+    \"highfalutin\".\"store_sales_date_year\" as \"store_sales_date_year\",
+    \"highfalutin\".\"store_sales_item_brand_id\" as \"store_sales_item_brand_id\",
+    \"highfalutin\".\"store_sales_item_brand_name\" as \"store_sales_item_brand_name\",
+    sum(\"highfalutin\".\"store_sales_ext_sales_price\") as \"sum_agg\"
+FROM
+    \"highfalutin\"
+GROUP BY 
+    \"highfalutin\".\"store_sales_date_year\",
+    \"highfalutin\".\"store_sales_item_brand_id\",
+    \"highfalutin\".\"store_sales_item_brand_name\"
 ORDER BY 
-    \"dsstore_sales_date_year_store_sales_item_id_store_sales_ticket_number_e8c5b59e_filtered_on_month_of_year_manufacturer_id\".\"store_sales_date_year\" asc,
-    sum(\"dsstore_sales_date_year_store_sales_item_id_store_sales_ticket_number_e8c5b59e_filtered_on_month_of_year_manufacturer_id\".\"store_sales_ext_sales_price\") desc,
-    \"dsstore_sales_date_year_store_sales_item_id_store_sales_ticket_number_e8c5b59e_filtered_on_month_of_year_manufacturer_id\".\"store_sales_item_brand_id\" asc
+    \"highfalutin\".\"store_sales_date_year\" asc,
+    \"sum_agg\" desc,
+    \"highfalutin\".\"store_sales_item_brand_id\" asc
 LIMIT (100)"""
 query_id = 3
-sql_comp_time = 0.088564
-total_time = 1.011037
+sql_comp_time = 0.075956
+total_time = 0.33691

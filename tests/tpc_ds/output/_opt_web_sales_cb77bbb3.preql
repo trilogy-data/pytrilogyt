@@ -33,7 +33,7 @@ datasource dsweb_sales_date_date_web_sales_item_id_web_sales_order_number_1c2539
     web_sales_item_name: ~web_sales.item.name,
     web_sales_order_number: ~web_sales.order_number
 )
-
+grain (web_sales.date.date,web_sales.item.id,web_sales.order_number)
 complete where web_sales.date.date >= '1999-02-22'::date and web_sales.date.date <= '1999-03-24'::date and web_sales.item.category in ('Sports', 'Books', 'Home')
 address dsweb_sales_date_date_web_sales_item_id_web_sales_order_number_1c2539e1_filtered_on_date_date_category;
 
@@ -45,7 +45,7 @@ datasource dsweb_sales_item_category_web_sales_item_class_web_sales_item_current
     web_sales_item_desc: web_sales.item.desc,
     web_sales_item_name: web_sales.item.name
 )
-
+grain (web_sales.item.category,web_sales.item.class,web_sales.item.current_price,web_sales.item.desc,web_sales.item.name)
 address dsweb_sales_item_category_web_sales_item_class_web_sales_item_current_price_web_sales_item_desc_web_sales_item_name_93d6159c;
 
 datasource dsweb_sales_item_class_df37a239 (
@@ -53,7 +53,7 @@ datasource dsweb_sales_item_class_df37a239 (
     itemrevenue: itemrevenue,
     web_sales_item_class: web_sales.item.class
 )
-
+grain (web_sales.item.class)
 address dsweb_sales_item_class_df37a239;
 
 datasource dsweb_sales_item_category_web_sales_item_class_web_sales_item_current_price_web_sales_item_desc_web_sales_item_name_1c30e378 (
@@ -66,5 +66,5 @@ datasource dsweb_sales_item_category_web_sales_item_class_web_sales_item_current
     web_sales_item_desc: web_sales.item.desc,
     web_sales_item_name: web_sales.item.name
 )
-
+grain (web_sales.item.category,web_sales.item.class,web_sales.item.current_price,web_sales.item.desc,web_sales.item.name)
 address dsweb_sales_item_category_web_sales_item_class_web_sales_item_current_price_web_sales_item_desc_web_sales_item_name_1c30e378;

@@ -21,7 +21,7 @@ datasource dscatalog_sales_bill_customer_state_catalog_sales_bill_customer_zip_c
     catalog_sales_order_number: ~catalog_sales.order_number,
     catalog_sales_sales_price: ~catalog_sales.sales_price
 )
-
+grain (catalog_sales.bill_customer.state,catalog_sales.bill_customer.zip,catalog_sales.date.quarter,catalog_sales.date.year,catalog_sales.item.id,catalog_sales.order_number)
 complete where catalog_sales.date.quarter = 2 and catalog_sales.date.year = 2001 and (catalog_sales.bill_customer.state in ('CA', 'WA', 'GA') or catalog_sales.sales_price > 500 or substring(catalog_sales.bill_customer.zip,1,5) in ('85669', '86197', '88274', '83405', '86475', '85392', '85460', '80348', '81792'))
 address dscatalog_sales_bill_customer_state_catalog_sales_bill_customer_zip_catalog_sales_date_quarter_catalog_sales_date_year_catalog_sales_item_id_1_more_25314fc0_filtered_on_quarter_year_state_sales_price_zip;
 
@@ -29,5 +29,5 @@ datasource dscatalog_sales_bill_customer_zip_2da46067 (
     catalog_sales_bill_customer_zip: catalog_sales.bill_customer.zip,
     sales: sales
 )
-
+grain (catalog_sales.bill_customer.zip)
 address dscatalog_sales_bill_customer_zip_2da46067;
