@@ -44,6 +44,7 @@ from trilogy.core.statements.execute import (
     ProcessedRawSQLStatement,
     ProcessedShowStatement,
     ProcessedValidateStatement,
+    PROCESSED_STATEMENT_TYPES,
 )
 from trilogy.dialect.base import BaseDialect
 
@@ -373,14 +374,7 @@ def reorder_ctes(
 
 
 def process_loop(
-    inputs: List[
-        ProcessedQuery
-        | ProcessedQueryPersist
-        | ProcessedShowStatement
-        | ProcessedRawSQLStatement
-        | ProcessedCopyStatement
-        | ProcessedValidateStatement
-    ],
+    inputs: List[PROCESSED_STATEMENT_TYPES],
     env: Environment,
     generator: BaseDialect,
     threshold: int = 2,

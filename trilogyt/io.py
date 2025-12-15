@@ -111,7 +111,7 @@ class MemoryWorkspace(BaseWorkspace):
     def get_environment(self) -> Environment:
         return Environment(
             working_path=Path.cwd(),
-            config=EnvironmentOptions(
+            config=EnvironmentConfig(
                 import_resolver=DictImportResolver(content=self.files),
             ),
         )
