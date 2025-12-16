@@ -17,7 +17,7 @@ ORDER BY
 LIMIT 100
 ;
 
-PERSIST dsreturns_customer_text_id_returns_item_id_returns_return_date_year_returns_store_sales_ticket_number_96a508ab_filtered_on_state_year INTO dsreturns_customer_text_id_returns_item_id_returns_return_date_year_returns_store_sales_ticket_number_96a508ab_filtered_on_state_year FROM WHERE
+OVERWRITE dsreturns_customer_text_id_returns_item_id_returns_return_date_year_returns_store_sales_ticket_number_96a508ab_filtered_on_state_year INTO dsreturns_customer_text_id_returns_item_id_returns_return_date_year_returns_store_sales_ticket_number_96a508ab_filtered_on_state_year FROM WHERE
     returns.store.state = 'TN' and returns.return_date.year = 2000
 SELECT
     returns.customer.text_id,
@@ -29,18 +29,18 @@ SELECT
     returns.store_sales.ticket_number,
 ;
 
-PERSIST dsreturns_customer_text_id_returns_store_id_076b41e9 INTO dsreturns_customer_text_id_returns_store_id_076b41e9 FROM SELECT
+OVERWRITE dsreturns_customer_text_id_returns_store_id_076b41e9 INTO dsreturns_customer_text_id_returns_store_id_076b41e9 FROM SELECT
     total_returns,
     returns.customer.text_id,
     returns.store.id,
 ;
 
-PERSIST dsreturns_store_id_54404a33 INTO dsreturns_store_id_54404a33 FROM SELECT
+OVERWRITE dsreturns_store_id_54404a33 INTO dsreturns_store_id_54404a33 FROM SELECT
     avg_store_returns,
     returns.store.id,
 ;
 
-PERSIST dsreturns_customer_text_id_returns_store_id_3beaaf57_filtered_on_total_returns_avg_store_returns INTO dsreturns_customer_text_id_returns_store_id_3beaaf57_filtered_on_total_returns_avg_store_returns FROM WHERE
+OVERWRITE dsreturns_customer_text_id_returns_store_id_3beaaf57_filtered_on_total_returns_avg_store_returns INTO dsreturns_customer_text_id_returns_store_id_3beaaf57_filtered_on_total_returns_avg_store_returns FROM WHERE
     total_returns > (1.2 * avg_store_returns)
 SELECT
     avg_store_returns,

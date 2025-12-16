@@ -1,2 +1,2 @@
-pytrilogy>=0.3.141
+pytrilogy>=0.3.142
 dbt-core

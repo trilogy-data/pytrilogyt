@@ -17,20 +17,20 @@ ORDER BY
 LIMIT 100
 ;
 
-PERSIST dscs_order_number_cs_warehouse_id_690359b8 INTO dscs_order_number_cs_warehouse_id_690359b8 FROM SELECT
+OVERWRITE dscs_order_number_cs_warehouse_id_690359b8 INTO dscs_order_number_cs_warehouse_id_690359b8 FROM SELECT
     cs.order_number,
     cs.warehouse.id,
 ;
 
-PERSIST dscr_order_number_ab93f574 INTO dscr_order_number_ab93f574 FROM SELECT
+OVERWRITE dscr_order_number_ab93f574 INTO dscr_order_number_ab93f574 FROM SELECT
     cr.order_number,
 ;
 
-PERSIST dslocal_multi_warehouse_sales_679f2d90 INTO dslocal_multi_warehouse_sales_679f2d90 FROM SELECT
+OVERWRITE dslocal_multi_warehouse_sales_679f2d90 INTO dslocal_multi_warehouse_sales_679f2d90 FROM SELECT
     multi_warehouse_sales,
 ;
 
-PERSIST dscs_call_center_id_cs_customer_address_id_cs_order_number_cs_ship_date_id_1b71cae0_filtered_on_order_number_order_number_order_number_multi_warehouse_sales INTO dscs_call_center_id_cs_customer_address_id_cs_order_number_cs_ship_date_id_1b71cae0_filtered_on_order_number_order_number_order_number_multi_warehouse_sales FROM WHERE
+OVERWRITE dscs_call_center_id_cs_customer_address_id_cs_order_number_cs_ship_date_id_1b71cae0_filtered_on_order_number_order_number_order_number_multi_warehouse_sales INTO dscs_call_center_id_cs_customer_address_id_cs_order_number_cs_ship_date_id_1b71cae0_filtered_on_order_number_order_number_order_number_multi_warehouse_sales FROM WHERE
     cs.order_number not in cr.order_number and cs.order_number in multi_warehouse_sales
 SELECT
     cs.call_center.id,
@@ -39,7 +39,7 @@ SELECT
     cs.ship_date.id,
 ;
 
-PERSIST dscs_call_center_county_cs_customer_address_state_cs_item_id_cs_order_number_cs_ship_date_date_a34f7ca9_filtered_on_date_date_state_county_order_number_order_number_order_number_multi_warehouse_sales INTO dscs_call_center_county_cs_customer_address_state_cs_item_id_cs_order_number_cs_ship_date_date_a34f7ca9_filtered_on_date_date_state_county_order_number_order_number_order_number_multi_warehouse_sales FROM WHERE
+OVERWRITE dscs_call_center_county_cs_customer_address_state_cs_item_id_cs_order_number_cs_ship_date_date_a34f7ca9_filtered_on_date_date_state_county_order_number_order_number_order_number_multi_warehouse_sales INTO dscs_call_center_county_cs_customer_address_state_cs_item_id_cs_order_number_cs_ship_date_date_a34f7ca9_filtered_on_date_date_state_county_order_number_order_number_order_number_multi_warehouse_sales FROM WHERE
     cs.ship_date.date >= '2002-02-01'::date and cs.ship_date.date <= '2002-04-02'::date and cs.customer_address.state = 'GA' and cs.call_center.county = 'Williamson County' and cs.order_number not in cr.order_number and cs.order_number in multi_warehouse_sales
 SELECT
     cs.call_center.county,
@@ -51,22 +51,22 @@ SELECT
     cs.ship_date.date,
 ;
 
-PERSIST dscs_order_number_a5e0ca39_filtered_on_date_date_state_county_order_number_order_number_order_number_multi_warehouse_sales INTO dscs_order_number_a5e0ca39_filtered_on_date_date_state_county_order_number_order_number_order_number_multi_warehouse_sales FROM WHERE
+OVERWRITE dscs_order_number_a5e0ca39_filtered_on_date_date_state_county_order_number_order_number_order_number_multi_warehouse_sales INTO dscs_order_number_a5e0ca39_filtered_on_date_date_state_county_order_number_order_number_order_number_multi_warehouse_sales FROM WHERE
     cs.ship_date.date >= '2002-02-01'::date and cs.ship_date.date <= '2002-04-02'::date and cs.customer_address.state = 'GA' and cs.call_center.county = 'Williamson County' and cs.order_number not in cr.order_number and cs.order_number in multi_warehouse_sales
 SELECT
     cs.order_number,
 ;
 
-PERSIST dstotal_net_profit_total_shipping_cost_c66c27a9 INTO dstotal_net_profit_total_shipping_cost_c66c27a9 FROM SELECT
+OVERWRITE dstotal_net_profit_total_shipping_cost_c66c27a9 INTO dstotal_net_profit_total_shipping_cost_c66c27a9 FROM SELECT
     total_net_profit,
     total_shipping_cost,
 ;
 
-PERSIST dsorder_count_589cea8c INTO dsorder_count_589cea8c FROM SELECT
+OVERWRITE dsorder_count_589cea8c INTO dsorder_count_589cea8c FROM SELECT
     order_count,
 ;
 
-PERSIST dsorder_count_total_net_profit_total_shipping_cost_f1322888 INTO dsorder_count_total_net_profit_total_shipping_cost_f1322888 FROM SELECT
+OVERWRITE dsorder_count_total_net_profit_total_shipping_cost_f1322888 INTO dsorder_count_total_net_profit_total_shipping_cost_f1322888 FROM SELECT
     order_count,
     total_net_profit,
     total_shipping_cost,

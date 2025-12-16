@@ -1,11 +1,11 @@
-base_prep_time = 0.000184
-base_parse_time = 0.143809
-base_generation_time = 0.001903
-base_exec_time = 0.026025
-optimized_prep_time = 0.000222
-optimized_parse_time = 0.171678
-optimized_generation_time = 0.00109
-optimized_exec_time = 0.021846
+base_prep_time = 0.000211
+base_parse_time = 0.152224
+base_generation_time = 0.001685
+base_exec_time = 0.017504
+optimized_prep_time = 0.000181
+optimized_parse_time = 0.674193
+optimized_generation_time = 0.001159
+optimized_exec_time = 0.020936
 was_optimized = true
 base_generated_sql = """
 
@@ -130,5 +130,5 @@ ORDER BY
     \"revenueratio\" asc
 LIMIT (100)"""
 query_id = 12
-sql_comp_time = 0.085622
-total_time = 0.457973
+sql_comp_time = 0.111322
+total_time = 0.983574

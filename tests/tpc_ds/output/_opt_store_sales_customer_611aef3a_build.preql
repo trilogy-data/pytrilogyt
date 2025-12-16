@@ -24,36 +24,36 @@ ORDER BY
 LIMIT 100
 ;
 
-PERSIST dscustomer_id_customer_zip_3d60a895 INTO dscustomer_id_customer_zip_3d60a895 FROM SELECT
+OVERWRITE dscustomer_id_customer_zip_3d60a895 INTO dscustomer_id_customer_zip_3d60a895 FROM SELECT
     customer.id,
     customer.preferred_cust_flag,
     customer.zip,
 ;
 
-PERSIST dslocal_zips_pre_b9876e7a INTO dslocal_zips_pre_b9876e7a FROM SELECT
+OVERWRITE dslocal_zips_pre_b9876e7a INTO dslocal_zips_pre_b9876e7a FROM SELECT
     zips_pre,
 ;
 
-PERSIST dscustomer_zip_78dc018d INTO dscustomer_zip_78dc018d FROM SELECT
+OVERWRITE dscustomer_zip_78dc018d INTO dscustomer_zip_78dc018d FROM SELECT
     customer.zip,
     zip_p_count,
 ;
 
-PERSIST dscustomer_address_id_c3487e4b INTO dscustomer_address_id_c3487e4b FROM SELECT
+OVERWRITE dscustomer_address_id_c3487e4b INTO dscustomer_address_id_c3487e4b FROM SELECT
     customer.address_id,
     customer.zip,
     zip_p_count,
 ;
 
-PERSIST dslocal_p_cust_zip_8302063a INTO dslocal_p_cust_zip_8302063a FROM SELECT
+OVERWRITE dslocal_p_cust_zip_8302063a INTO dslocal_p_cust_zip_8302063a FROM SELECT
     p_cust_zip,
 ;
 
-PERSIST dslocal_final_zips_919671db INTO dslocal_final_zips_919671db FROM SELECT
+OVERWRITE dslocal_final_zips_919671db INTO dslocal_final_zips_919671db FROM SELECT
     final_zips,
 ;
 
-PERSIST dsstore_sales_date_quarter_store_sales_date_year_store_sales_item_id_store_sales_store_name_store_sales_store_zip_1_more_acb1a053_filtered_on_quarter_year_zip_final_zips INTO dsstore_sales_date_quarter_store_sales_date_year_store_sales_item_id_store_sales_store_name_store_sales_store_zip_1_more_acb1a053_filtered_on_quarter_year_zip_final_zips FROM WHERE
+OVERWRITE dsstore_sales_date_quarter_store_sales_date_year_store_sales_item_id_store_sales_store_name_store_sales_store_zip_1_more_acb1a053_filtered_on_quarter_year_zip_final_zips INTO dsstore_sales_date_quarter_store_sales_date_year_store_sales_item_id_store_sales_store_name_store_sales_store_zip_1_more_acb1a053_filtered_on_quarter_year_zip_final_zips FROM WHERE
     store_sales.date.quarter = 2 and store_sales.date.year = 1998 and substring(store_sales.store.zip,1,2) in final_zips
 SELECT
     store_sales.date.quarter,
@@ -65,7 +65,7 @@ SELECT
     store_sales.ticket_number,
 ;
 
-PERSIST dsstore_sales_store_name_2b1ac618 INTO dsstore_sales_store_name_2b1ac618 FROM SELECT
+OVERWRITE dsstore_sales_store_name_2b1ac618 INTO dsstore_sales_store_name_2b1ac618 FROM SELECT
     store_net_profit,
     store_sales.store.name,
 ;

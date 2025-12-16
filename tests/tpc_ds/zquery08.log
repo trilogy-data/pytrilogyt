@@ -1,11 +1,11 @@
-base_prep_time = 0.000169
-base_parse_time = 0.201706
-base_generation_time = 0.002541
-base_exec_time = 0.036113
-optimized_prep_time = 0.00022
-optimized_parse_time = 0.21558
-optimized_generation_time = 0.000376
-optimized_exec_time = 0.001121
+base_prep_time = 0.000202
+base_parse_time = 0.227038
+base_generation_time = 0.002887
+base_exec_time = 0.009486
+optimized_prep_time = 0.000201
+optimized_parse_time = 0.208832
+optimized_generation_time = 0.000504
+optimized_exec_time = 0.043928
 was_optimized = true
 base_generated_sql = """
 
@@ -108,14 +108,29 @@ ORDER BY
     \"sweltering\".\"store_sales_store_name\" asc
 LIMIT (100)"""
 optimized_generated_sql = """
+
+WITH 
+highfalutin as (
 SELECT
-    \"dsstore_sales_date_quarter_store_sales_date_year_store_sales_item_id_store_sales_store_name_store_sales_store_zip_1_more_acb1a053_filtered_on_quarter_year_zip_final_zips\".\"store_sales_store_name\" as \"store_sales_store_name\",
-    \"dsstore_sales_date_quarter_store_sales_date_year_store_sales_item_id_store_sales_store_name_store_sales_store_zip_1_more_acb1a053_filtered_on_quarter_year_zip_final_zips\".\"store_sales_net_profit\" as \"store_net_profit\"
+    \"dsstore_sales_date_quarter_store_sales_date_year_store_sales_item_id_store_sales_store_name_store_sales_store_zip_1_more_acb1a053_filtered_on_quarter_year_zip_final_zips\".\"store_sales_net_profit\" as \"store_sales_net_profit\",
+    \"dsstore_sales_date_quarter_store_sales_date_year_store_sales_item_id_store_sales_store_name_store_sales_store_zip_1_more_acb1a053_filtered_on_quarter_year_zip_final_zips\".\"store_sales_store_name\" as \"store_sales_store_name\"
 FROM
     \"dsstore_sales_date_quarter_store_sales_date_year_store_sales_item_id_store_sales_store_name_store_sales_store_zip_1_more_acb1a053_filtered_on_quarter_year_zip_final_zips\"
+GROUP BY 
+    \"dsstore_sales_date_quarter_store_sales_date_year_store_sales_item_id_store_sales_store_name_store_sales_store_zip_1_more_acb1a053_filtered_on_quarter_year_zip_final_zips\".\"store_sales_item_id\",
+    \"dsstore_sales_date_quarter_store_sales_date_year_store_sales_item_id_store_sales_store_name_store_sales_store_zip_1_more_acb1a053_filtered_on_quarter_year_zip_final_zips\".\"store_sales_net_profit\",
+    \"dsstore_sales_date_quarter_store_sales_date_year_store_sales_item_id_store_sales_store_name_store_sales_store_zip_1_more_acb1a053_filtered_on_quarter_year_zip_final_zips\".\"store_sales_store_name\",
+    \"dsstore_sales_date_quarter_store_sales_date_year_store_sales_item_id_store_sales_store_name_store_sales_store_zip_1_more_acb1a053_filtered_on_quarter_year_zip_final_zips\".\"store_sales_ticket_number\")
+SELECT
+    \"highfalutin\".\"store_sales_store_name\" as \"store_sales_store_name\",
+    sum(\"highfalutin\".\"store_sales_net_profit\") as \"store_net_profit\"
+FROM
+    \"highfalutin\"
+GROUP BY 
+    \"highfalutin\".\"store_sales_store_name\"
 ORDER BY 
-    \"dsstore_sales_date_quarter_store_sales_date_year_store_sales_item_id_store_sales_store_name_store_sales_store_zip_1_more_acb1a053_filtered_on_quarter_year_zip_final_zips\".\"store_sales_store_name\" asc
+    \"highfalutin\".\"store_sales_store_name\" asc
 LIMIT (100)"""
 query_id = 8
-sql_comp_time = 0.005278
-total_time = 0.482296
+sql_comp_time = 0.006751
+total_time = 0.515185
