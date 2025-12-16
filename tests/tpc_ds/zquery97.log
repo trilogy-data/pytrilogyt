@@ -1,11 +1,11 @@
-base_prep_time = 0.000251
-base_parse_time = 0.386552
-base_generation_time = 0.001678
-base_exec_time = 0.039878
-optimized_prep_time = 0.000251
-optimized_parse_time = 0.897767
-optimized_generation_time = 0.001595
-optimized_exec_time = 0.03367
+base_prep_time = 0.000222
+base_parse_time = 0.405142
+base_generation_time = 0.001644
+base_exec_time = 0.033171
+optimized_prep_time = 0.000221
+optimized_parse_time = 0.416831
+optimized_generation_time = 0.001643
+optimized_exec_time = 0.032758
 was_optimized = false
 base_generated_sql = """
 
@@ -176,5 +176,5 @@ SELECT
 FROM
     \"uneven\""""
 query_id = 97
-sql_comp_time = 0.079986
-total_time = 1.447714
+sql_comp_time = 0.009766
+total_time = 0.90425

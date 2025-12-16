@@ -1,11 +1,11 @@
-base_prep_time = 0.000283
-base_parse_time = 0.522788
-base_generation_time = 0.012039
-base_exec_time = 0.019438
-optimized_prep_time = 0.000184
-optimized_parse_time = 0.412763
-optimized_generation_time = 0.011288
-optimized_exec_time = 0.019631
+base_prep_time = 0.000326
+base_parse_time = 0.493528
+base_generation_time = 0.009624
+base_exec_time = 0.017435
+optimized_prep_time = 0.000296
+optimized_parse_time = 0.44192
+optimized_generation_time = 0.009843
+optimized_exec_time = 0.019709
 was_optimized = false
 base_generated_sql = """
 
@@ -240,5 +240,5 @@ ORDER BY
     \"juicy\".\"store_sales_store_name\" asc
 LIMIT (100)"""
 query_id = 25
-sql_comp_time = 0.016086
-total_time = 1.017216
+sql_comp_time = 0.012953
+total_time = 1.008962

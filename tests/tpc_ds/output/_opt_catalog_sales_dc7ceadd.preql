@@ -27,7 +27,7 @@ address dscatalog_sales_bill_customer_state_catalog_sales_bill_customer_zip_cata
 
 datasource dscatalog_sales_bill_customer_zip_2da46067 (
     catalog_sales_bill_customer_zip: catalog_sales.bill_customer.zip,
-    sales: sales
+    sales
 )
 grain (catalog_sales.bill_customer.zip)
 address dscatalog_sales_bill_customer_zip_2da46067;

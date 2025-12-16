@@ -19,7 +19,7 @@ ORDER BY
     store_sales.customer.state asc nulls first
 ;
 
-PERSIST dsitem_id_store_sales_customer_state_store_sales_date_month_of_year_store_sales_date_year_store_sales_ticket_number_8c6c8978_filtered_on_year_month_of_year_category INTO dsitem_id_store_sales_customer_state_store_sales_date_month_of_year_store_sales_date_year_store_sales_ticket_number_8c6c8978_filtered_on_year_month_of_year_category FROM WHERE
+OVERWRITE dsitem_id_store_sales_customer_state_store_sales_date_month_of_year_store_sales_date_year_store_sales_ticket_number_8c6c8978_filtered_on_year_month_of_year_category INTO dsitem_id_store_sales_customer_state_store_sales_date_month_of_year_store_sales_date_year_store_sales_ticket_number_8c6c8978_filtered_on_year_month_of_year_category FROM WHERE
     store_sales.date.year = 2001 and store_sales.date.month_of_year = 1 and store_sales.item.category is not null
 SELECT
     item.category,
@@ -32,7 +32,7 @@ SELECT
     store_sales.ticket_number,
 ;
 
-PERSIST dsstore_sales_customer_state_854fd24c_filtered_on_customer_count INTO dsstore_sales_customer_state_854fd24c_filtered_on_customer_count FROM WHERE
+OVERWRITE dsstore_sales_customer_state_854fd24c_filtered_on_customer_count INTO dsstore_sales_customer_state_854fd24c_filtered_on_customer_count FROM WHERE
     customer_count >= 10
 SELECT
     customer_count,

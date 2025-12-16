@@ -31,7 +31,7 @@ grain (cr.order_number)
 address dscr_order_number_ab93f574;
 
 datasource dslocal_multi_warehouse_sales_679f2d90 (
-    multi_warehouse_sales: multi_warehouse_sales
+    multi_warehouse_sales
 )
 grain (multi_warehouse_sales)
 address dslocal_multi_warehouse_sales_679f2d90;
@@ -67,22 +67,22 @@ complete where cs.ship_date.date >= '2002-02-01'::date and cs.ship_date.date <= 
 address dscs_order_number_a5e0ca39_filtered_on_date_date_state_county_order_number_order_number_order_number_multi_warehouse_sales;
 
 datasource dstotal_net_profit_total_shipping_cost_c66c27a9 (
-    total_net_profit: total_net_profit,
-    total_shipping_cost: total_shipping_cost
+    total_net_profit,
+    total_shipping_cost
 )
 
 address dstotal_net_profit_total_shipping_cost_c66c27a9;
 
 datasource dsorder_count_589cea8c (
-    order_count: order_count
+    order_count
 )
 
 address dsorder_count_589cea8c;
 
 datasource dsorder_count_total_net_profit_total_shipping_cost_f1322888 (
-    order_count: order_count,
-    total_net_profit: total_net_profit,
-    total_shipping_cost: total_shipping_cost
+    order_count,
+    total_net_profit,
+    total_shipping_cost
 )
 
 address dsorder_count_total_net_profit_total_shipping_cost_f1322888;

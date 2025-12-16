@@ -1,21 +1,21 @@
-base_prep_time = 0.0002
-base_parse_time = 0.140565
-base_generation_time = 0.002972
-base_exec_time = 0.034754
+base_prep_time = 0.000211
+base_parse_time = 0.156486
+base_generation_time = 0.002698
+base_exec_time = 0.025257
 optimized_prep_time = 0.000197
-optimized_parse_time = 0.122285
-optimized_generation_time = 0.00256
-optimized_exec_time = 0.019693
+optimized_parse_time = 0.146025
+optimized_generation_time = 0.002611
+optimized_exec_time = 0.023896
 was_optimized = false
 base_generated_sql = """
 
 WITH 
 questionable as (
 SELECT
+    \"call_center_call_center\".\"CC_NAME\" as \"call_center_name\",
     \"ship_mode_ship_mode\".\"SM_TYPE\" as \"ship_mode_type\",
+    \"warehouse_warehouse\".\"w_warehouse_name\" as \"warehouse_name\",
     (cast(\"catalog_sales\".\"CS_ORDER_NUMBER\" as string) || cast(\"catalog_sales\".\"CS_ITEM_SK\" as string)) as \"catalog_pk\",
-    LOWER(\"call_center_call_center\".\"CC_NAME\")  as \"cc_name_lower\",
-    SUBSTRING(\"warehouse_warehouse\".\"w_warehouse_name\",1,20) as \"warehouse_short_name\",
     date_diff('day', cast(\"sold_date_date\".\"D_DATE\" as date), cast(\"ship_date_date\".\"D_DATE\" as date)) as \"days_to_ship\"
 FROM
     \"memory\".\"catalog_sales\" as \"catalog_sales\"
@@ -29,14 +29,14 @@ WHERE
 ),
 abundant as (
 SELECT
-    \"questionable\".\"cc_name_lower\" as \"cc_name_lower\",
     \"questionable\".\"ship_mode_type\" as \"ship_mode_type\",
-    \"questionable\".\"warehouse_short_name\" as \"warehouse_short_name\",
     CASE WHEN \"questionable\".\"days_to_ship\" <= 30 THEN \"questionable\".\"catalog_pk\" ELSE NULL END as \"_virt_filter_catalog_pk_8168372723999465\",
     CASE WHEN \"questionable\".\"days_to_ship\" > 120 THEN \"questionable\".\"catalog_pk\" ELSE NULL END as \"_virt_filter_catalog_pk_5945567725420865\",
     CASE WHEN \"questionable\".\"days_to_ship\" > 30 and \"questionable\".\"days_to_ship\" <= 60 THEN \"questionable\".\"catalog_pk\" ELSE NULL END as \"_virt_filter_catalog_pk_6661083751970711\",
     CASE WHEN \"questionable\".\"days_to_ship\" > 60 and \"questionable\".\"days_to_ship\" <= 90 THEN \"questionable\".\"catalog_pk\" ELSE NULL END as \"_virt_filter_catalog_pk_3717011266371848\",
-    CASE WHEN \"questionable\".\"days_to_ship\" > 90 and \"questionable\".\"days_to_ship\" <= 120 THEN \"questionable\".\"catalog_pk\" ELSE NULL END as \"_virt_filter_catalog_pk_5603765296623263\"
+    CASE WHEN \"questionable\".\"days_to_ship\" > 90 and \"questionable\".\"days_to_ship\" <= 120 THEN \"questionable\".\"catalog_pk\" ELSE NULL END as \"_virt_filter_catalog_pk_5603765296623263\",
+    LOWER(\"questionable\".\"call_center_name\")  as \"cc_name_lower\",
+    SUBSTRING(\"questionable\".\"warehouse_name\",1,20) as \"warehouse_short_name\"
 FROM
     \"questionable\")
 SELECT
@@ -64,10 +64,10 @@ optimized_generated_sql = """
 WITH 
 questionable as (
 SELECT
+    \"call_center_call_center\".\"CC_NAME\" as \"call_center_name\",
     \"ship_mode_ship_mode\".\"SM_TYPE\" as \"ship_mode_type\",
+    \"warehouse_warehouse\".\"w_warehouse_name\" as \"warehouse_name\",
     (cast(\"catalog_sales\".\"CS_ORDER_NUMBER\" as string) || cast(\"catalog_sales\".\"CS_ITEM_SK\" as string)) as \"catalog_pk\",
-    LOWER(\"call_center_call_center\".\"CC_NAME\")  as \"cc_name_lower\",
-    SUBSTRING(\"warehouse_warehouse\".\"w_warehouse_name\",1,20) as \"warehouse_short_name\",
     date_diff('day', cast(\"sold_date_date\".\"D_DATE\" as date), cast(\"ship_date_date\".\"D_DATE\" as date)) as \"days_to_ship\"
 FROM
     \"memory\".\"catalog_sales\" as \"catalog_sales\"
@@ -81,14 +81,14 @@ WHERE
 ),
 abundant as (
 SELECT
-    \"questionable\".\"cc_name_lower\" as \"cc_name_lower\",
     \"questionable\".\"ship_mode_type\" as \"ship_mode_type\",
-    \"questionable\".\"warehouse_short_name\" as \"warehouse_short_name\",
     CASE WHEN \"questionable\".\"days_to_ship\" <= 30 THEN \"questionable\".\"catalog_pk\" ELSE NULL END as \"_virt_filter_catalog_pk_8168372723999465\",
     CASE WHEN \"questionable\".\"days_to_ship\" > 120 THEN \"questionable\".\"catalog_pk\" ELSE NULL END as \"_virt_filter_catalog_pk_5945567725420865\",
     CASE WHEN \"questionable\".\"days_to_ship\" > 30 and \"questionable\".\"days_to_ship\" <= 60 THEN \"questionable\".\"catalog_pk\" ELSE NULL END as \"_virt_filter_catalog_pk_6661083751970711\",
     CASE WHEN \"questionable\".\"days_to_ship\" > 60 and \"questionable\".\"days_to_ship\" <= 90 THEN \"questionable\".\"catalog_pk\" ELSE NULL END as \"_virt_filter_catalog_pk_3717011266371848\",
-    CASE WHEN \"questionable\".\"days_to_ship\" > 90 and \"questionable\".\"days_to_ship\" <= 120 THEN \"questionable\".\"catalog_pk\" ELSE NULL END as \"_virt_filter_catalog_pk_5603765296623263\"
+    CASE WHEN \"questionable\".\"days_to_ship\" > 90 and \"questionable\".\"days_to_ship\" <= 120 THEN \"questionable\".\"catalog_pk\" ELSE NULL END as \"_virt_filter_catalog_pk_5603765296623263\",
+    LOWER(\"questionable\".\"call_center_name\")  as \"cc_name_lower\",
+    SUBSTRING(\"questionable\".\"warehouse_name\",1,20) as \"warehouse_short_name\"
 FROM
     \"questionable\")
 SELECT
@@ -112,5 +112,5 @@ ORDER BY
     \"abundant\".\"cc_name_lower\" asc nulls first
 LIMIT (100)"""
 query_id = 99
-sql_comp_time = 0.012937
-total_time = 0.338419
+sql_comp_time = 0.053018
+total_time = 0.412586

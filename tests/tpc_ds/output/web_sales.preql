@@ -15,9 +15,9 @@ import address as bill_address;
 key order_number int;
 key return_order_number int;
 property <order_number,item.id>.quantity int;
-property <order_number,item.id>.sales_price float;
-property <order_number,item.id>.net_profit float;
-property <order_number,item.id>.ext_sales_price float;
+property <order_number,item.id>.sales_price numeric(15,2);
+property <order_number,item.id>.net_profit numeric(15,2);
+property <order_number,item.id>.ext_sales_price numeric(15,2);
 property <order_number,item.id>.ext_ship_cost float;
 property <order_number,item.id>.return_amount float;
 property <order_number,item.id>.is_returned bool;
@@ -25,7 +25,7 @@ property <order_number,item.id>.is_returned bool;
 
 datasource web_sales (
     WS_SOLD_DATE_SK: date.id,
-    WS_SOLD_TIME_SK: time.id,
+    WS_SOLD_TIME_SK: time.id,   
     WS_SHIP_DATE_SK: ship_date.id,
     WS_BILL_CUSTOMER_SK: customer.id,
     WS_ORDER_NUMBER: order_number,

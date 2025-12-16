@@ -38,7 +38,7 @@ complete where web_sales.date.date >= '1999-02-22'::date and web_sales.date.date
 address dsweb_sales_date_date_web_sales_item_id_web_sales_order_number_1c2539e1_filtered_on_date_date_category;
 
 datasource dsweb_sales_item_category_web_sales_item_class_web_sales_item_current_price_web_sales_item_desc_web_sales_item_name_93d6159c (
-    itemrevenue: itemrevenue,
+    itemrevenue,
     web_sales_item_category: web_sales.item.category,
     web_sales_item_class: web_sales.item.class,
     web_sales_item_current_price: web_sales.item.current_price,
@@ -49,17 +49,17 @@ grain (web_sales.item.category,web_sales.item.class,web_sales.item.current_price
 address dsweb_sales_item_category_web_sales_item_class_web_sales_item_current_price_web_sales_item_desc_web_sales_item_name_93d6159c;
 
 datasource dsweb_sales_item_class_df37a239 (
-    itemclassrevenue: itemclassrevenue,
-    itemrevenue: itemrevenue,
+    itemclassrevenue,
+    itemrevenue,
     web_sales_item_class: web_sales.item.class
 )
 grain (web_sales.item.class)
 address dsweb_sales_item_class_df37a239;
 
 datasource dsweb_sales_item_category_web_sales_item_class_web_sales_item_current_price_web_sales_item_desc_web_sales_item_name_1c30e378 (
-    itemclassrevenue: itemclassrevenue,
-    itemrevenue: itemrevenue,
-    revenueratio: revenueratio,
+    itemclassrevenue,
+    itemrevenue,
+    revenueratio,
     web_sales_item_category: web_sales.item.category,
     web_sales_item_class: web_sales.item.class,
     web_sales_item_current_price: web_sales.item.current_price,

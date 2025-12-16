@@ -38,12 +38,10 @@ from trilogy.core.models.build import (
 from trilogy.core.models.core import ListWrapper, MapWrapper, TupleWrapper
 from trilogy.core.models.execute import CTE, QueryDatasource, UnionCTE
 from trilogy.core.statements.execute import (
-    ProcessedCopyStatement,
+    PROCESSED_STATEMENT_TYPES,
     ProcessedQuery,
     ProcessedQueryPersist,
-    ProcessedRawSQLStatement,
     ProcessedShowStatement,
-    ProcessedValidateStatement,
 )
 from trilogy.dialect.base import BaseDialect
 
@@ -373,14 +371,7 @@ def reorder_ctes(
 
 
 def process_loop(
-    inputs: List[
-        ProcessedQuery
-        | ProcessedQueryPersist
-        | ProcessedShowStatement
-        | ProcessedRawSQLStatement
-        | ProcessedCopyStatement
-        | ProcessedValidateStatement
-    ],
+    inputs: List[PROCESSED_STATEMENT_TYPES],
     env: Environment,
     generator: BaseDialect,
     threshold: int = 2,

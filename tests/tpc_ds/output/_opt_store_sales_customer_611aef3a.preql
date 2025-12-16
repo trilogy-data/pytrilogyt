@@ -33,14 +33,14 @@ grain (customer.id,customer.zip)
 address dscustomer_id_customer_zip_3d60a895;
 
 datasource dslocal_zips_pre_b9876e7a (
-    zips_pre: zips_pre
+    zips_pre
 )
 grain (zips_pre)
 address dslocal_zips_pre_b9876e7a;
 
 datasource dscustomer_zip_78dc018d (
     customer_zip: customer.zip,
-    zip_p_count: zip_p_count
+    zip_p_count
 )
 grain (customer.zip)
 address dscustomer_zip_78dc018d;
@@ -48,19 +48,19 @@ address dscustomer_zip_78dc018d;
 datasource dscustomer_address_id_c3487e4b (
     customer_address_id: customer.address_id,
     customer_zip: customer.zip,
-    zip_p_count: zip_p_count
+    zip_p_count
 )
 grain (customer.address_id)
 address dscustomer_address_id_c3487e4b;
 
 datasource dslocal_p_cust_zip_8302063a (
-    p_cust_zip: p_cust_zip
+    p_cust_zip
 )
 grain (p_cust_zip)
 address dslocal_p_cust_zip_8302063a;
 
 datasource dslocal_final_zips_919671db (
-    final_zips: final_zips
+    final_zips
 )
 grain (final_zips)
 address dslocal_final_zips_919671db;
@@ -79,7 +79,7 @@ complete where store_sales.date.quarter = 2 and store_sales.date.year = 1998 and
 address dsstore_sales_date_quarter_store_sales_date_year_store_sales_item_id_store_sales_store_name_store_sales_store_zip_1_more_acb1a053_filtered_on_quarter_year_zip_final_zips;
 
 datasource dsstore_sales_store_name_2b1ac618 (
-    store_net_profit: store_net_profit,
+    store_net_profit,
     store_sales_store_name: store_sales.store.name
 )
 grain (store_sales.store.name)

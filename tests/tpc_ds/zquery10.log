@@ -1,11 +1,11 @@
-base_prep_time = 0.000315
-base_parse_time = 0.559217
-base_generation_time = 0.005373
-base_exec_time = 0.042128
-optimized_prep_time = 0.000362
-optimized_parse_time = 1.267229
-optimized_generation_time = 0.005832
-optimized_exec_time = 0.02989
+base_prep_time = 0.000215
+base_parse_time = 1.245214
+base_generation_time = 0.004383
+base_exec_time = 0.039788
+optimized_prep_time = 0.000245
+optimized_parse_time = 0.607268
+optimized_generation_time = 0.004607
+optimized_exec_time = 0.029788
 was_optimized = false
 base_generated_sql = """
 
@@ -69,7 +69,7 @@ FROM
     \"memory\".\"customer_demographics\" as \"customer_demographics_customer_demographics\"
     INNER JOIN \"memory\".\"customer\" as \"customer_customers\" on \"customer_demographics_customer_demographics\".\"CD_DEMO_SK\" = \"customer_customers\".\"C_CURRENT_CDEMO_SK\"
 WHERE
-    \"customer_customers\".\"C_CUSTOMER_SK\" in (select concerned.\"relevant_customers\" from concerned where concerned.\"relevant_customers\" is not null)
+    \"customer_customers\".\"C_CUSTOMER_SK\" in (select concerned.\"relevant_customers\" from concerned where concerned.\"relevant_customers\" is not null) and \"customer_demographics_customer_demographics\".\"CD_GENDER\" is not null
 
 GROUP BY 
     \"customer_customers\".\"C_CUSTOMER_SK\",
@@ -98,9 +98,6 @@ SELECT
     count(\"young\".\"base_customer_id\") as \"cnt6\"
 FROM
     \"young\"
-WHERE
-    \"young\".\"base_customer_demographics_gender\" is not null
-
 GROUP BY 
     \"young\".\"base_customer_demographics_college_dependent_count\",
     \"young\".\"base_customer_demographics_credit_rating\",
@@ -181,7 +178,7 @@ FROM
     \"memory\".\"customer_demographics\" as \"customer_demographics_customer_demographics\"
     INNER JOIN \"memory\".\"customer\" as \"customer_customers\" on \"customer_demographics_customer_demographics\".\"CD_DEMO_SK\" = \"customer_customers\".\"C_CURRENT_CDEMO_SK\"
 WHERE
-    \"customer_customers\".\"C_CUSTOMER_SK\" in (select concerned.\"relevant_customers\" from concerned where concerned.\"relevant_customers\" is not null)
+    \"customer_customers\".\"C_CUSTOMER_SK\" in (select concerned.\"relevant_customers\" from concerned where concerned.\"relevant_customers\" is not null) and \"customer_demographics_customer_demographics\".\"CD_GENDER\" is not null
 
 GROUP BY 
     \"customer_customers\".\"C_CUSTOMER_SK\",
@@ -210,9 +207,6 @@ SELECT
     count(\"young\".\"base_customer_id\") as \"cnt6\"
 FROM
     \"young\"
-WHERE
-    \"young\".\"base_customer_demographics_gender\" is not null
-
 GROUP BY 
     \"young\".\"base_customer_demographics_college_dependent_count\",
     \"young\".\"base_customer_demographics_credit_rating\",
@@ -232,5 +226,5 @@ ORDER BY
     \"young\".\"base_customer_demographics_employed_dependent_count\" asc,
     \"young\".\"base_customer_demographics_college_dependent_count\" asc"""
 query_id = 10
-sql_comp_time = 0.078741
-total_time = 1.993805
+sql_comp_time = 0.044025
+total_time = 1.97967

@@ -1,11 +1,11 @@
-base_prep_time = 0.000286
-base_parse_time = 0.220907
-base_generation_time = 0.005331
-base_exec_time = 0.016903
-optimized_prep_time = 0.000391
-optimized_parse_time = 0.21927
-optimized_generation_time = 0.003327
-optimized_exec_time = 0.016407
+base_prep_time = 0.000279
+base_parse_time = 0.996086
+base_generation_time = 0.00294
+base_exec_time = 0.015406
+optimized_prep_time = 0.000191
+optimized_parse_time = 0.190313
+optimized_generation_time = 0.003272
+optimized_exec_time = 0.014534
 was_optimized = false
 base_generated_sql = """
 
@@ -61,7 +61,7 @@ GROUP BY
     \"web_sales_web_sales\".\"WS_WEB_SITE_SK\"),
 yummy as (
 SELECT
-    \"web_sales_web_sales\".\"WS_EXT_SHIP_COST\" as \"web_sales_extra_ship_cost\",
+    \"web_sales_web_sales\".\"WS_EXT_SHIP_COST\" as \"web_sales_ext_ship_cost\",
     \"web_sales_web_sales\".\"WS_NET_PROFIT\" as \"web_sales_net_profit\"
 FROM
     \"memory\".\"web_sales\" as \"web_sales_web_sales\"
@@ -86,7 +86,7 @@ GROUP BY
     \"vacuous\".\"web_sales_order_number\"),
 juicy as (
 SELECT
-    sum(\"yummy\".\"web_sales_extra_ship_cost\") as \"total_shipping_cost\",
+    sum(\"yummy\".\"web_sales_ext_ship_cost\") as \"total_shipping_cost\",
     sum(\"yummy\".\"web_sales_net_profit\") as \"total_net_profit\"
 FROM
     \"yummy\"),
@@ -159,7 +159,7 @@ GROUP BY
     \"web_sales_web_sales\".\"WS_WEB_SITE_SK\"),
 yummy as (
 SELECT
-    \"web_sales_web_sales\".\"WS_EXT_SHIP_COST\" as \"web_sales_extra_ship_cost\",
+    \"web_sales_web_sales\".\"WS_EXT_SHIP_COST\" as \"web_sales_ext_ship_cost\",
     \"web_sales_web_sales\".\"WS_NET_PROFIT\" as \"web_sales_net_profit\"
 FROM
     \"memory\".\"web_sales\" as \"web_sales_web_sales\"
@@ -184,7 +184,7 @@ GROUP BY
     \"vacuous\".\"web_sales_order_number\"),
 juicy as (
 SELECT
-    sum(\"yummy\".\"web_sales_extra_ship_cost\") as \"total_shipping_cost\",
+    sum(\"yummy\".\"web_sales_ext_ship_cost\") as \"total_shipping_cost\",
     sum(\"yummy\".\"web_sales_net_profit\") as \"total_net_profit\"
 FROM
     \"yummy\"),
@@ -204,5 +204,5 @@ ORDER BY
     \"young\".\"order_count\" desc
 LIMIT (100)"""
 query_id = 95
-sql_comp_time = 0.019205
-total_time = 0.518827
+sql_comp_time = 0.018994
+total_time = 1.244946
