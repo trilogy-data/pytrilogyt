@@ -1,11 +1,11 @@
-base_prep_time = 0.000329
-base_parse_time = 0.594037
-base_generation_time = 0.008099
-base_exec_time = 0.602268
-optimized_prep_time = 0.000285
-optimized_parse_time = 0.616705
-optimized_generation_time = 0.007549
-optimized_exec_time = 0.0561
+base_prep_time = 0.000179
+base_parse_time = 0.540888
+base_generation_time = 0.007114
+base_exec_time = 0.037709
+optimized_prep_time = 0.000189
+optimized_parse_time = 0.558597
+optimized_generation_time = 0.007539
+optimized_exec_time = 0.037692
 was_optimized = false
 base_generated_sql = """
 
@@ -320,5 +320,5 @@ WHERE
     \"sweltering\".\"peach_sales\" > 0.05 * \"concerned\".\"avg_store_customer_sales\"
 """
 query_id = 24
-sql_comp_time = 0.032389
-total_time = 1.921525
+sql_comp_time = 0.03007
+total_time = 1.222259

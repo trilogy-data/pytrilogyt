@@ -7,7 +7,10 @@ def dsgeneric_scalar_0c9429cc(duck_db: DuckDBResource) -> None:
     with duck_db.get_connection() as conn:
         conn.execute(
             """ 
-CREATE OR REPLACE TABLE dsgeneric_scalar_0c9429cc AS
+CREATE OR REPLACE TABLE "dsgeneric_scalar_0c9429cc" (
+    generic_scalar int,
+    generic_split int
+); INSERT INTO "dsgeneric_scalar_0c9429cc" 
 
 WITH 
 quizzical as (

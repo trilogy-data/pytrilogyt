@@ -1,11 +1,11 @@
-base_prep_time = 0.000202
-base_parse_time = 0.227038
-base_generation_time = 0.002887
-base_exec_time = 0.009486
-optimized_prep_time = 0.000201
-optimized_parse_time = 0.208832
-optimized_generation_time = 0.000504
-optimized_exec_time = 0.043928
+base_prep_time = 0.000213
+base_parse_time = 0.787081
+base_generation_time = 0.002571
+base_exec_time = 0.01033
+optimized_prep_time = 0.00019
+optimized_parse_time = 0.184405
+optimized_generation_time = 0.000489
+optimized_exec_time = 0.001143
 was_optimized = true
 base_generated_sql = """
 
@@ -132,5 +132,5 @@ ORDER BY
     \"highfalutin\".\"store_sales_store_name\" asc
 LIMIT (100)"""
 query_id = 8
-sql_comp_time = 0.006751
-total_time = 0.515185
+sql_comp_time = 0.006021
+total_time = 0.994226

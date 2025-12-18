@@ -1,11 +1,11 @@
-base_prep_time = 0.000215
-base_parse_time = 1.245214
-base_generation_time = 0.004383
-base_exec_time = 0.039788
-optimized_prep_time = 0.000245
-optimized_parse_time = 0.607268
-optimized_generation_time = 0.004607
-optimized_exec_time = 0.029788
+base_prep_time = 0.000294
+base_parse_time = 0.508532
+base_generation_time = 0.003585
+base_exec_time = 0.023797
+optimized_prep_time = 0.000189
+optimized_parse_time = 0.481559
+optimized_generation_time = 0.003822
+optimized_exec_time = 0.022948
 was_optimized = false
 base_generated_sql = """
 
@@ -226,5 +226,5 @@ ORDER BY
     \"young\".\"base_customer_demographics_employed_dependent_count\" asc,
     \"young\".\"base_customer_demographics_college_dependent_count\" asc"""
 query_id = 10
-sql_comp_time = 0.044025
-total_time = 1.97967
+sql_comp_time = 0.037564
+total_time = 1.085495
