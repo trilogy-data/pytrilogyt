@@ -252,7 +252,7 @@ def generate_model(
     preql_path: Path | None,
     dialect: Dialects,
     config: DagsterConfig,
-    model_ds_mapping: dict[str, str | None],
+    model_ds_mapping: dict[str, str],
     environment: Environment | None = None,
     clear_target_dir: bool = True,
 ) -> list[ModelInput]:
