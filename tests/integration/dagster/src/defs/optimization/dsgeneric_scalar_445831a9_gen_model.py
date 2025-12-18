@@ -7,7 +7,10 @@ def dsgeneric_scalar_445831a9(duck_db: DuckDBResource) -> None:
     with duck_db.get_connection() as conn:
         conn.execute(
             """ 
-CREATE OR REPLACE TABLE dsgeneric_scalar_445831a9 AS
+CREATE OR REPLACE TABLE "dsgeneric_scalar_445831a9" (
+    generic_int_array int[],
+    generic_scalar int
+); INSERT INTO "dsgeneric_scalar_445831a9" 
 SELECT
     "generic_avalues"."int_array" as "generic_int_array",
     "generic_avalues"."scalar" as "generic_scalar"

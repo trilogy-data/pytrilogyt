@@ -9,6 +9,7 @@ from trilogy.authoring import (
     Datasource,
     PersistStatement,
 )
+from trilogy.core.enums import AddressType
 from trilogy.core.models.build import BuildDatasource
 from trilogy.core.models.datasource import Address
 from trilogy.core.models.execute import CTE, QueryDatasource, UnionCTE
@@ -19,6 +20,7 @@ from yaml import dump, safe_load
 from trilogyt.constants import logger
 from trilogyt.core import enrich_environment
 from trilogyt.dbt.config import DBTConfig
+from trilogyt.helpers import safe_string_address
 
 DEFAULT_DESCRIPTION: str = "No description provided"
 
@@ -49,17 +51,20 @@ def add_datasource_reference(
     if not isinstance(source, BuildDatasource):
         return
     if source.identifier in eligible:
-        if isinstance(source.address, Address):
+        if (
+            isinstance(source.address, Address)
+            and source.address.type == AddressType.TABLE
+        ):
             source.address.location = f"{{{{ ref('{source.identifier}_gen_model') }}}}"
-            source.address.is_query = True
+            source.address.type = AddressType.QUERY
         elif isinstance(source.address, str):
             source.address = f"{{{{ ref('{source.identifier}_gen_model') }}}}"
 
 
 def add_cte_reference(cte: CTE, eligible: dict[str, Datasource]):
-    if cte.base_name_override in eligible:
-        cte.base_name_override = f"{{{{ ref('{cte.base_name_override}_gen_model') }}}}"
 
+    if safe_string_address(cte.base_name_override) in eligible:
+        cte.base_name_override = f"{{{{ ref('{cte.base_name_override}_gen_model') }}}}"
     for source in cte.source.datasources:
         add_datasource_reference(source, eligible)
 

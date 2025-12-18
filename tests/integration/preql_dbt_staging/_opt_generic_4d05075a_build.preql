@@ -11,7 +11,7 @@ SELECT
     generic.scalar,
 ;
 
-PERSIST dsgeneric_scalar_445831a9 INTO dsgeneric_scalar_445831a9 FROM SELECT
+OVERWRITE dsgeneric_scalar_445831a9 INTO dsgeneric_scalar_445831a9 FROM SELECT
     generic.int_array,
     generic.scalar,
 ;

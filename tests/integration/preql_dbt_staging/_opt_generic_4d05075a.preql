@@ -15,5 +15,5 @@ datasource dsgeneric_scalar_445831a9 (
     generic_int_array: generic.int_array,
     generic_scalar: generic.scalar
 )
-
+grain (generic.scalar)
 address dsgeneric_scalar_445831a9;

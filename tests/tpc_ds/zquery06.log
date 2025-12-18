@@ -1,11 +1,11 @@
-base_prep_time = 0.000412
-base_parse_time = 0.154712
-base_generation_time = 0.002999
-base_exec_time = 0.006848
-optimized_prep_time = 0.000203
-optimized_parse_time = 0.181627
-optimized_generation_time = 0.003175
-optimized_exec_time = 0.007648
+base_prep_time = 0.000201
+base_parse_time = 0.138978
+base_generation_time = 0.002744
+base_exec_time = 0.005905
+optimized_prep_time = 0.000216
+optimized_parse_time = 0.151732
+optimized_generation_time = 0.002834
+optimized_exec_time = 0.006813
 was_optimized = false
 base_generated_sql = """
 
@@ -118,5 +118,5 @@ ORDER BY
     \"customer_count\" asc nulls first,
     \"uneven\".\"store_sales_customer_state\" asc nulls first"""
 query_id = 6
-sql_comp_time = 0.019661
-total_time = 0.391737
+sql_comp_time = 0.015194
+total_time = 0.326716

@@ -1,11 +1,11 @@
-base_prep_time = 0.000253
-base_parse_time = 0.791252
-base_generation_time = 0.001769
-base_exec_time = 0.02577
-optimized_prep_time = 0.000277
-optimized_parse_time = 0.240216
-optimized_generation_time = 0.002066
-optimized_exec_time = 0.014423
+base_prep_time = 0.000181
+base_parse_time = 0.205436
+base_generation_time = 0.001798
+base_exec_time = 0.012198
+optimized_prep_time = 0.000192
+optimized_parse_time = 0.217228
+optimized_generation_time = 0.001962
+optimized_exec_time = 0.010967
 was_optimized = false
 base_generated_sql = """
 
@@ -176,5 +176,5 @@ ORDER BY
     \"uneven\".\"returns_customer_text_id\" asc
 LIMIT (100)"""
 query_id = 1
-sql_comp_time = 1.555537
-total_time = 2.635123
+sql_comp_time = 0.09177
+total_time = 0.544626

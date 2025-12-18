@@ -17,6 +17,7 @@ from trilogyt.constants import logger
 from trilogyt.core import enrich_environment
 from trilogyt.dagster.config import DagsterConfig
 from trilogyt.dagster.constants import ALL_JOB_NAME, ENTRYPOINT_FILE, SUFFIX
+from trilogyt.helpers import safe_string_address
 
 DEFAULT_DESCRIPTION: str = "No description provided"
 
@@ -184,7 +185,7 @@ def generate_dependency_map(
                     continue
                 # handle inlined datasources
                 logger.info(f"checking cte {cte.name} with {eligible}")
-                if cte.base_name_override in eligible:
+                if safe_string_address(cte.base_name_override) in eligible:
                     if any(x == cte.base_name_override for x in depends_on):
                         continue
                     matched = model_ds_mapping.get(cte.base_name_override)

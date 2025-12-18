@@ -11,7 +11,9 @@ def dim_splits_three(duck_db: DuckDBResource) -> None:
     with duck_db.get_connection() as conn:
         conn.execute(
             """ 
-CREATE OR REPLACE TABLE dim_splits_three AS
+CREATE OR REPLACE TABLE "dim_splits_three" (
+    cte_generic_split int
+); INSERT INTO "dim_splits_three" 
 SELECT
     "dscte_generic_scalar_02e41b09"."cte_generic_split" as "cte_generic_split"
 FROM

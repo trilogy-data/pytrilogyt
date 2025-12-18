@@ -1,11 +1,11 @@
-base_prep_time = 0.000311
-base_parse_time = 0.036389
-base_generation_time = 0.001383
-base_exec_time = 0.005929
-optimized_prep_time = 0.000277
-optimized_parse_time = 0.036387
-optimized_generation_time = 0.001556
-optimized_exec_time = 0.004881
+base_prep_time = 0.000188
+base_parse_time = 0.034795
+base_generation_time = 0.00131
+base_exec_time = 0.004487
+optimized_prep_time = 0.000181
+optimized_parse_time = 0.033674
+optimized_generation_time = 0.001377
+optimized_exec_time = 0.00398
 was_optimized = false
 base_generated_sql = """
 
@@ -136,5 +136,5 @@ ORDER BY
     \"thoughtful\".\"inventory_item_name\" asc nulls first
 LIMIT (100)"""
 query_id = 21
-sql_comp_time = 0.044123
-total_time = 0.133662
+sql_comp_time = 0.003756
+total_time = 0.085674

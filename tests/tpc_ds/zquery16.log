@@ -1,11 +1,11 @@
-base_prep_time = 0.000224
-base_parse_time = 0.33408
-base_generation_time = 0.004316
-base_exec_time = 0.017557
-optimized_prep_time = 0.000234
-optimized_parse_time = 1.101702
-optimized_generation_time = 0.004769
-optimized_exec_time = 0.006614
+base_prep_time = 0.000218
+base_parse_time = 0.927103
+base_generation_time = 0.003138
+base_exec_time = 0.014479
+optimized_prep_time = 0.000191
+optimized_parse_time = 0.277953
+optimized_generation_time = 0.002675
+optimized_exec_time = 0.004843
 was_optimized = true
 base_generated_sql = """
 
@@ -167,5 +167,5 @@ ORDER BY
     \"juicy\".\"order_count\" desc
 LIMIT (100)"""
 query_id = 16
-sql_comp_time = 0.007944
-total_time = 1.489746
+sql_comp_time = 0.006215
+total_time = 1.239563

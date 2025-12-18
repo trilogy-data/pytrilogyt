@@ -1,11 +1,11 @@
-base_prep_time = 0.000279
-base_parse_time = 0.996086
-base_generation_time = 0.00294
-base_exec_time = 0.015406
-optimized_prep_time = 0.000191
-optimized_parse_time = 0.190313
-optimized_generation_time = 0.003272
-optimized_exec_time = 0.014534
+base_prep_time = 0.000226
+base_parse_time = 0.17751
+base_generation_time = 0.002965
+base_exec_time = 0.015326
+optimized_prep_time = 0.000187
+optimized_parse_time = 0.176052
+optimized_generation_time = 0.00323
+optimized_exec_time = 0.01329
 was_optimized = false
 base_generated_sql = """
 
@@ -204,5 +204,5 @@ ORDER BY
     \"young\".\"order_count\" desc
 LIMIT (100)"""
 query_id = 95
-sql_comp_time = 0.018994
-total_time = 1.244946
+sql_comp_time = 0.015847
+total_time = 0.407093
