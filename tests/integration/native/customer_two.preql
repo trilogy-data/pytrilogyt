@@ -1,0 +1,6 @@
+import _opt_generic_4d05075a;
+
+OVERWRITE dim_splits_two INTO dim_splits_two FROM SELECT
+    generic.split,
+    generic.scalar,
+;

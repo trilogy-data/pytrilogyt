@@ -1,0 +1,5 @@
+import generic as generic;
+
+
+copy into csv '.\tests\integration\output\test.csv' from select
+generic.scalar, generic.split;
