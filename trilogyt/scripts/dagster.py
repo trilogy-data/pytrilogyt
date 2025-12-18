@@ -44,7 +44,7 @@ def dagster_handler(
     models: list[ModelInput] = []
 
     inputs = list(staging_path.glob("*.preql"))
-    model_ds_mapping: dict[str, str] = {}
+    model_ds_mapping: dict[str, str | None] = {}
     for file in inputs:
         model_ds_mapping.update(
             generate_name_ds_mapping(file, file.read_text(), dialect)

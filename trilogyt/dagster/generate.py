@@ -188,9 +188,11 @@ def generate_dependency_map(
                 if safe_string_address(cte.base_name_override) in eligible:
                     if any(x == cte.base_name_override for x in depends_on):
                         continue
-                    matched = model_ds_mapping.get(cte.base_name_override)
-                    if matched:
-                        depends_on.append(matched)
+                    lookup = safe_string_address(cte.base_name_override)
+                    if lookup:
+                        matched = model_ds_mapping.get(lookup)
+                        if matched:
+                            depends_on.append(matched)
                 for source in cte.source.datasources:
                     logger.info(source.identifier)
                     if not isinstance(source, BuildDatasource):
@@ -234,7 +236,7 @@ def generate_name_ds_mapping(
         _, statements = executor.environment.parse(content)
     except Exception as e:
         raise SyntaxError(f"Unable to parse {content}" + str(e))
-    output = {}
+    output: dict[str, str] = {}
     for query in statements:
         if isinstance(query, PersistStatement):
             if isinstance(query.datasource.address, Address):
@@ -250,7 +252,7 @@ def generate_model(
     preql_path: Path | None,
     dialect: Dialects,
     config: DagsterConfig,
-    model_ds_mapping: dict[str, str],
+    model_ds_mapping: dict[str, str | None],
     environment: Environment | None = None,
     clear_target_dir: bool = True,
 ) -> list[ModelInput]:

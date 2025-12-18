@@ -1,3 +1,4 @@
+
 from pathlib import Path
 
 import dagster as dg
@@ -10,8 +11,7 @@ def defs():
         dg.Definitions(
             resources={
                 "duck_db": DuckDBResource(
-                    database="dagster.db",
-                    connection_config={"enable_external_access": False},
+                    database="dagster.db", connection_config={"enable_external_access": False}
                 )
             }
         ),

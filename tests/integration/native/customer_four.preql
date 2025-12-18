@@ -1,5 +1,0 @@
-import _opt_generic_87073dc2;
-
-OVERWRITE dim_splits_four INTO dim_splits_four FROM SELECT
-    cte.generic.split,
-;
