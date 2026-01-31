@@ -39,27 +39,17 @@ SELECT
     cs.ship_date.id,
 ;
 
-OVERWRITE dscs_call_center_county_cs_customer_address_state_cs_item_id_cs_order_number_cs_ship_date_date_a34f7ca9_filtered_on_date_date_state_county_order_number_order_number_order_number_multi_warehouse_sales INTO dscs_call_center_county_cs_customer_address_state_cs_item_id_cs_order_number_cs_ship_date_date_a34f7ca9_filtered_on_date_date_state_county_order_number_order_number_order_number_multi_warehouse_sales FROM WHERE
+OVERWRITE dstotal_net_profit_total_shipping_cost_c66c27a9_filtered_on_date_date_state_county_order_number_order_number_order_number_multi_warehouse_sales INTO dstotal_net_profit_total_shipping_cost_c66c27a9_filtered_on_date_date_state_county_order_number_order_number_order_number_multi_warehouse_sales FROM WHERE
     cs.ship_date.date >= '2002-02-01'::date and cs.ship_date.date <= '2002-04-02'::date and cs.customer_address.state = 'GA' and cs.call_center.county = 'Williamson County' and cs.order_number not in cr.order_number and cs.order_number in multi_warehouse_sales
 SELECT
-    cs.call_center.county,
-    cs.customer_address.state,
-    cs.ext_ship_cost,
-    cs.item.id,
-    cs.net_profit,
-    cs.order_number,
-    cs.ship_date.date,
+    total_net_profit,
+    total_shipping_cost,
 ;
 
 OVERWRITE dscs_order_number_a5e0ca39_filtered_on_date_date_state_county_order_number_order_number_order_number_multi_warehouse_sales INTO dscs_order_number_a5e0ca39_filtered_on_date_date_state_county_order_number_order_number_order_number_multi_warehouse_sales FROM WHERE
     cs.ship_date.date >= '2002-02-01'::date and cs.ship_date.date <= '2002-04-02'::date and cs.customer_address.state = 'GA' and cs.call_center.county = 'Williamson County' and cs.order_number not in cr.order_number and cs.order_number in multi_warehouse_sales
 SELECT
     cs.order_number,
-;
-
-OVERWRITE dstotal_net_profit_total_shipping_cost_c66c27a9 INTO dstotal_net_profit_total_shipping_cost_c66c27a9 FROM SELECT
-    total_net_profit,
-    total_shipping_cost,
 ;
 
 OVERWRITE dsorder_count_589cea8c INTO dsorder_count_589cea8c FROM SELECT

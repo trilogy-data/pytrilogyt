@@ -27,13 +27,6 @@ datasource dsgeneric_scalar_0c9429cc (
 grain (generic.scalar)
 address dsgeneric_scalar_0c9429cc;
 
-datasource dscte_generic_scalar_02e41b09 (
-    cte_generic_scalar: cte.generic.scalar,
-    cte_generic_split: cte.generic.split
-)
-grain (cte.generic.scalar)
-address dscte_generic_scalar_02e41b09;
-
 datasource dscte_generic_split_4a0c66ea (
     cte_generic_split: cte.generic.split
 )

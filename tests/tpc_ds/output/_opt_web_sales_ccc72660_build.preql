@@ -11,7 +11,7 @@ SELECT
     web_sales.item.class,
     web_sales.item.current_price,
     sum(web_sales.ext_sales_price) -> itemrevenue,
-    --sum itemrevenue over web_sales.item.class -> itemclassrevenue,
+    --sum(itemrevenue) by web_sales.item.class -> itemclassrevenue,
     (itemrevenue * 100.0) / itemclassrevenue -> revenueratio,
 ORDER BY
     web_sales.item.category asc,
@@ -22,21 +22,9 @@ ORDER BY
 LIMIT 100
 ;
 
-OVERWRITE dsweb_sales_date_date_web_sales_item_id_web_sales_order_number_1c2539e1_filtered_on_date_date_category INTO dsweb_sales_date_date_web_sales_item_id_web_sales_order_number_1c2539e1_filtered_on_date_date_category FROM WHERE
+OVERWRITE dsweb_sales_item_category_web_sales_item_class_web_sales_item_current_price_web_sales_item_desc_web_sales_item_name_93d6159c_filtered_on_date_date_category INTO dsweb_sales_item_category_web_sales_item_class_web_sales_item_current_price_web_sales_item_desc_web_sales_item_name_93d6159c_filtered_on_date_date_category FROM WHERE
     web_sales.date.date >= '1999-02-22'::date and web_sales.date.date <= '1999-03-24'::date and web_sales.item.category in ('Sports', 'Books', 'Home')
 SELECT
-    web_sales.date.date,
-    web_sales.ext_sales_price,
-    web_sales.item.category,
-    web_sales.item.class,
-    web_sales.item.current_price,
-    web_sales.item.desc,
-    web_sales.item.id,
-    web_sales.item.name,
-    web_sales.order_number,
-;
-
-OVERWRITE dsweb_sales_item_category_web_sales_item_class_web_sales_item_current_price_web_sales_item_desc_web_sales_item_name_93d6159c INTO dsweb_sales_item_category_web_sales_item_class_web_sales_item_current_price_web_sales_item_desc_web_sales_item_name_93d6159c FROM SELECT
     itemrevenue,
     web_sales.item.category,
     web_sales.item.class,
@@ -45,9 +33,8 @@ OVERWRITE dsweb_sales_item_category_web_sales_item_class_web_sales_item_current_
     web_sales.item.name,
 ;
 
-OVERWRITE dsweb_sales_item_class_df37a239 INTO dsweb_sales_item_class_df37a239 FROM SELECT
+OVERWRITE dsweb_sales_item_class_c7b1922f INTO dsweb_sales_item_class_c7b1922f FROM SELECT
     itemclassrevenue,
-    itemrevenue,
     web_sales.item.class,
 ;
 

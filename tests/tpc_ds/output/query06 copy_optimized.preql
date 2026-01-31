@@ -1,4 +1,4 @@
-import _opt_store_sales_item_808f9e2b;
+import _opt_store_sales_item_149b6376;
 
 MERGE store_sales.item.id into item.id;
 

@@ -1,11 +1,11 @@
-base_prep_time = 0.000218
-base_parse_time = 0.927103
-base_generation_time = 0.003138
-base_exec_time = 0.014479
-optimized_prep_time = 0.000191
-optimized_parse_time = 0.277953
-optimized_generation_time = 0.002675
-optimized_exec_time = 0.004843
+base_prep_time = 0.0
+base_parse_time = 0.424168
+base_generation_time = 0.0
+base_exec_time = 0.033478
+optimized_prep_time = 0.0
+optimized_parse_time = 0.921248
+optimized_generation_time = 0.003921
+optimized_exec_time = 0.007119
 was_optimized = true
 base_generated_sql = """
 
@@ -19,7 +19,7 @@ FROM
 GROUP BY 
     \"cs_catalog_sales\".\"CS_ORDER_NUMBER\",
     \"cs_catalog_sales\".\"CS_WAREHOUSE_SK\"),
-cooperative as (
+thoughtful as (
 SELECT
     \"cr_catalog_returns\".\"CR_ORDER_NUMBER\" as \"cr_order_number\"
 FROM
@@ -48,7 +48,7 @@ SELECT
 FROM
     \"memory\".\"catalog_sales\" as \"cs_catalog_sales\"
 WHERE
-    \"cs_catalog_sales\".\"CS_ORDER_NUMBER\" not in (select cooperative.\"cr_order_number\" from cooperative where cooperative.\"cr_order_number\" is not null) and \"cs_catalog_sales\".\"CS_ORDER_NUMBER\" in (select uneven.\"multi_warehouse_sales\" from uneven where uneven.\"multi_warehouse_sales\" is not null)
+    \"cs_catalog_sales\".\"CS_ORDER_NUMBER\" not in (select thoughtful.\"cr_order_number\" from thoughtful where thoughtful.\"cr_order_number\" is not null) and \"cs_catalog_sales\".\"CS_ORDER_NUMBER\" in (select uneven.\"multi_warehouse_sales\" from uneven where uneven.\"multi_warehouse_sales\" is not null)
 
 GROUP BY 
     \"cs_catalog_sales\".\"CS_CALL_CENTER_SK\",
@@ -57,15 +57,15 @@ GROUP BY
     \"cs_catalog_sales\".\"CS_SHIP_DATE_SK\"),
 yummy as (
 SELECT
-    \"cs_catalog_sales\".\"CS_EXT_SHIP_COST\" as \"cs_ext_ship_cost\",
-    \"cs_catalog_sales\".\"CS_NET_PROFIT\" as \"cs_net_profit\"
+    sum(\"cs_catalog_sales\".\"CS_EXT_SHIP_COST\") as \"total_shipping_cost\",
+    sum(\"cs_catalog_sales\".\"CS_NET_PROFIT\") as \"total_net_profit\"
 FROM
     \"memory\".\"catalog_sales\" as \"cs_catalog_sales\"
     INNER JOIN \"memory\".\"date_dim\" as \"cs_ship_date_date\" on \"cs_catalog_sales\".\"CS_SHIP_DATE_SK\" = \"cs_ship_date_date\".\"D_DATE_SK\"
     RIGHT OUTER JOIN \"memory\".\"call_center\" as \"cs_call_center_call_center\" on \"cs_catalog_sales\".\"CS_CALL_CENTER_SK\" = \"cs_call_center_call_center\".\"CC_CALL_CENTER_SK\"
     RIGHT OUTER JOIN \"memory\".\"customer_address\" as \"cs_customer_address_customer_address\" on \"cs_catalog_sales\".\"CS_SHIP_ADDR_SK\" = \"cs_customer_address_customer_address\".\"CA_ADDRESS_SK\"
 WHERE
-    cast(\"cs_ship_date_date\".\"D_DATE\" as date) >= date '2002-02-01' and cast(\"cs_ship_date_date\".\"D_DATE\" as date) <= date '2002-04-02' and \"cs_customer_address_customer_address\".\"CA_STATE\" = 'GA' and \"cs_call_center_call_center\".\"CC_COUNTY\" = 'Williamson County' and \"cs_catalog_sales\".\"CS_ORDER_NUMBER\" not in (select cooperative.\"cr_order_number\" from cooperative where cooperative.\"cr_order_number\" is not null) and \"cs_catalog_sales\".\"CS_ORDER_NUMBER\" in (select uneven.\"multi_warehouse_sales\" from uneven where uneven.\"multi_warehouse_sales\" is not null)
+    cast(\"cs_ship_date_date\".\"D_DATE\" as date) >= date '2002-02-01' and cast(\"cs_ship_date_date\".\"D_DATE\" as date) <= date '2002-04-02' and \"cs_customer_address_customer_address\".\"CA_STATE\" = 'GA' and \"cs_call_center_call_center\".\"CC_COUNTY\" = 'Williamson County' and \"cs_catalog_sales\".\"CS_ORDER_NUMBER\" not in (select thoughtful.\"cr_order_number\" from thoughtful where thoughtful.\"cr_order_number\" is not null) and \"cs_catalog_sales\".\"CS_ORDER_NUMBER\" in (select uneven.\"multi_warehouse_sales\" from uneven where uneven.\"multi_warehouse_sales\" is not null)
 ),
 concerned as (
 SELECT
@@ -76,16 +76,10 @@ FROM
     RIGHT OUTER JOIN \"memory\".\"call_center\" as \"cs_call_center_call_center\" on \"vacuous\".\"cs_call_center_id\" = \"cs_call_center_call_center\".\"CC_CALL_CENTER_SK\"
     RIGHT OUTER JOIN \"memory\".\"customer_address\" as \"cs_customer_address_customer_address\" on \"vacuous\".\"cs_customer_address_id\" = \"cs_customer_address_customer_address\".\"CA_ADDRESS_SK\"
 WHERE
-    cast(\"cs_ship_date_date\".\"D_DATE\" as date) >= date '2002-02-01' and cast(\"cs_ship_date_date\".\"D_DATE\" as date) <= date '2002-04-02' and \"cs_customer_address_customer_address\".\"CA_STATE\" = 'GA' and \"cs_call_center_call_center\".\"CC_COUNTY\" = 'Williamson County' and \"vacuous\".\"cs_order_number\" not in (select cooperative.\"cr_order_number\" from cooperative where cooperative.\"cr_order_number\" is not null) and \"vacuous\".\"cs_order_number\" in (select uneven.\"multi_warehouse_sales\" from uneven where uneven.\"multi_warehouse_sales\" is not null)
+    cast(\"cs_ship_date_date\".\"D_DATE\" as date) >= date '2002-02-01' and cast(\"cs_ship_date_date\".\"D_DATE\" as date) <= date '2002-04-02' and \"cs_customer_address_customer_address\".\"CA_STATE\" = 'GA' and \"cs_call_center_call_center\".\"CC_COUNTY\" = 'Williamson County' and \"vacuous\".\"cs_order_number\" not in (select thoughtful.\"cr_order_number\" from thoughtful where thoughtful.\"cr_order_number\" is not null) and \"vacuous\".\"cs_order_number\" in (select uneven.\"multi_warehouse_sales\" from uneven where uneven.\"multi_warehouse_sales\" is not null)
 
 GROUP BY 
     \"vacuous\".\"cs_order_number\"),
-juicy as (
-SELECT
-    sum(\"yummy\".\"cs_ext_ship_cost\") as \"total_shipping_cost\",
-    sum(\"yummy\".\"cs_net_profit\") as \"total_net_profit\"
-FROM
-    \"yummy\"),
 young as (
 SELECT
     count(distinct \"concerned\".\"cs_order_number\") as \"order_count\"
@@ -93,10 +87,10 @@ FROM
     \"concerned\")
 SELECT
     \"young\".\"order_count\" as \"order_count\",
-    \"juicy\".\"total_shipping_cost\" as \"total_shipping_cost\",
-    \"juicy\".\"total_net_profit\" as \"total_net_profit\"
+    \"yummy\".\"total_shipping_cost\" as \"total_shipping_cost\",
+    \"yummy\".\"total_net_profit\" as \"total_net_profit\"
 FROM
-    \"juicy\"
+    \"yummy\"
     FULL JOIN \"young\" on 1=1
 ORDER BY 
     \"young\".\"order_count\" desc
@@ -104,7 +98,7 @@ LIMIT (100)"""
 optimized_generated_sql = """
 
 WITH 
-uneven as (
+cooperative as (
 SELECT
     \"cs_catalog_sales\".\"CS_CALL_CENTER_SK\" as \"cs_call_center_id\",
     \"cs_catalog_sales\".\"CS_ORDER_NUMBER\" as \"cs_order_number\",
@@ -120,37 +114,28 @@ GROUP BY
     \"cs_catalog_sales\".\"CS_ORDER_NUMBER\",
     \"cs_catalog_sales\".\"CS_SHIP_ADDR_SK\",
     \"cs_catalog_sales\".\"CS_SHIP_DATE_SK\"),
-questionable as (
+quizzical as (
 SELECT
-    \"cs_catalog_sales\".\"CS_EXT_SHIP_COST\" as \"cs_ext_ship_cost\",
-    \"cs_catalog_sales\".\"CS_NET_PROFIT\" as \"cs_net_profit\"
+    \"dstotal_net_profit_total_shipping_cost_c66c27a9_filtered_on_date_date_state_county_order_number_order_number_order_number_multi_warehouse_sales\".\"total_net_profit\" as \"total_net_profit\",
+    \"dstotal_net_profit_total_shipping_cost_c66c27a9_filtered_on_date_date_state_county_order_number_order_number_order_number_multi_warehouse_sales\".\"total_shipping_cost\" as \"total_shipping_cost\"
 FROM
-    \"memory\".\"catalog_sales\" as \"cs_catalog_sales\"
-    INNER JOIN \"memory\".\"date_dim\" as \"cs_ship_date_date\" on \"cs_catalog_sales\".\"CS_SHIP_DATE_SK\" = \"cs_ship_date_date\".\"D_DATE_SK\"
-    RIGHT OUTER JOIN \"memory\".\"call_center\" as \"cs_call_center_call_center\" on \"cs_catalog_sales\".\"CS_CALL_CENTER_SK\" = \"cs_call_center_call_center\".\"CC_CALL_CENTER_SK\"
-    RIGHT OUTER JOIN \"memory\".\"customer_address\" as \"cs_customer_address_customer_address\" on \"cs_catalog_sales\".\"CS_SHIP_ADDR_SK\" = \"cs_customer_address_customer_address\".\"CA_ADDRESS_SK\"
-WHERE
-    cast(\"cs_ship_date_date\".\"D_DATE\" as date) >= date '2002-02-01' and cast(\"cs_ship_date_date\".\"D_DATE\" as date) <= date '2002-04-02' and \"cs_customer_address_customer_address\".\"CA_STATE\" = 'GA' and \"cs_call_center_call_center\".\"CC_COUNTY\" = 'Williamson County' and \"cs_catalog_sales\".\"CS_ORDER_NUMBER\" not in (select dscr_order_number_ab93f574.\"cr_order_number\" from dscr_order_number_ab93f574 as dscr_order_number_ab93f574 where dscr_order_number_ab93f574.\"cr_order_number\" is not null) and \"cs_catalog_sales\".\"CS_ORDER_NUMBER\" in (select dslocal_multi_warehouse_sales_679f2d90.\"multi_warehouse_sales\" from dslocal_multi_warehouse_sales_679f2d90 as dslocal_multi_warehouse_sales_679f2d90 where dslocal_multi_warehouse_sales_679f2d90.\"multi_warehouse_sales\" is not null)
-),
+    \"dstotal_net_profit_total_shipping_cost_c66c27a9_filtered_on_date_date_state_county_order_number_order_number_order_number_multi_warehouse_sales\"
+GROUP BY 
+    \"dstotal_net_profit_total_shipping_cost_c66c27a9_filtered_on_date_date_state_county_order_number_order_number_order_number_multi_warehouse_sales\".\"total_net_profit\",
+    \"dstotal_net_profit_total_shipping_cost_c66c27a9_filtered_on_date_date_state_county_order_number_order_number_order_number_multi_warehouse_sales\".\"total_shipping_cost\"),
 yummy as (
 SELECT
-    \"uneven\".\"cs_order_number\" as \"cs_order_number\"
+    \"cooperative\".\"cs_order_number\" as \"cs_order_number\"
 FROM
-    \"uneven\"
-    INNER JOIN \"memory\".\"date_dim\" as \"cs_ship_date_date\" on \"uneven\".\"cs_ship_date_id\" = \"cs_ship_date_date\".\"D_DATE_SK\"
-    RIGHT OUTER JOIN \"memory\".\"call_center\" as \"cs_call_center_call_center\" on \"uneven\".\"cs_call_center_id\" = \"cs_call_center_call_center\".\"CC_CALL_CENTER_SK\"
-    RIGHT OUTER JOIN \"memory\".\"customer_address\" as \"cs_customer_address_customer_address\" on \"uneven\".\"cs_customer_address_id\" = \"cs_customer_address_customer_address\".\"CA_ADDRESS_SK\"
+    \"cooperative\"
+    INNER JOIN \"memory\".\"date_dim\" as \"cs_ship_date_date\" on \"cooperative\".\"cs_ship_date_id\" = \"cs_ship_date_date\".\"D_DATE_SK\"
+    RIGHT OUTER JOIN \"memory\".\"call_center\" as \"cs_call_center_call_center\" on \"cooperative\".\"cs_call_center_id\" = \"cs_call_center_call_center\".\"CC_CALL_CENTER_SK\"
+    RIGHT OUTER JOIN \"memory\".\"customer_address\" as \"cs_customer_address_customer_address\" on \"cooperative\".\"cs_customer_address_id\" = \"cs_customer_address_customer_address\".\"CA_ADDRESS_SK\"
 WHERE
-    cast(\"cs_ship_date_date\".\"D_DATE\" as date) >= date '2002-02-01' and cast(\"cs_ship_date_date\".\"D_DATE\" as date) <= date '2002-04-02' and \"cs_customer_address_customer_address\".\"CA_STATE\" = 'GA' and \"cs_call_center_call_center\".\"CC_COUNTY\" = 'Williamson County' and \"uneven\".\"cs_order_number\" not in (select dscr_order_number_ab93f574.\"cr_order_number\" from dscr_order_number_ab93f574 as dscr_order_number_ab93f574 where dscr_order_number_ab93f574.\"cr_order_number\" is not null) and \"uneven\".\"cs_order_number\" in (select dslocal_multi_warehouse_sales_679f2d90.\"multi_warehouse_sales\" from dslocal_multi_warehouse_sales_679f2d90 as dslocal_multi_warehouse_sales_679f2d90 where dslocal_multi_warehouse_sales_679f2d90.\"multi_warehouse_sales\" is not null)
+    cast(\"cs_ship_date_date\".\"D_DATE\" as date) >= date '2002-02-01' and cast(\"cs_ship_date_date\".\"D_DATE\" as date) <= date '2002-04-02' and \"cs_customer_address_customer_address\".\"CA_STATE\" = 'GA' and \"cs_call_center_call_center\".\"CC_COUNTY\" = 'Williamson County' and \"cooperative\".\"cs_order_number\" not in (select dscr_order_number_ab93f574.\"cr_order_number\" from dscr_order_number_ab93f574 as dscr_order_number_ab93f574 where dscr_order_number_ab93f574.\"cr_order_number\" is not null) and \"cooperative\".\"cs_order_number\" in (select dslocal_multi_warehouse_sales_679f2d90.\"multi_warehouse_sales\" from dslocal_multi_warehouse_sales_679f2d90 as dslocal_multi_warehouse_sales_679f2d90 where dslocal_multi_warehouse_sales_679f2d90.\"multi_warehouse_sales\" is not null)
 
 GROUP BY 
-    \"uneven\".\"cs_order_number\"),
-abundant as (
-SELECT
-    sum(\"questionable\".\"cs_ext_ship_cost\") as \"total_shipping_cost\",
-    sum(\"questionable\".\"cs_net_profit\") as \"total_net_profit\"
-FROM
-    \"questionable\"),
+    \"cooperative\".\"cs_order_number\"),
 juicy as (
 SELECT
     count(distinct \"yummy\".\"cs_order_number\") as \"order_count\"
@@ -158,14 +143,14 @@ FROM
     \"yummy\")
 SELECT
     \"juicy\".\"order_count\" as \"order_count\",
-    \"abundant\".\"total_shipping_cost\" as \"total_shipping_cost\",
-    \"abundant\".\"total_net_profit\" as \"total_net_profit\"
+    \"quizzical\".\"total_shipping_cost\" as \"total_shipping_cost\",
+    \"quizzical\".\"total_net_profit\" as \"total_net_profit\"
 FROM
-    \"abundant\"
+    \"quizzical\"
     FULL JOIN \"juicy\" on 1=1
 ORDER BY 
     \"juicy\".\"order_count\" desc
 LIMIT (100)"""
 query_id = 16
-sql_comp_time = 0.006215
-total_time = 1.239563
+sql_comp_time = 0.008241
+total_time = 1.398175

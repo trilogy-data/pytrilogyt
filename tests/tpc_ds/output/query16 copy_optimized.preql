@@ -1,4 +1,4 @@
-import _opt_cs_cr_ac761932;
+import _opt_cs_cr_c3b0c488;
 
 property multi_warehouse_sales <- filter cs.order_number where count(cs.warehouse.id) by cs.order_number > 1;
 

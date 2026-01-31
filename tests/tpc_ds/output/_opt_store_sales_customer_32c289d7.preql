@@ -24,48 +24,29 @@ ORDER BY
 LIMIT 100
 ;
 
-OVERWRITE dscustomer_id_customer_zip_3d60a895 INTO dscustomer_id_customer_zip_3d60a895 FROM SELECT
-    customer.id,
-    customer.preferred_cust_flag,
-    customer.zip,
-;
+datasource dscustomer_zip_78dc018d (
+    customer_zip: customer.zip,
+    zip_p_count
+)
+grain (customer.zip)
+address dscustomer_zip_78dc018d;
 
-OVERWRITE dslocal_zips_pre_b9876e7a INTO dslocal_zips_pre_b9876e7a FROM SELECT
-    zips_pre,
-;
+datasource dslocal_zips_pre_b9876e7a (
+    zips_pre
+)
+grain (zips_pre)
+address dslocal_zips_pre_b9876e7a;
 
-OVERWRITE dscustomer_zip_78dc018d INTO dscustomer_zip_78dc018d FROM SELECT
-    customer.zip,
-    zip_p_count,
-;
+datasource dslocal_final_zips_919671db (
+    final_zips
+)
+grain (final_zips)
+address dslocal_final_zips_919671db;
 
-OVERWRITE dscustomer_address_id_c3487e4b INTO dscustomer_address_id_c3487e4b FROM SELECT
-    customer.address_id,
-    customer.zip,
-    zip_p_count,
-;
-
-OVERWRITE dslocal_p_cust_zip_8302063a INTO dslocal_p_cust_zip_8302063a FROM SELECT
-    p_cust_zip,
-;
-
-OVERWRITE dslocal_final_zips_919671db INTO dslocal_final_zips_919671db FROM SELECT
-    final_zips,
-;
-
-OVERWRITE dsstore_sales_date_quarter_store_sales_date_year_store_sales_item_id_store_sales_store_name_store_sales_store_zip_1_more_acb1a053_filtered_on_quarter_year_zip_final_zips INTO dsstore_sales_date_quarter_store_sales_date_year_store_sales_item_id_store_sales_store_name_store_sales_store_zip_1_more_acb1a053_filtered_on_quarter_year_zip_final_zips FROM WHERE
-    store_sales.date.quarter = 2 and store_sales.date.year = 1998 and substring(store_sales.store.zip,1,2) in final_zips
-SELECT
-    store_sales.date.quarter,
-    store_sales.date.year,
-    store_sales.item.id,
-    store_sales.net_profit,
-    store_sales.store.name,
-    store_sales.store.zip,
-    store_sales.ticket_number,
-;
-
-OVERWRITE dsstore_sales_store_name_2b1ac618 INTO dsstore_sales_store_name_2b1ac618 FROM SELECT
-    store_net_profit,
-    store_sales.store.name,
-;
+datasource dsstore_sales_store_name_2b1ac618_filtered_on_quarter_year_zip_final_zips (
+    store_net_profit: ~store_net_profit,
+    store_sales_store_name: ~store_sales.store.name
+)
+grain (store_sales.store.name)
+complete where store_sales.date.quarter = 2 and store_sales.date.year = 1998 and substring(store_sales.store.zip,1,2) in final_zips
+address dsstore_sales_store_name_2b1ac618_filtered_on_quarter_year_zip_final_zips;
