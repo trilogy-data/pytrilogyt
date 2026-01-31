@@ -17,26 +17,14 @@ ORDER BY
 LIMIT 100
 ;
 
-datasource dsreturns_customer_text_id_returns_item_id_returns_return_date_year_returns_store_sales_ticket_number_96a508ab_filtered_on_state_year (
+datasource dsreturns_customer_text_id_returns_store_id_076b41e9_filtered_on_state_year (
+    total_returns: ~total_returns,
     returns_customer_text_id: ~returns.customer.text_id,
-    returns_item_id: ~returns.item.id,
-    returns_return_amount: ~returns.return_amount,
-    returns_return_date_year: ~returns.return_date.year,
-    returns_store_id: ~returns.store.id,
-    returns_store_state: ~returns.store.state,
-    returns_store_sales_ticket_number: ~returns.store_sales.ticket_number
-)
-grain (returns.customer.text_id,returns.item.id,returns.return_date.year,returns.store_sales.ticket_number)
-complete where returns.store.state = 'TN' and returns.return_date.year = 2000
-address dsreturns_customer_text_id_returns_item_id_returns_return_date_year_returns_store_sales_ticket_number_96a508ab_filtered_on_state_year;
-
-datasource dsreturns_customer_text_id_returns_store_id_076b41e9 (
-    total_returns,
-    returns_customer_text_id: returns.customer.text_id,
-    returns_store_id: returns.store.id
+    returns_store_id: ~returns.store.id
 )
 grain (returns.customer.text_id,returns.store.id)
-address dsreturns_customer_text_id_returns_store_id_076b41e9;
+complete where returns.store.state = 'TN' and returns.return_date.year = 2000
+address dsreturns_customer_text_id_returns_store_id_076b41e9_filtered_on_state_year;
 
 datasource dsreturns_store_id_54404a33 (
     avg_store_returns,

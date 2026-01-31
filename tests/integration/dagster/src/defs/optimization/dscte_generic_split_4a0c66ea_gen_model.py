@@ -23,19 +23,14 @@ highfalutin as (
 SELECT
     unnest("quizzical"."generic_int_array") as "generic_split"
 FROM
-    "quizzical"),
-wakeful as (
+    "quizzical")
 SELECT
     "highfalutin"."generic_split" as "cte_generic_split"
 FROM
     "highfalutin"
 WHERE
     "highfalutin"."generic_split" in (1,2,3)
-)
-SELECT
-    "wakeful"."cte_generic_split" as "cte_generic_split"
-FROM
-    "wakeful"
+
 GROUP BY 
-    "wakeful"."cte_generic_split" """
+    "highfalutin"."generic_split" """
         )

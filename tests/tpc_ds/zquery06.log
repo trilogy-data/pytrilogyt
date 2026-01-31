@@ -1,11 +1,11 @@
-base_prep_time = 0.000201
-base_parse_time = 0.138978
-base_generation_time = 0.002744
-base_exec_time = 0.005905
-optimized_prep_time = 0.000216
-optimized_parse_time = 0.151732
-optimized_generation_time = 0.002834
-optimized_exec_time = 0.006813
+base_prep_time = 0.0
+base_parse_time = 0.228371
+base_generation_time = 0.006072
+base_exec_time = 0.009004
+optimized_prep_time = 0.001993
+optimized_parse_time = 0.232827
+optimized_generation_time = 0.0
+optimized_exec_time = 0.018468
 was_optimized = false
 base_generated_sql = """
 
@@ -37,31 +37,24 @@ SELECT
 FROM
     \"memory\".\"item\" as \"item_items\"
 GROUP BY 
-    \"item_items\".\"I_CATEGORY\"),
-uneven as (
+    \"item_items\".\"I_CATEGORY\")
 SELECT
-    \"questionable\".\"item_id\" as \"item_id\",
     \"questionable\".\"store_sales_customer_state\" as \"store_sales_customer_state\",
-    \"questionable\".\"store_sales_ticket_number\" as \"store_sales_ticket_number\"
+    sum(1) as \"customer_count\"
 FROM
     \"questionable\"
     INNER JOIN \"abundant\" on \"questionable\".\"item_category\" is not distinct from \"abundant\".\"item_category\"
 WHERE
     \"questionable\".\"store_sales_date_year\" = 2001 and \"questionable\".\"store_sales_date_month_of_year\" = 1 and \"questionable\".\"store_sales_item_current_price\" > 1.2 * \"abundant\".\"_virt_agg_avg_5942253052406187\" and \"questionable\".\"store_sales_item_category\" is not null
-)
-SELECT
-    \"uneven\".\"store_sales_customer_state\" as \"store_sales_customer_state\",
-    sum(1) as \"customer_count\"
-FROM
-    \"uneven\"
+
 GROUP BY 
-    \"uneven\".\"store_sales_customer_state\"
+    \"questionable\".\"store_sales_customer_state\"
 HAVING
     sum(1) >= 10
 
 ORDER BY 
     \"customer_count\" asc nulls first,
-    \"uneven\".\"store_sales_customer_state\" asc nulls first"""
+    \"questionable\".\"store_sales_customer_state\" asc nulls first"""
 optimized_generated_sql = """
 
 WITH 
@@ -92,31 +85,24 @@ SELECT
 FROM
     \"memory\".\"item\" as \"item_items\"
 GROUP BY 
-    \"item_items\".\"I_CATEGORY\"),
-uneven as (
+    \"item_items\".\"I_CATEGORY\")
 SELECT
-    \"questionable\".\"item_id\" as \"item_id\",
     \"questionable\".\"store_sales_customer_state\" as \"store_sales_customer_state\",
-    \"questionable\".\"store_sales_ticket_number\" as \"store_sales_ticket_number\"
+    sum(1) as \"customer_count\"
 FROM
     \"questionable\"
     INNER JOIN \"abundant\" on \"questionable\".\"item_category\" is not distinct from \"abundant\".\"item_category\"
 WHERE
     \"questionable\".\"store_sales_date_year\" = 2001 and \"questionable\".\"store_sales_date_month_of_year\" = 1 and \"questionable\".\"store_sales_item_current_price\" > 1.2 * \"abundant\".\"_virt_agg_avg_5942253052406187\" and \"questionable\".\"store_sales_item_category\" is not null
-)
-SELECT
-    \"uneven\".\"store_sales_customer_state\" as \"store_sales_customer_state\",
-    sum(1) as \"customer_count\"
-FROM
-    \"uneven\"
+
 GROUP BY 
-    \"uneven\".\"store_sales_customer_state\"
+    \"questionable\".\"store_sales_customer_state\"
 HAVING
     sum(1) >= 10
 
 ORDER BY 
     \"customer_count\" asc nulls first,
-    \"uneven\".\"store_sales_customer_state\" asc nulls first"""
+    \"questionable\".\"store_sales_customer_state\" asc nulls first"""
 query_id = 6
-sql_comp_time = 0.015194
-total_time = 0.326716
+sql_comp_time = 0.020465
+total_time = 0.518961

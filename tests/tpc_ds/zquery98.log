@@ -1,11 +1,11 @@
-base_prep_time = 0.000187
-base_parse_time = 0.144007
-base_generation_time = 0.001786
-base_exec_time = 0.007675
-optimized_prep_time = 0.000181
-optimized_parse_time = 0.145771
-optimized_generation_time = 0.001776
-optimized_exec_time = 0.006891
+base_prep_time = 0.000534
+base_parse_time = 1.432629
+base_generation_time = 0.006238
+base_exec_time = 0.018934
+optimized_prep_time = 0.000476
+optimized_parse_time = 0.555425
+optimized_generation_time = 0.005219
+optimized_exec_time = 0.018283
 was_optimized = false
 base_generated_sql = """
 
@@ -128,5 +128,5 @@ ORDER BY
     \"thoughtful\".\"store_sales_item_desc\" asc nulls first,
     \"revenueratio\" asc nulls first"""
 query_id = 98
-sql_comp_time = 0.023798
-total_time = 0.337945
+sql_comp_time = 0.087545
+total_time = 2.141592

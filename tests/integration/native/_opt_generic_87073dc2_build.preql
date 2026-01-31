@@ -23,11 +23,6 @@ OVERWRITE dsgeneric_scalar_0c9429cc INTO dsgeneric_scalar_0c9429cc FROM SELECT
     generic.split,
 ;
 
-OVERWRITE dscte_generic_scalar_02e41b09 INTO dscte_generic_scalar_02e41b09 FROM SELECT
-    cte.generic.scalar,
-    cte.generic.split,
-;
-
 OVERWRITE dscte_generic_split_4a0c66ea INTO dscte_generic_split_4a0c66ea FROM SELECT
     cte.generic.split,
 ;

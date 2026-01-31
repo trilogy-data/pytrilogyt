@@ -13,6 +13,7 @@ root = Path(__file__)
 def test_full_model_build_native(logger):
     fake = root.parent / "native"
     os.makedirs(fake, exist_ok=True)
+    os.makedirs(fake / "output", exist_ok=True)
     assert fake.exists()
     native_wrapper(
         root.parent / "preql/",

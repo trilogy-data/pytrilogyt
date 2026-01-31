@@ -37,11 +37,12 @@ select x;
                     name="test_source",
                     # identifier='test_source',
                     columns=[],
-                    address=Address(location="test_source", is_query=False),
+                    address=Address(location="test_source"),
                 )
             },
         )
         # assert not cte.is_root_datasource, cte.source.datasources[0].address
         assert not cte.quote_address, cte.source.datasources[0].address
     generated = base.generate_sql(target)
+    print(generated[-1])
     assert " {{ ref(" in generated[-1], generated[-1]

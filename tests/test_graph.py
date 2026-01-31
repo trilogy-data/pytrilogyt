@@ -71,7 +71,7 @@ select split;
     )
 
     # we should have the one consolidated CTE first
-    assert len(consolidated) == 8
+    assert len(consolidated) == 9
     renderer = Renderer()
     final = []
     for x in consolidated:

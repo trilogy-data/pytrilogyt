@@ -16,15 +16,22 @@ CREATE OR REPLACE TABLE "dim_splits_one" (
 ); INSERT INTO "dim_splits_one" 
 
 WITH 
-highfalutin as (
+quizzical as (
 SELECT
     "dsgeneric_scalar_445831a9"."generic_int_array" as "generic_int_array"
 FROM
     "dsgeneric_scalar_445831a9"
 GROUP BY 
-    "dsgeneric_scalar_445831a9"."generic_int_array")
+    "dsgeneric_scalar_445831a9"."generic_int_array"),
+wakeful as (
 SELECT
-    unnest("highfalutin"."generic_int_array") as "generic_split"
+    unnest("quizzical"."generic_int_array") as "generic_split"
 FROM
-    "highfalutin" """
+    "quizzical")
+SELECT
+    "wakeful"."generic_split" as "generic_split"
+FROM
+    "wakeful"
+GROUP BY 
+    "wakeful"."generic_split" """
         )

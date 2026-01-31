@@ -46,18 +46,13 @@ grain (cs.call_center.id,cs.customer_address.id,cs.order_number,cs.ship_date.id)
 complete where cs.order_number not in cr.order_number and cs.order_number in multi_warehouse_sales
 address dscs_call_center_id_cs_customer_address_id_cs_order_number_cs_ship_date_id_1b71cae0_filtered_on_order_number_order_number_order_number_multi_warehouse_sales;
 
-datasource dscs_call_center_county_cs_customer_address_state_cs_item_id_cs_order_number_cs_ship_date_date_a34f7ca9_filtered_on_date_date_state_county_order_number_order_number_order_number_multi_warehouse_sales (
-    cs_call_center_county: ~cs.call_center.county,
-    cs_customer_address_state: ~cs.customer_address.state,
-    cs_ext_ship_cost: ~cs.ext_ship_cost,
-    cs_item_id: ~cs.item.id,
-    cs_net_profit: ~cs.net_profit,
-    cs_order_number: ~cs.order_number,
-    cs_ship_date_date: ~cs.ship_date.date
+datasource dstotal_net_profit_total_shipping_cost_c66c27a9_filtered_on_date_date_state_county_order_number_order_number_order_number_multi_warehouse_sales (
+    total_net_profit: ~total_net_profit,
+    total_shipping_cost: ~total_shipping_cost
 )
-grain (cs.call_center.county,cs.customer_address.state,cs.item.id,cs.order_number,cs.ship_date.date)
+
 complete where cs.ship_date.date >= '2002-02-01'::date and cs.ship_date.date <= '2002-04-02'::date and cs.customer_address.state = 'GA' and cs.call_center.county = 'Williamson County' and cs.order_number not in cr.order_number and cs.order_number in multi_warehouse_sales
-address dscs_call_center_county_cs_customer_address_state_cs_item_id_cs_order_number_cs_ship_date_date_a34f7ca9_filtered_on_date_date_state_county_order_number_order_number_order_number_multi_warehouse_sales;
+address dstotal_net_profit_total_shipping_cost_c66c27a9_filtered_on_date_date_state_county_order_number_order_number_order_number_multi_warehouse_sales;
 
 datasource dscs_order_number_a5e0ca39_filtered_on_date_date_state_county_order_number_order_number_order_number_multi_warehouse_sales (
     cs_order_number: ~cs.order_number
@@ -65,13 +60,6 @@ datasource dscs_order_number_a5e0ca39_filtered_on_date_date_state_county_order_n
 grain (cs.order_number)
 complete where cs.ship_date.date >= '2002-02-01'::date and cs.ship_date.date <= '2002-04-02'::date and cs.customer_address.state = 'GA' and cs.call_center.county = 'Williamson County' and cs.order_number not in cr.order_number and cs.order_number in multi_warehouse_sales
 address dscs_order_number_a5e0ca39_filtered_on_date_date_state_county_order_number_order_number_order_number_multi_warehouse_sales;
-
-datasource dstotal_net_profit_total_shipping_cost_c66c27a9 (
-    total_net_profit,
-    total_shipping_cost
-)
-
-address dstotal_net_profit_total_shipping_cost_c66c27a9;
 
 datasource dsorder_count_589cea8c (
     order_count

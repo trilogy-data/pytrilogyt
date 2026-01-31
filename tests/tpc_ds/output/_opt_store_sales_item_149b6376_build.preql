@@ -31,10 +31,3 @@ SELECT
     store_sales.item.current_price,
     store_sales.ticket_number,
 ;
-
-OVERWRITE dsstore_sales_customer_state_854fd24c_filtered_on_customer_count INTO dsstore_sales_customer_state_854fd24c_filtered_on_customer_count FROM WHERE
-    customer_count >= 10
-SELECT
-    customer_count,
-    store_sales.customer.state,
-;

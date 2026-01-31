@@ -64,7 +64,14 @@ def add_datasource_reference(
 def add_cte_reference(cte: CTE, eligible: dict[str, Datasource]):
 
     if safe_string_address(cte.base_name_override) in eligible:
-        cte.base_name_override = f"{{{{ ref('{cte.base_name_override}_gen_model') }}}}"
+        if isinstance(cte.base_name_override, Address):
+            cte.base_name_override = (
+                f"{{{{ ref('{cte.base_name_override.location}_gen_model') }}}}"
+            )
+        else:
+            cte.base_name_override = (
+                f"{{{{ ref('{cte.base_name_override}_gen_model') }}}}"
+            )
     for source in cte.source.datasources:
         add_datasource_reference(source, eligible)
 

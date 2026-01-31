@@ -1,11 +1,11 @@
-base_prep_time = 0.000226
-base_parse_time = 0.17751
-base_generation_time = 0.002965
-base_exec_time = 0.015326
-optimized_prep_time = 0.000187
-optimized_parse_time = 0.176052
-optimized_generation_time = 0.00323
-optimized_exec_time = 0.01329
+base_prep_time = 0.000691
+base_parse_time = 0.519259
+base_generation_time = 0.013249
+base_exec_time = 0.025292
+optimized_prep_time = 0.0
+optimized_parse_time = 1.14385
+optimized_generation_time = 0.013992
+optimized_exec_time = 0.03164
 was_optimized = false
 base_generated_sql = """
 
@@ -61,8 +61,8 @@ GROUP BY
     \"web_sales_web_sales\".\"WS_WEB_SITE_SK\"),
 yummy as (
 SELECT
-    \"web_sales_web_sales\".\"WS_EXT_SHIP_COST\" as \"web_sales_ext_ship_cost\",
-    \"web_sales_web_sales\".\"WS_NET_PROFIT\" as \"web_sales_net_profit\"
+    sum(\"web_sales_web_sales\".\"WS_EXT_SHIP_COST\") as \"total_shipping_cost\",
+    sum(\"web_sales_web_sales\".\"WS_NET_PROFIT\") as \"total_net_profit\"
 FROM
     \"memory\".\"web_sales\" as \"web_sales_web_sales\"
     INNER JOIN \"memory\".\"web_site\" as \"web_sales_web_site_web_site\" on \"web_sales_web_sales\".\"WS_WEB_SITE_SK\" = \"web_sales_web_site_web_site\".\"web_site_sk\"
@@ -84,12 +84,6 @@ WHERE
 
 GROUP BY 
     \"vacuous\".\"web_sales_order_number\"),
-juicy as (
-SELECT
-    sum(\"yummy\".\"web_sales_ext_ship_cost\") as \"total_shipping_cost\",
-    sum(\"yummy\".\"web_sales_net_profit\") as \"total_net_profit\"
-FROM
-    \"yummy\"),
 young as (
 SELECT
     count(\"concerned\".\"web_sales_order_number\") as \"order_count\"
@@ -97,10 +91,10 @@ FROM
     \"concerned\")
 SELECT
     \"young\".\"order_count\" as \"order_count\",
-    \"juicy\".\"total_shipping_cost\" as \"total_shipping_cost\",
-    \"juicy\".\"total_net_profit\" as \"total_net_profit\"
+    \"yummy\".\"total_shipping_cost\" as \"total_shipping_cost\",
+    \"yummy\".\"total_net_profit\" as \"total_net_profit\"
 FROM
-    \"juicy\"
+    \"yummy\"
     FULL JOIN \"young\" on 1=1
 ORDER BY 
     \"young\".\"order_count\" desc
@@ -159,8 +153,8 @@ GROUP BY
     \"web_sales_web_sales\".\"WS_WEB_SITE_SK\"),
 yummy as (
 SELECT
-    \"web_sales_web_sales\".\"WS_EXT_SHIP_COST\" as \"web_sales_ext_ship_cost\",
-    \"web_sales_web_sales\".\"WS_NET_PROFIT\" as \"web_sales_net_profit\"
+    sum(\"web_sales_web_sales\".\"WS_EXT_SHIP_COST\") as \"total_shipping_cost\",
+    sum(\"web_sales_web_sales\".\"WS_NET_PROFIT\") as \"total_net_profit\"
 FROM
     \"memory\".\"web_sales\" as \"web_sales_web_sales\"
     INNER JOIN \"memory\".\"web_site\" as \"web_sales_web_site_web_site\" on \"web_sales_web_sales\".\"WS_WEB_SITE_SK\" = \"web_sales_web_site_web_site\".\"web_site_sk\"
@@ -182,12 +176,6 @@ WHERE
 
 GROUP BY 
     \"vacuous\".\"web_sales_order_number\"),
-juicy as (
-SELECT
-    sum(\"yummy\".\"web_sales_ext_ship_cost\") as \"total_shipping_cost\",
-    sum(\"yummy\".\"web_sales_net_profit\") as \"total_net_profit\"
-FROM
-    \"yummy\"),
 young as (
 SELECT
     count(\"concerned\".\"web_sales_order_number\") as \"order_count\"
@@ -195,14 +183,14 @@ FROM
     \"concerned\")
 SELECT
     \"young\".\"order_count\" as \"order_count\",
-    \"juicy\".\"total_shipping_cost\" as \"total_shipping_cost\",
-    \"juicy\".\"total_net_profit\" as \"total_net_profit\"
+    \"yummy\".\"total_shipping_cost\" as \"total_shipping_cost\",
+    \"yummy\".\"total_net_profit\" as \"total_net_profit\"
 FROM
-    \"juicy\"
+    \"yummy\"
     FULL JOIN \"young\" on 1=1
 ORDER BY 
     \"young\".\"order_count\" desc
 LIMIT (100)"""
 query_id = 95
-sql_comp_time = 0.015847
-total_time = 0.407093
+sql_comp_time = 0.045213
+total_time = 1.7987
