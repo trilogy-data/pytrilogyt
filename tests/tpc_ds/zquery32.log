@@ -1,11 +1,11 @@
-base_prep_time = 0.0
-base_parse_time = 0.340692
-base_generation_time = 0.003184
-base_exec_time = 0.008243
-optimized_prep_time = 0.0
-optimized_parse_time = 0.266817
-optimized_generation_time = 0.006667
-optimized_exec_time = 0.010446
+base_prep_time = 0.000115
+base_parse_time = 0.103267
+base_generation_time = 0.00161
+base_exec_time = 0.004923
+optimized_prep_time = 8.2e-05
+optimized_parse_time = 0.105051
+optimized_generation_time = 0.002525
+optimized_exec_time = 0.005545
 was_optimized = false
 base_generated_sql = """
 
@@ -33,8 +33,8 @@ FROM
 WHERE
     cast(\"sold_date_date\".\"D_DATE\" as date) >= :start_date and cast(\"sold_date_date\".\"D_DATE\" as date) <= :end_date
 
-GROUP BY 
-    \"catalog_sales\".\"CS_ITEM_SK\")
+GROUP BY
+    1)
 SELECT
     sum(\"cheerful\".\"discount_amount\") as \"total_discount\"
 FROM
@@ -70,8 +70,8 @@ FROM
 WHERE
     cast(\"sold_date_date\".\"D_DATE\" as date) >= :start_date and cast(\"sold_date_date\".\"D_DATE\" as date) <= :end_date
 
-GROUP BY 
-    \"catalog_sales\".\"CS_ITEM_SK\")
+GROUP BY
+    1)
 SELECT
     sum(\"cheerful\".\"discount_amount\") as \"total_discount\"
 FROM
@@ -82,5 +82,5 @@ WHERE
 
 LIMIT (100)"""
 query_id = 32
-sql_comp_time = 0.006101
-total_time = 0.643309
+sql_comp_time = 0.003869
+total_time = 0.228917

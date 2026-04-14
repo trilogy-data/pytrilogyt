@@ -1,11 +1,11 @@
-base_prep_time = 0.000534
-base_parse_time = 1.432629
-base_generation_time = 0.006238
-base_exec_time = 0.018934
-optimized_prep_time = 0.000476
-optimized_parse_time = 0.555425
-optimized_generation_time = 0.005219
-optimized_exec_time = 0.018283
+base_prep_time = 8.6e-05
+base_parse_time = 0.140035
+base_generation_time = 0.002965
+base_exec_time = 0.010584
+optimized_prep_time = 0.000132
+optimized_parse_time = 0.127045
+optimized_generation_time = 0.002201
+optimized_exec_time = 0.009858
 was_optimized = false
 base_generated_sql = """
 
@@ -31,8 +31,8 @@ SELECT
     sum(\"cheerful\".\"store_sales_ext_sales_price\") as \"_virt_agg_sum_7595906549305205\"
 FROM
     \"cheerful\"
-GROUP BY 
-    \"cheerful\".\"store_sales_item_class\"),
+GROUP BY
+    1),
 thoughtful as (
 SELECT
     \"cheerful\".\"store_sales_item_category\" as \"store_sales_item_category\",
@@ -44,12 +44,12 @@ SELECT
     sum(\"cheerful\".\"store_sales_ext_sales_price\") as \"item_revenue\"
 FROM
     \"cheerful\"
-GROUP BY 
-    \"cheerful\".\"store_sales_item_category\",
-    \"cheerful\".\"store_sales_item_class\",
-    \"cheerful\".\"store_sales_item_current_price\",
-    \"cheerful\".\"store_sales_item_desc\",
-    \"cheerful\".\"store_sales_item_name\")
+GROUP BY
+    1,
+    2,
+    3,
+    4,
+    5)
 SELECT
     \"thoughtful\".\"store_sales_item_name\" as \"store_sales_item_name\",
     \"thoughtful\".\"store_sales_item_desc\" as \"store_sales_item_desc\",
@@ -91,8 +91,8 @@ SELECT
     sum(\"cheerful\".\"store_sales_ext_sales_price\") as \"_virt_agg_sum_7595906549305205\"
 FROM
     \"cheerful\"
-GROUP BY 
-    \"cheerful\".\"store_sales_item_class\"),
+GROUP BY
+    1),
 thoughtful as (
 SELECT
     \"cheerful\".\"store_sales_item_category\" as \"store_sales_item_category\",
@@ -104,12 +104,12 @@ SELECT
     sum(\"cheerful\".\"store_sales_ext_sales_price\") as \"item_revenue\"
 FROM
     \"cheerful\"
-GROUP BY 
-    \"cheerful\".\"store_sales_item_category\",
-    \"cheerful\".\"store_sales_item_class\",
-    \"cheerful\".\"store_sales_item_current_price\",
-    \"cheerful\".\"store_sales_item_desc\",
-    \"cheerful\".\"store_sales_item_name\")
+GROUP BY
+    1,
+    2,
+    3,
+    4,
+    5)
 SELECT
     \"thoughtful\".\"store_sales_item_name\" as \"store_sales_item_name\",
     \"thoughtful\".\"store_sales_item_desc\" as \"store_sales_item_desc\",
@@ -128,5 +128,5 @@ ORDER BY
     \"thoughtful\".\"store_sales_item_desc\" asc nulls first,
     \"revenueratio\" asc nulls first"""
 query_id = 98
-sql_comp_time = 0.087545
-total_time = 2.141592
+sql_comp_time = 0.039101
+total_time = 0.339925

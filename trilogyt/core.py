@@ -1,9 +1,8 @@
 from hashlib import sha256
 
-from trilogy.authoring import Concept, DataType, Environment
-from trilogy.core.enums import Purpose
+from trilogy.authoring import Concept, DataType, Environment, FunctionFactory
+from trilogy.core.enums import FunctionType, Purpose
 from trilogy.core.env_processor import generate_graph
-from trilogy.core.functions import CurrentDatetime
 from trilogy.core.models.build_environment import BuildEnvironment
 
 from trilogyt.constants import TRILOGY_NAMESPACE
@@ -15,7 +14,7 @@ ENVIRONMENT_CONCEPTS = [
         namespace=TRILOGY_NAMESPACE,
         datatype=DataType.DATETIME,
         purpose=Purpose.CONSTANT,
-        lineage=CurrentDatetime([]),
+        lineage=FunctionFactory().create_function([], FunctionType.CURRENT_DATETIME),
     )
 ]
 

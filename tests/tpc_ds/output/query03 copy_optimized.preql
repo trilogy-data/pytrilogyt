@@ -1,4 +1,4 @@
-import _opt_store_sales_d16b6664;
+import _opt_store_sales_8be1c7f8;
 
 WHERE
     store_sales.date.month_of_year = 11 and store_sales.item.manufacturer_id = 128

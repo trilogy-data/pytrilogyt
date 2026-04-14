@@ -28,7 +28,6 @@ def run_test_case(
             text = f.read()
         prep_time = datetime.now()
         engine.environment = Environment(working_path=preql_path.parent)
-
         end_prep = datetime.now()
         parsed = datetime.now()
 
@@ -36,6 +35,7 @@ def run_test_case(
         post_parsed = datetime.now()
         generated_sql = engine.generate_sql(queries[-1])
         generated = datetime.now()
+
         results = engine.execute_raw_sql(generated_sql[-1])
         execed = datetime.now()
         exec_time = execed - generated

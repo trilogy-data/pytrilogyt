@@ -1,11 +1,11 @@
-base_prep_time = 0.0
-base_parse_time = 0.317255
-base_generation_time = 0.014063
-base_exec_time = 0.028536
-optimized_prep_time = 0.0
-optimized_parse_time = 0.880222
-optimized_generation_time = 0.004563
-optimized_exec_time = 0.034088
+base_prep_time = 8.2e-05
+base_parse_time = 0.162074
+base_generation_time = 0.001488
+base_exec_time = 0.025924
+optimized_prep_time = 0.000138
+optimized_parse_time = 0.189235
+optimized_generation_time = 0.00198
+optimized_exec_time = 0.01531
 was_optimized = false
 base_generated_sql = """
 
@@ -22,9 +22,9 @@ FROM
 WHERE
     \"returns_store_store\".\"S_STATE\" = 'TN' and cast(\"returns_return_date_date\".\"D_YEAR\" as int) = 2000
 
-GROUP BY 
-    \"returns_store_returns\".\"SR_CUSTOMER_SK\",
-    \"returns_store_store\".\"S_STORE_SK\"),
+GROUP BY
+    1,
+    2),
 thoughtful as (
 SELECT
     \"returns_store_returns\".\"SR_CUSTOMER_SK\" as \"returns_customer_id\",
@@ -32,18 +32,18 @@ SELECT
     \"returns_store_returns\".\"SR_STORE_SK\" as \"returns_store_id\"
 FROM
     \"memory\".\"store_returns\" as \"returns_store_returns\"
-GROUP BY 
-    \"returns_store_returns\".\"SR_CUSTOMER_SK\",
-    \"returns_store_returns\".\"SR_RETURNED_DATE_SK\",
-    \"returns_store_returns\".\"SR_STORE_SK\"),
+GROUP BY
+    1,
+    2,
+    3),
 yummy as (
 SELECT
     \"questionable\".\"returns_store_id\" as \"returns_store_id\",
     avg(\"questionable\".\"total_returns\") as \"avg_store_returns\"
 FROM
     \"questionable\"
-GROUP BY 
-    \"questionable\".\"returns_store_id\"),
+GROUP BY
+    1),
 cooperative as (
 SELECT
     \"returns_customer_customers\".\"C_CUSTOMER_ID\" as \"returns_customer_text_id\",
@@ -57,10 +57,10 @@ FROM
 WHERE
     \"returns_store_store\".\"S_STATE\" = 'TN' and cast(\"returns_return_date_date\".\"D_YEAR\" as int) = 2000
 
-GROUP BY 
-    \"returns_customer_customers\".\"C_CUSTOMER_ID\",
-    \"returns_customer_customers\".\"C_CUSTOMER_SK\",
-    \"returns_store_store\".\"S_STORE_SK\"),
+GROUP BY
+    1,
+    2,
+    3),
 uneven as (
 SELECT
     \"cooperative\".\"returns_customer_text_id\" as \"returns_customer_text_id\",
@@ -69,10 +69,10 @@ SELECT
 FROM
     \"cooperative\"
     INNER JOIN \"questionable\" on \"cooperative\".\"returns_customer_id\" = \"questionable\".\"returns_customer_id\" AND \"cooperative\".\"returns_store_id\" = \"questionable\".\"returns_store_id\"
-GROUP BY 
-    \"cooperative\".\"returns_customer_text_id\",
-    \"cooperative\".\"returns_store_id\",
-    \"questionable\".\"total_returns\")
+GROUP BY
+    1,
+    2,
+    3)
 SELECT
     \"uneven\".\"returns_customer_text_id\" as \"returns_customer_text_id\"
 FROM
@@ -99,9 +99,9 @@ FROM
 WHERE
     \"returns_store_store\".\"S_STATE\" = 'TN' and cast(\"returns_return_date_date\".\"D_YEAR\" as int) = 2000
 
-GROUP BY 
-    \"returns_store_returns\".\"SR_CUSTOMER_SK\",
-    \"returns_store_store\".\"S_STORE_SK\"),
+GROUP BY
+    1,
+    2),
 thoughtful as (
 SELECT
     \"returns_store_returns\".\"SR_CUSTOMER_SK\" as \"returns_customer_id\",
@@ -109,18 +109,18 @@ SELECT
     \"returns_store_returns\".\"SR_STORE_SK\" as \"returns_store_id\"
 FROM
     \"memory\".\"store_returns\" as \"returns_store_returns\"
-GROUP BY 
-    \"returns_store_returns\".\"SR_CUSTOMER_SK\",
-    \"returns_store_returns\".\"SR_RETURNED_DATE_SK\",
-    \"returns_store_returns\".\"SR_STORE_SK\"),
+GROUP BY
+    1,
+    2,
+    3),
 yummy as (
 SELECT
     \"questionable\".\"returns_store_id\" as \"returns_store_id\",
     avg(\"questionable\".\"total_returns\") as \"avg_store_returns\"
 FROM
     \"questionable\"
-GROUP BY 
-    \"questionable\".\"returns_store_id\"),
+GROUP BY
+    1),
 cooperative as (
 SELECT
     \"returns_customer_customers\".\"C_CUSTOMER_ID\" as \"returns_customer_text_id\",
@@ -134,10 +134,10 @@ FROM
 WHERE
     \"returns_store_store\".\"S_STATE\" = 'TN' and cast(\"returns_return_date_date\".\"D_YEAR\" as int) = 2000
 
-GROUP BY 
-    \"returns_customer_customers\".\"C_CUSTOMER_ID\",
-    \"returns_customer_customers\".\"C_CUSTOMER_SK\",
-    \"returns_store_store\".\"S_STORE_SK\"),
+GROUP BY
+    1,
+    2,
+    3),
 uneven as (
 SELECT
     \"cooperative\".\"returns_customer_text_id\" as \"returns_customer_text_id\",
@@ -146,10 +146,10 @@ SELECT
 FROM
     \"cooperative\"
     INNER JOIN \"questionable\" on \"cooperative\".\"returns_customer_id\" = \"questionable\".\"returns_customer_id\" AND \"cooperative\".\"returns_store_id\" = \"questionable\".\"returns_store_id\"
-GROUP BY 
-    \"cooperative\".\"returns_customer_text_id\",
-    \"cooperative\".\"returns_store_id\",
-    \"questionable\".\"total_returns\")
+GROUP BY
+    1,
+    2,
+    3)
 SELECT
     \"uneven\".\"returns_customer_text_id\" as \"returns_customer_text_id\"
 FROM
@@ -162,5 +162,5 @@ ORDER BY
     \"uneven\".\"returns_customer_text_id\" asc
 LIMIT (100)"""
 query_id = 1
-sql_comp_time = 4.372802
-total_time = 5.653544
+sql_comp_time = 0.113325
+total_time = 0.514587

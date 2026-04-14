@@ -1,11 +1,11 @@
-base_prep_time = 0.0
-base_parse_time = 1.307878
-base_generation_time = 0.01616
-base_exec_time = 0.033481
-optimized_prep_time = 0.0
-optimized_parse_time = 1.279587
-optimized_generation_time = 0.033209
-optimized_exec_time = 0.06468
+base_prep_time = 0.000175
+base_parse_time = 0.314935
+base_generation_time = 0.008797
+base_exec_time = 0.018478
+optimized_prep_time = 7.7e-05
+optimized_parse_time = 0.26441
+optimized_generation_time = 0.007916
+optimized_exec_time = 0.019201
 was_optimized = false
 base_generated_sql = """
 
@@ -29,14 +29,14 @@ FROM
 WHERE
     cast(\"store_sales_date_date\".\"D_YEAR\" as int) = 2001 and \"store_sales_date_date\".\"D_MOY\" = 4 and cast(\"store_sales_return_date_date\".\"D_YEAR\" as int) = 2001 and \"store_sales_return_date_date\".\"D_MOY\" >= 4 and \"store_sales_return_date_date\".\"D_MOY\" <= 10 and cast(\"catalog_sales_date_date\".\"D_YEAR\" as int) = 2001 and \"catalog_sales_date_date\".\"D_MOY\" >= 4 and \"catalog_sales_date_date\".\"D_MOY\" <= 10 and \"store_sales_store_returns\".\"SR_CUSTOMER_SK\" = \"store_sales_store_sales\".\"SS_CUSTOMER_SK\" and CASE WHEN \"store_sales_store_returns\".\"SR_RETURN_TIME_SK\" THEN TRUE ELSE FALSE END
 
-GROUP BY 
-    \"catalog_sales_catalog_sales\".\"CS_NET_PROFIT\",
+GROUP BY
+    1,
+    2,
+    3,
+    4,
+    5,
     \"catalog_sales_catalog_sales\".\"CS_ORDER_NUMBER\",
-    \"store_sales_item_items\".\"I_ITEM_DESC\",
-    \"store_sales_item_items\".\"I_ITEM_ID\",
-    \"store_sales_item_items\".\"I_ITEM_SK\",
-    \"store_sales_store_store\".\"S_STORE_ID\",
-    \"store_sales_store_store\".\"S_STORE_NAME\"),
+    \"store_sales_item_items\".\"I_ITEM_SK\"),
 uneven as (
 SELECT
     \"catalog_sales_catalog_sales\".\"CS_BILL_CUSTOMER_SK\" as \"store_sales_customer_id\",
@@ -44,10 +44,10 @@ SELECT
     \"catalog_sales_catalog_sales\".\"CS_SOLD_DATE_SK\" as \"catalog_sales_date_id\"
 FROM
     \"memory\".\"catalog_sales\" as \"catalog_sales_catalog_sales\"
-GROUP BY 
-    \"catalog_sales_catalog_sales\".\"CS_BILL_CUSTOMER_SK\",
-    \"catalog_sales_catalog_sales\".\"CS_ITEM_SK\",
-    \"catalog_sales_catalog_sales\".\"CS_SOLD_DATE_SK\"),
+GROUP BY
+    1,
+    2,
+    3),
 concerned as (
 SELECT
     \"vacuous\".\"store_sales_item_desc\" as \"store_sales_item_desc\",
@@ -57,11 +57,11 @@ SELECT
     sum(\"vacuous\".\"catalog_sales_net_profit\") as \"catalog_sales_profit\"
 FROM
     \"vacuous\"
-GROUP BY 
-    \"vacuous\".\"store_sales_item_desc\",
-    \"vacuous\".\"store_sales_item_name\",
-    \"vacuous\".\"store_sales_store_name\",
-    \"vacuous\".\"store_sales_store_text_id\"),
+GROUP BY
+    1,
+    2,
+    3,
+    4),
 yummy as (
 SELECT
     \"store_sales_item_items\".\"I_ITEM_DESC\" as \"store_sales_item_desc\",
@@ -82,15 +82,15 @@ FROM
 WHERE
     cast(\"store_sales_date_date\".\"D_YEAR\" as int) = 2001 and \"store_sales_date_date\".\"D_MOY\" = 4 and cast(\"store_sales_return_date_date\".\"D_YEAR\" as int) = 2001 and \"store_sales_return_date_date\".\"D_MOY\" >= 4 and \"store_sales_return_date_date\".\"D_MOY\" <= 10 and cast(\"catalog_sales_date_date\".\"D_YEAR\" as int) = 2001 and \"catalog_sales_date_date\".\"D_MOY\" >= 4 and \"catalog_sales_date_date\".\"D_MOY\" <= 10 and \"store_sales_store_returns\".\"SR_CUSTOMER_SK\" = \"store_sales_store_sales\".\"SS_CUSTOMER_SK\" and CASE WHEN \"store_sales_store_returns\".\"SR_RETURN_TIME_SK\" THEN TRUE ELSE FALSE END
 
-GROUP BY 
-    \"store_sales_item_items\".\"I_ITEM_DESC\",
-    \"store_sales_item_items\".\"I_ITEM_ID\",
+GROUP BY
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
     \"store_sales_item_items\".\"I_ITEM_SK\",
-    \"store_sales_store_returns\".\"SR_NET_LOSS\",
-    \"store_sales_store_sales\".\"SS_NET_PROFIT\",
-    \"store_sales_store_sales\".\"SS_TICKET_NUMBER\",
-    \"store_sales_store_store\".\"S_STORE_ID\",
-    \"store_sales_store_store\".\"S_STORE_NAME\"),
+    \"store_sales_store_sales\".\"SS_TICKET_NUMBER\"),
 juicy as (
 SELECT
     \"yummy\".\"store_sales_item_desc\" as \"store_sales_item_desc\",
@@ -101,11 +101,11 @@ SELECT
     sum(\"yummy\".\"store_sales_return_net_loss\") as \"store_returns_loss\"
 FROM
     \"yummy\"
-GROUP BY 
-    \"yummy\".\"store_sales_item_desc\",
-    \"yummy\".\"store_sales_item_name\",
-    \"yummy\".\"store_sales_store_name\",
-    \"yummy\".\"store_sales_store_text_id\")
+GROUP BY
+    1,
+    2,
+    3,
+    4)
 SELECT
     \"juicy\".\"store_sales_item_name\" as \"store_sales_item_name\",
     \"juicy\".\"store_sales_item_desc\" as \"store_sales_item_desc\",
@@ -145,14 +145,14 @@ FROM
 WHERE
     cast(\"store_sales_date_date\".\"D_YEAR\" as int) = 2001 and \"store_sales_date_date\".\"D_MOY\" = 4 and cast(\"store_sales_return_date_date\".\"D_YEAR\" as int) = 2001 and \"store_sales_return_date_date\".\"D_MOY\" >= 4 and \"store_sales_return_date_date\".\"D_MOY\" <= 10 and cast(\"catalog_sales_date_date\".\"D_YEAR\" as int) = 2001 and \"catalog_sales_date_date\".\"D_MOY\" >= 4 and \"catalog_sales_date_date\".\"D_MOY\" <= 10 and \"store_sales_store_returns\".\"SR_CUSTOMER_SK\" = \"store_sales_store_sales\".\"SS_CUSTOMER_SK\" and CASE WHEN \"store_sales_store_returns\".\"SR_RETURN_TIME_SK\" THEN TRUE ELSE FALSE END
 
-GROUP BY 
-    \"catalog_sales_catalog_sales\".\"CS_NET_PROFIT\",
+GROUP BY
+    1,
+    2,
+    3,
+    4,
+    5,
     \"catalog_sales_catalog_sales\".\"CS_ORDER_NUMBER\",
-    \"store_sales_item_items\".\"I_ITEM_DESC\",
-    \"store_sales_item_items\".\"I_ITEM_ID\",
-    \"store_sales_item_items\".\"I_ITEM_SK\",
-    \"store_sales_store_store\".\"S_STORE_ID\",
-    \"store_sales_store_store\".\"S_STORE_NAME\"),
+    \"store_sales_item_items\".\"I_ITEM_SK\"),
 uneven as (
 SELECT
     \"catalog_sales_catalog_sales\".\"CS_BILL_CUSTOMER_SK\" as \"store_sales_customer_id\",
@@ -160,10 +160,10 @@ SELECT
     \"catalog_sales_catalog_sales\".\"CS_SOLD_DATE_SK\" as \"catalog_sales_date_id\"
 FROM
     \"memory\".\"catalog_sales\" as \"catalog_sales_catalog_sales\"
-GROUP BY 
-    \"catalog_sales_catalog_sales\".\"CS_BILL_CUSTOMER_SK\",
-    \"catalog_sales_catalog_sales\".\"CS_ITEM_SK\",
-    \"catalog_sales_catalog_sales\".\"CS_SOLD_DATE_SK\"),
+GROUP BY
+    1,
+    2,
+    3),
 concerned as (
 SELECT
     \"vacuous\".\"store_sales_item_desc\" as \"store_sales_item_desc\",
@@ -173,11 +173,11 @@ SELECT
     sum(\"vacuous\".\"catalog_sales_net_profit\") as \"catalog_sales_profit\"
 FROM
     \"vacuous\"
-GROUP BY 
-    \"vacuous\".\"store_sales_item_desc\",
-    \"vacuous\".\"store_sales_item_name\",
-    \"vacuous\".\"store_sales_store_name\",
-    \"vacuous\".\"store_sales_store_text_id\"),
+GROUP BY
+    1,
+    2,
+    3,
+    4),
 yummy as (
 SELECT
     \"store_sales_item_items\".\"I_ITEM_DESC\" as \"store_sales_item_desc\",
@@ -198,15 +198,15 @@ FROM
 WHERE
     cast(\"store_sales_date_date\".\"D_YEAR\" as int) = 2001 and \"store_sales_date_date\".\"D_MOY\" = 4 and cast(\"store_sales_return_date_date\".\"D_YEAR\" as int) = 2001 and \"store_sales_return_date_date\".\"D_MOY\" >= 4 and \"store_sales_return_date_date\".\"D_MOY\" <= 10 and cast(\"catalog_sales_date_date\".\"D_YEAR\" as int) = 2001 and \"catalog_sales_date_date\".\"D_MOY\" >= 4 and \"catalog_sales_date_date\".\"D_MOY\" <= 10 and \"store_sales_store_returns\".\"SR_CUSTOMER_SK\" = \"store_sales_store_sales\".\"SS_CUSTOMER_SK\" and CASE WHEN \"store_sales_store_returns\".\"SR_RETURN_TIME_SK\" THEN TRUE ELSE FALSE END
 
-GROUP BY 
-    \"store_sales_item_items\".\"I_ITEM_DESC\",
-    \"store_sales_item_items\".\"I_ITEM_ID\",
+GROUP BY
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
     \"store_sales_item_items\".\"I_ITEM_SK\",
-    \"store_sales_store_returns\".\"SR_NET_LOSS\",
-    \"store_sales_store_sales\".\"SS_NET_PROFIT\",
-    \"store_sales_store_sales\".\"SS_TICKET_NUMBER\",
-    \"store_sales_store_store\".\"S_STORE_ID\",
-    \"store_sales_store_store\".\"S_STORE_NAME\"),
+    \"store_sales_store_sales\".\"SS_TICKET_NUMBER\"),
 juicy as (
 SELECT
     \"yummy\".\"store_sales_item_desc\" as \"store_sales_item_desc\",
@@ -217,11 +217,11 @@ SELECT
     sum(\"yummy\".\"store_sales_return_net_loss\") as \"store_returns_loss\"
 FROM
     \"yummy\"
-GROUP BY 
-    \"yummy\".\"store_sales_item_desc\",
-    \"yummy\".\"store_sales_item_name\",
-    \"yummy\".\"store_sales_store_name\",
-    \"yummy\".\"store_sales_store_text_id\")
+GROUP BY
+    1,
+    2,
+    3,
+    4)
 SELECT
     \"juicy\".\"store_sales_item_name\" as \"store_sales_item_name\",
     \"juicy\".\"store_sales_item_desc\" as \"store_sales_item_desc\",
@@ -240,5 +240,5 @@ ORDER BY
     \"juicy\".\"store_sales_store_name\" asc
 LIMIT (100)"""
 query_id = 25
-sql_comp_time = 0.01258
-total_time = 2.748876
+sql_comp_time = 0.015393
+total_time = 0.652385

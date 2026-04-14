@@ -33,10 +33,6 @@ OVERWRITE dslocal_zips_pre_b9876e7a INTO dslocal_zips_pre_b9876e7a FROM SELECT
     zips_pre,
 ;
 
-OVERWRITE dslocal_final_zips_919671db INTO dslocal_final_zips_919671db FROM SELECT
-    final_zips,
-;
-
 OVERWRITE dsstore_sales_store_name_2b1ac618_filtered_on_quarter_year_zip_final_zips INTO dsstore_sales_store_name_2b1ac618_filtered_on_quarter_year_zip_final_zips FROM WHERE
     store_sales.date.quarter = 2 and store_sales.date.year = 1998 and substring(store_sales.store.zip,1,2) in final_zips
 SELECT

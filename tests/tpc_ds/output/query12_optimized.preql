@@ -1,4 +1,4 @@
-import _opt_web_sales_ccc72660;
+import _opt_web_sales_06c4d4bb;
 
 WHERE
     web_sales.date.date >= '1999-02-22'::date and web_sales.date.date <= '1999-03-24'::date and web_sales.item.category in ('Sports', 'Books', 'Home')
