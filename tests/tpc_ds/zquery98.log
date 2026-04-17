@@ -1,11 +1,11 @@
-base_prep_time = 8.6e-05
-base_parse_time = 0.140035
-base_generation_time = 0.002965
-base_exec_time = 0.010584
-optimized_prep_time = 0.000132
-optimized_parse_time = 0.127045
-optimized_generation_time = 0.002201
-optimized_exec_time = 0.009858
+base_prep_time = 0.000102
+base_parse_time = 0.180302
+base_generation_time = 0.003164
+base_exec_time = 0.012692
+optimized_prep_time = 0.000341
+optimized_parse_time = 0.166213
+optimized_generation_time = 0.003986
+optimized_exec_time = 0.012173
 was_optimized = false
 base_generated_sql = """
 
@@ -57,7 +57,7 @@ SELECT
     \"thoughtful\".\"store_sales_item_class\" as \"store_sales_item_class\",
     \"thoughtful\".\"store_sales_item_current_price\" as \"store_sales_item_current_price\",
     \"thoughtful\".\"item_revenue\" as \"item_revenue\",
-    \"thoughtful\".\"_virt_agg_sum_9873055619986236\" * 100.0 / (\"cooperative\".\"_virt_agg_sum_7595906549305205\") as \"revenueratio\"
+    ( \"thoughtful\".\"_virt_agg_sum_9873055619986236\" * 100.0 ) / (\"cooperative\".\"_virt_agg_sum_7595906549305205\") as \"revenueratio\"
 FROM
     \"thoughtful\"
     INNER JOIN \"cooperative\" on \"thoughtful\".\"store_sales_item_class\" is not distinct from \"cooperative\".\"store_sales_item_class\"
@@ -117,7 +117,7 @@ SELECT
     \"thoughtful\".\"store_sales_item_class\" as \"store_sales_item_class\",
     \"thoughtful\".\"store_sales_item_current_price\" as \"store_sales_item_current_price\",
     \"thoughtful\".\"item_revenue\" as \"item_revenue\",
-    \"thoughtful\".\"_virt_agg_sum_9873055619986236\" * 100.0 / (\"cooperative\".\"_virt_agg_sum_7595906549305205\") as \"revenueratio\"
+    ( \"thoughtful\".\"_virt_agg_sum_9873055619986236\" * 100.0 ) / (\"cooperative\".\"_virt_agg_sum_7595906549305205\") as \"revenueratio\"
 FROM
     \"thoughtful\"
     INNER JOIN \"cooperative\" on \"thoughtful\".\"store_sales_item_class\" is not distinct from \"cooperative\".\"store_sales_item_class\"
@@ -128,5 +128,5 @@ ORDER BY
     \"thoughtful\".\"store_sales_item_desc\" asc nulls first,
     \"revenueratio\" asc nulls first"""
 query_id = 98
-sql_comp_time = 0.039101
-total_time = 0.339925
+sql_comp_time = 0.059603
+total_time = 0.451958

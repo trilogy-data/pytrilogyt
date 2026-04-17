@@ -1,11 +1,11 @@
-base_prep_time = 6.4e-05
-base_parse_time = 0.052476
-base_generation_time = 0.001062
-base_exec_time = 0.006667
-optimized_prep_time = 8.5e-05
-optimized_parse_time = 0.037938
-optimized_generation_time = 0.000316
-optimized_exec_time = 0.001168
+base_prep_time = 0.000322
+base_parse_time = 0.093179
+base_generation_time = 0.001949
+base_exec_time = 0.012601
+optimized_prep_time = 0.000185
+optimized_parse_time = 0.06448
+optimized_generation_time = 0.000903
+optimized_exec_time = 0.005536
 was_optimized = true
 base_generated_sql = """
 SELECT
@@ -43,5 +43,5 @@ ORDER BY
     \"dsstore_sales_date_year_store_sales_item_brand_id_store_sales_item_brand_name_a595e281_filtered_on_month_of_year_manufacturer_id\".\"store_sales_item_brand_id\" asc
 LIMIT (100)"""
 query_id = 3
-sql_comp_time = 0.004477
-total_time = 0.10733
+sql_comp_time = 0.018997
+total_time = 0.201213

@@ -1,16 +1,16 @@
-base_prep_time = 0.000104
-base_parse_time = 0.20392
-base_generation_time = 0.002617
-base_exec_time = 0.020876
-optimized_prep_time = 0.000188
-optimized_parse_time = 0.158891
-optimized_generation_time = 0.000252
-optimized_exec_time = 0.0008
+base_prep_time = 0.000243
+base_parse_time = 0.262364
+base_generation_time = 0.005893
+base_exec_time = 0.014274
+optimized_prep_time = 0.000113
+optimized_parse_time = 0.15506
+optimized_generation_time = 0.000383
+optimized_exec_time = 0.000996
 was_optimized = true
 base_generated_sql = """
 
 WITH 
-questionable as (
+cheerful as (
 SELECT
     \"customer_customer_address\".\"CA_ZIP\" as \"customer_zip\",
     count(CASE WHEN \"customer_customers\".\"C_PREFERRED_CUST_FLAG\" = 'Y' THEN \"customer_customers\".\"C_CUSTOMER_SK\" ELSE NULL END) as \"zip_p_count\"
@@ -19,25 +19,25 @@ FROM
     INNER JOIN \"memory\".\"customer\" as \"customer_customers\" on \"customer_customer_address\".\"CA_ADDRESS_SK\" = \"customer_customers\".\"C_CURRENT_ADDR_SK\"
 GROUP BY
     1),
-cheerful as (
+quizzical as (
 SELECT
     unnest(:_virt_7180871482901048) as \"zips_pre\"
 ),
-yummy as (
+questionable as (
 SELECT
-    SUBSTRING(CASE WHEN \"questionable\".\"zip_p_count\" > 10 THEN \"customer_customer_address\".\"CA_ZIP\" ELSE NULL END,1,5) as \"_virt_func_substring_4293448550966409\"
-FROM
-    \"questionable\"
-    INNER JOIN \"memory\".\"customer_address\" as \"customer_customer_address\" on \"questionable\".\"customer_zip\" = \"customer_customer_address\".\"CA_ZIP\"
-GROUP BY
-    1),
-young as (
-SELECT
-    SUBSTRING(SUBSTRING(cast(\"cheerful\".\"zips_pre\" as string),1,5),1,2) as \"final_zips\"
+    SUBSTRING(CASE WHEN \"cheerful\".\"zip_p_count\" > 10 THEN \"customer_customer_address\".\"CA_ZIP\" ELSE NULL END,1,5) as \"_virt_func_substring_4293448550966409\"
 FROM
     \"cheerful\"
+    INNER JOIN \"memory\".\"customer_address\" as \"customer_customer_address\" on \"cheerful\".\"customer_zip\" = \"customer_customer_address\".\"CA_ZIP\"
+GROUP BY
+    1),
+juicy as (
+SELECT
+    SUBSTRING(SUBSTRING(cast(\"quizzical\".\"zips_pre\" as string),1,5),1,2) as \"final_zips\"
+FROM
+    \"quizzical\"
 WHERE
-    SUBSTRING(cast(\"cheerful\".\"zips_pre\" as string),1,5) in (select yummy.\"_virt_func_substring_4293448550966409\" from yummy where yummy.\"_virt_func_substring_4293448550966409\" is not null)
+    SUBSTRING(cast(\"quizzical\".\"zips_pre\" as string),1,5) in (select questionable.\"_virt_func_substring_4293448550966409\" from questionable where questionable.\"_virt_func_substring_4293448550966409\" is not null)
 
 GROUP BY
     1)
@@ -49,7 +49,7 @@ FROM
     INNER JOIN \"memory\".\"date_dim\" as \"store_sales_date_date\" on \"store_sales_store_sales\".\"SS_SOLD_DATE_SK\" = \"store_sales_date_date\".\"D_DATE_SK\"
     INNER JOIN \"memory\".\"store\" as \"store_sales_store_store\" on \"store_sales_store_sales\".\"SS_STORE_SK\" = \"store_sales_store_store\".\"S_STORE_SK\"
 WHERE
-    \"store_sales_date_date\".\"D_QOY\" = 2 and cast(\"store_sales_date_date\".\"D_YEAR\" as int) = 1998 and SUBSTRING(\"store_sales_store_store\".\"S_ZIP\",1,2) in (select young.\"final_zips\" from young where young.\"final_zips\" is not null)
+    \"store_sales_date_date\".\"D_QOY\" = 2 and cast(\"store_sales_date_date\".\"D_YEAR\" as int) = 1998 and SUBSTRING(\"store_sales_store_store\".\"S_ZIP\",1,2) in (select juicy.\"final_zips\" from juicy where juicy.\"final_zips\" is not null)
 
 GROUP BY
     1
@@ -66,5 +66,5 @@ ORDER BY
     \"dsstore_sales_store_name_2b1ac618_filtered_on_quarter_year_zip_final_zips\".\"store_sales_store_name\" asc
 LIMIT (100)"""
 query_id = 8
-sql_comp_time = 0.008669
-total_time = 0.399023
+sql_comp_time = 0.016165
+total_time = 0.458763

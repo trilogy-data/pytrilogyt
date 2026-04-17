@@ -1,11 +1,11 @@
-base_prep_time = 0.000112
-base_parse_time = 0.031668
-base_generation_time = 0.002476
-base_exec_time = 0.005291
-optimized_prep_time = 8.8e-05
-optimized_parse_time = 0.026713
-optimized_generation_time = 0.002054
-optimized_exec_time = 0.004895
+base_prep_time = 9.8e-05
+base_parse_time = 0.035682
+base_generation_time = 0.005041
+base_exec_time = 0.005914
+optimized_prep_time = 0.000101
+optimized_parse_time = 0.029193
+optimized_generation_time = 0.005024
+optimized_exec_time = 0.006135
 was_optimized = false
 base_generated_sql = """
 SELECT
@@ -116,5 +116,5 @@ ORDER BY
     \"inventory_item_items\".\"I_ITEM_ID\" asc nulls first
 LIMIT (100)"""
 query_id = 21
-sql_comp_time = 0.01725
-total_time = 0.093572
+sql_comp_time = 0.005303
+total_time = 0.095605

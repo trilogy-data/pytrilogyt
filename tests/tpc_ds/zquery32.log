@@ -1,11 +1,11 @@
-base_prep_time = 0.000115
-base_parse_time = 0.103267
-base_generation_time = 0.00161
-base_exec_time = 0.004923
-optimized_prep_time = 8.2e-05
-optimized_parse_time = 0.105051
-optimized_generation_time = 0.002525
-optimized_exec_time = 0.005545
+base_prep_time = 0.0001
+base_parse_time = 0.123167
+base_generation_time = 0.002618
+base_exec_time = 0.007253
+optimized_prep_time = 0.000101
+optimized_parse_time = 0.128502
+optimized_generation_time = 0.00254
+optimized_exec_time = 0.007728
 was_optimized = false
 base_generated_sql = """
 
@@ -13,7 +13,7 @@ WITH
 cheerful as (
 SELECT
     \"catalog_sales\".\"CS_EXT_DISCOUNT_AMT\" as \"discount_amount\",
-    \"item_items\".\"I_ITEM_SK\" as \"item_id\",
+    \"catalog_sales\".\"CS_ITEM_SK\" as \"item_id\",
     \"item_items\".\"I_MANUFACT_ID\" as \"item_manufacturer_id\",
     cast(\"sold_date_date\".\"D_DATE\" as date) as \"sold_date_date\"
 FROM
@@ -50,7 +50,7 @@ WITH
 cheerful as (
 SELECT
     \"catalog_sales\".\"CS_EXT_DISCOUNT_AMT\" as \"discount_amount\",
-    \"item_items\".\"I_ITEM_SK\" as \"item_id\",
+    \"catalog_sales\".\"CS_ITEM_SK\" as \"item_id\",
     \"item_items\".\"I_MANUFACT_ID\" as \"item_manufacturer_id\",
     cast(\"sold_date_date\".\"D_DATE\" as date) as \"sold_date_date\"
 FROM
@@ -82,5 +82,5 @@ WHERE
 
 LIMIT (100)"""
 query_id = 32
-sql_comp_time = 0.003869
-total_time = 0.228917
+sql_comp_time = 0.004284
+total_time = 0.27888

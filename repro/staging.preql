@@ -1,0 +1,16 @@
+import items as item;
+import sales as sales;
+
+merge sales.item.id into ~item.id;
+
+datasource staged_sales (
+    sale_id: ~sales.id,
+    sale_year: ~sales.year,
+    item_id: ~item.id,
+    item_category: ~item.category,
+    sales_item_price: ~sales.item.price,
+    sales_item_category: ~sales.item.category
+)
+grain (sales.id)
+complete where sales.year = 2023
+address staged_sales_tbl;

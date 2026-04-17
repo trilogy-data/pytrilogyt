@@ -1,11 +1,11 @@
-base_prep_time = 8.1e-05
-base_parse_time = 0.06549
-base_generation_time = 0.001289
-base_exec_time = 0.013496
-optimized_prep_time = 0.000111
-optimized_parse_time = 0.073511
-optimized_generation_time = 0.001234
-optimized_exec_time = 0.012258
+base_prep_time = 9.5e-05
+base_parse_time = 0.091388
+base_generation_time = 0.007643
+base_exec_time = 0.031876
+optimized_prep_time = 9.9e-05
+optimized_parse_time = 0.096389
+optimized_generation_time = 0.003347
+optimized_exec_time = 0.029771
 was_optimized = false
 base_generated_sql = """
 SELECT
@@ -50,5 +50,5 @@ ORDER BY
     \"cs_item_items\".\"I_ITEM_ID\" asc
 LIMIT (100)"""
 query_id = 26
-sql_comp_time = 0.011968
-total_time = 0.182142
+sql_comp_time = 0.027248
+total_time = 0.293359

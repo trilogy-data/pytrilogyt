@@ -1,0 +1,11 @@
+import items as item;
+import sales as sales;
+
+merge sales.item.id into ~item.id;
+
+WHERE
+    sales.year = 2023
+    and sales.item.price > avg(item.price) by item.category
+SELECT
+    count(sales.id) -> sale_count
+;

@@ -1,11 +1,11 @@
-base_prep_time = 8.1e-05
-base_parse_time = 0.189395
-base_generation_time = 0.005659
-base_exec_time = 0.026379
-optimized_prep_time = 7.6e-05
-optimized_parse_time = 0.198051
-optimized_generation_time = 0.00414
-optimized_exec_time = 0.023996
+base_prep_time = 0.000112
+base_parse_time = 0.213493
+base_generation_time = 0.010933
+base_exec_time = 0.033184
+optimized_prep_time = 0.000117
+optimized_parse_time = 0.229819
+optimized_generation_time = 0.006294
+optimized_exec_time = 0.026226
 was_optimized = false
 base_generated_sql = """
 
@@ -308,5 +308,5 @@ ORDER BY
     \"juicy\".\"customer_state_returns_2002\" asc nulls first
 LIMIT (100)"""
 query_id = 30
-sql_comp_time = 0.012556
-total_time = 0.465488
+sql_comp_time = 0.015773
+total_time = 0.543343

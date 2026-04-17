@@ -1,12 +1,12 @@
-from dagster_duckdb import DuckDBResource
 from dagster import asset
+from dagster_duckdb import DuckDBResource
 
 
 @asset(deps=[])
 def dsgeneric_scalar_0c9429cc(duck_db: DuckDBResource) -> None:
     with duck_db.get_connection() as conn:
         conn.execute(
-           ''' 
+            """ 
 CREATE OR REPLACE TABLE "dsgeneric_scalar_0c9429cc" (
     generic_scalar int,
     generic_split int
@@ -25,6 +25,5 @@ SELECT
     "quizzical"."generic_scalar" as "generic_scalar",
     unnest("quizzical"."generic_int_array") as "generic_split"
 FROM
-    "quizzical" '''
+    "quizzical" """
         )
-    
