@@ -7,9 +7,9 @@ quizzical as (
 SELECT
     "dsgeneric_scalar_445831a9"."generic_int_array" as "generic_int_array"
 FROM
-    ({{ ref('dsgeneric_scalar_445831a9_gen_model') }}) as "dsgeneric_scalar_445831a9"
-GROUP BY 
-    "dsgeneric_scalar_445831a9"."generic_int_array"),
+    {{ ref('dsgeneric_scalar_445831a9_gen_model') }} as "dsgeneric_scalar_445831a9"
+GROUP BY
+    1),
 wakeful as (
 SELECT
     unnest("quizzical"."generic_int_array") as "generic_split"
@@ -19,5 +19,5 @@ SELECT
     "wakeful"."generic_split" as "generic_split"
 FROM
     "wakeful"
-GROUP BY 
-    "wakeful"."generic_split"
+GROUP BY
+    1

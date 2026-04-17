@@ -1,11 +1,11 @@
-base_prep_time = 0.0
-base_parse_time = 0.435003
-base_generation_time = 0.014701
-base_exec_time = 0.035134
-optimized_prep_time = 0.001001
-optimized_parse_time = 0.379326
-optimized_generation_time = 0.008084
-optimized_exec_time = 0.038192
+base_prep_time = 0.000108
+base_parse_time = 1.034738
+base_generation_time = 0.014303
+base_exec_time = 0.035311
+optimized_prep_time = 0.000104
+optimized_parse_time = 0.141595
+optimized_generation_time = 0.011698
+optimized_exec_time = 0.027903
 was_optimized = false
 base_generated_sql = """
 SELECT
@@ -25,12 +25,12 @@ FROM
     INNER JOIN \"memory\".\"warehouse\" as \"warehouse_warehouse\" on \"catalog_sales\".\"CS_WAREHOUSE_SK\" = \"warehouse_warehouse\".\"w_warehouse_sk\"
     RIGHT OUTER JOIN \"memory\".\"call_center\" as \"call_center_call_center\" on \"catalog_sales\".\"CS_CALL_CENTER_SK\" = \"call_center_call_center\".\"CC_CALL_CENTER_SK\"
 WHERE
-    \"ship_date_date\".\"D_MONTH_SEQ\" >= 1200 and \"ship_date_date\".\"D_MONTH_SEQ\" <= 1211 and \"catalog_sales\".\"CS_ORDER_NUMBER\" is not null and \"call_center_call_center\".\"CC_CALL_CENTER_SK\" is not null and \"warehouse_warehouse\".\"w_warehouse_sk\" is not null and \"ship_mode_ship_mode\".\"SM_SHIP_MODE_SK\" is not null
+    \"ship_date_date\".\"D_MONTH_SEQ\" >= 1200 and \"ship_date_date\".\"D_MONTH_SEQ\" <= 1211 and \"catalog_sales\".\"CS_ORDER_NUMBER\" is not null and \"call_center_call_center\".\"CC_CALL_CENTER_SK\" is not null and \"catalog_sales\".\"CS_WAREHOUSE_SK\" is not null and \"catalog_sales\".\"CS_SHIP_MODE_SK\" is not null
 
-GROUP BY 
-    \"ship_mode_ship_mode\".\"SM_TYPE\",
-    LOWER(\"call_center_call_center\".\"CC_NAME\") ,
-    SUBSTRING(\"warehouse_warehouse\".\"w_warehouse_name\",1,20)
+GROUP BY
+    1,
+    2,
+    3
 ORDER BY 
     \"warehouse_short_name\" asc nulls first,
     \"ship_mode_ship_mode\".\"SM_TYPE\" asc nulls first,
@@ -54,17 +54,17 @@ FROM
     INNER JOIN \"memory\".\"warehouse\" as \"warehouse_warehouse\" on \"catalog_sales\".\"CS_WAREHOUSE_SK\" = \"warehouse_warehouse\".\"w_warehouse_sk\"
     RIGHT OUTER JOIN \"memory\".\"call_center\" as \"call_center_call_center\" on \"catalog_sales\".\"CS_CALL_CENTER_SK\" = \"call_center_call_center\".\"CC_CALL_CENTER_SK\"
 WHERE
-    \"ship_date_date\".\"D_MONTH_SEQ\" >= 1200 and \"ship_date_date\".\"D_MONTH_SEQ\" <= 1211 and \"catalog_sales\".\"CS_ORDER_NUMBER\" is not null and \"call_center_call_center\".\"CC_CALL_CENTER_SK\" is not null and \"warehouse_warehouse\".\"w_warehouse_sk\" is not null and \"ship_mode_ship_mode\".\"SM_SHIP_MODE_SK\" is not null
+    \"ship_date_date\".\"D_MONTH_SEQ\" >= 1200 and \"ship_date_date\".\"D_MONTH_SEQ\" <= 1211 and \"catalog_sales\".\"CS_ORDER_NUMBER\" is not null and \"call_center_call_center\".\"CC_CALL_CENTER_SK\" is not null and \"catalog_sales\".\"CS_WAREHOUSE_SK\" is not null and \"catalog_sales\".\"CS_SHIP_MODE_SK\" is not null
 
-GROUP BY 
-    \"ship_mode_ship_mode\".\"SM_TYPE\",
-    LOWER(\"call_center_call_center\".\"CC_NAME\") ,
-    SUBSTRING(\"warehouse_warehouse\".\"w_warehouse_name\",1,20)
+GROUP BY
+    1,
+    2,
+    3
 ORDER BY 
     \"warehouse_short_name\" asc nulls first,
     \"ship_mode_ship_mode\".\"SM_TYPE\" asc nulls first,
     \"cc_name_lower\" asc nulls first
 LIMIT (100)"""
 query_id = 99
-sql_comp_time = 0.033772
-total_time = 0.949057
+sql_comp_time = 0.020858
+total_time = 1.290468

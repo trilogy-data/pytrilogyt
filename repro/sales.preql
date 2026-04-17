@@ -1,0 +1,14 @@
+import items as item;
+
+key id int;
+property id.year int;
+
+datasource sales (
+    id: id,
+    year: year,
+    item_id: item.id,
+    item_price: item.price,
+    item_category: item.category
+)
+grain (id)
+address sales_tbl;

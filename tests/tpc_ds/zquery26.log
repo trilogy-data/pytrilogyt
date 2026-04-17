@@ -1,11 +1,11 @@
-base_prep_time = 0.0
-base_parse_time = 0.524232
-base_generation_time = 0.0
-base_exec_time = 0.027834
-optimized_prep_time = 0.0
-optimized_parse_time = 0.242592
-optimized_generation_time = 0.005039
-optimized_exec_time = 0.022917
+base_prep_time = 9.5e-05
+base_parse_time = 0.091388
+base_generation_time = 0.007643
+base_exec_time = 0.031876
+optimized_prep_time = 9.9e-05
+optimized_parse_time = 0.096389
+optimized_generation_time = 0.003347
+optimized_exec_time = 0.029771
 was_optimized = false
 base_generated_sql = """
 SELECT
@@ -23,8 +23,8 @@ FROM
 WHERE
     \"cs_bill_customer_demographic_customer_demographics\".\"CD_GENDER\" = 'M' and \"cs_bill_customer_demographic_customer_demographics\".\"CD_MARITAL_STATUS\" = 'S' and \"cs_bill_customer_demographic_customer_demographics\".\"CD_EDUCATION_STATUS\" = 'College' and ( \"cs_promotion_promotion\".\"P_CHANNEL_EMAIL\" = 'N' or \"cs_promotion_promotion\".\"P_CHANNEL_EVENT\" = 'N' ) and cast(\"cs_date_date\".\"D_YEAR\" as int) = 2000
 
-GROUP BY 
-    \"cs_item_items\".\"I_ITEM_ID\"
+GROUP BY
+    1
 ORDER BY 
     \"cs_item_items\".\"I_ITEM_ID\" asc
 LIMIT (100)"""
@@ -44,11 +44,11 @@ FROM
 WHERE
     \"cs_bill_customer_demographic_customer_demographics\".\"CD_GENDER\" = 'M' and \"cs_bill_customer_demographic_customer_demographics\".\"CD_MARITAL_STATUS\" = 'S' and \"cs_bill_customer_demographic_customer_demographics\".\"CD_EDUCATION_STATUS\" = 'College' and ( \"cs_promotion_promotion\".\"P_CHANNEL_EMAIL\" = 'N' or \"cs_promotion_promotion\".\"P_CHANNEL_EVENT\" = 'N' ) and cast(\"cs_date_date\".\"D_YEAR\" as int) = 2000
 
-GROUP BY 
-    \"cs_item_items\".\"I_ITEM_ID\"
+GROUP BY
+    1
 ORDER BY 
     \"cs_item_items\".\"I_ITEM_ID\" asc
 LIMIT (100)"""
 query_id = 26
-sql_comp_time = 0.032879
-total_time = 0.858674
+sql_comp_time = 0.027248
+total_time = 0.293359

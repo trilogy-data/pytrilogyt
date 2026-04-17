@@ -1,11 +1,11 @@
-base_prep_time = 0.0
-base_parse_time = 0.103783
-base_generation_time = 0.008494
-base_exec_time = 0.013475
-optimized_prep_time = 0.0
-optimized_parse_time = 0.102418
-optimized_generation_time = 0.010881
-optimized_exec_time = 0.020789
+base_prep_time = 9.8e-05
+base_parse_time = 0.035682
+base_generation_time = 0.005041
+base_exec_time = 0.005914
+optimized_prep_time = 0.000101
+optimized_parse_time = 0.029193
+optimized_generation_time = 0.005024
+optimized_exec_time = 0.006135
 was_optimized = false
 base_generated_sql = """
 SELECT
@@ -27,9 +27,9 @@ FROM
 WHERE
     cast(\"inventory_date_date\".\"D_DATE\" as date) >= date '2000-02-10' and cast(\"inventory_date_date\".\"D_DATE\" as date) <= date '2000-04-10' and \"inventory_item_items\".\"I_CURRENT_PRICE\" >= 0.99 and \"inventory_item_items\".\"I_CURRENT_PRICE\" <= 1.49
 
-GROUP BY 
-    \"inventory_item_items\".\"I_ITEM_ID\",
-    \"inventory_warehouse_warehouse\".\"w_warehouse_name\"
+GROUP BY
+    1,
+    2
 HAVING
     CASE
 	WHEN sum(CASE
@@ -81,9 +81,9 @@ FROM
 WHERE
     cast(\"inventory_date_date\".\"D_DATE\" as date) >= date '2000-02-10' and cast(\"inventory_date_date\".\"D_DATE\" as date) <= date '2000-04-10' and \"inventory_item_items\".\"I_CURRENT_PRICE\" >= 0.99 and \"inventory_item_items\".\"I_CURRENT_PRICE\" <= 1.49
 
-GROUP BY 
-    \"inventory_item_items\".\"I_ITEM_ID\",
-    \"inventory_warehouse_warehouse\".\"w_warehouse_name\"
+GROUP BY
+    1,
+    2
 HAVING
     CASE
 	WHEN sum(CASE
@@ -116,5 +116,5 @@ ORDER BY
     \"inventory_item_items\".\"I_ITEM_ID\" asc nulls first
 LIMIT (100)"""
 query_id = 21
-sql_comp_time = 0.014083
-total_time = 0.280599
+sql_comp_time = 0.005303
+total_time = 0.095605

@@ -1,11 +1,11 @@
-base_prep_time = 0.0
-base_parse_time = 1.369904
-base_generation_time = 0.011525
-base_exec_time = 0.080597
-optimized_prep_time = 0.0
-optimized_parse_time = 0.580852
-optimized_generation_time = 0.018069
-optimized_exec_time = 0.069557
+base_prep_time = 0.000112
+base_parse_time = 0.213493
+base_generation_time = 0.010933
+base_exec_time = 0.033184
+optimized_prep_time = 0.000117
+optimized_parse_time = 0.229819
+optimized_generation_time = 0.006294
+optimized_exec_time = 0.026226
 was_optimized = false
 base_generated_sql = """
 
@@ -22,26 +22,26 @@ FROM
 WHERE
     \"web_returns_return_address_customer_address\".\"CA_STATE\" is not null
 
-GROUP BY 
-    \"web_returns_return_address_customer_address\".\"CA_STATE\",
-    \"web_returns_web_returns\".\"WR_RETURNING_CUSTOMER_SK\"),
+GROUP BY
+    1,
+    2),
 thoughtful as (
 SELECT
     \"web_returns_web_returns\".\"WR_RETURNING_ADDR_SK\" as \"web_returns_return_address_id\",
     \"web_returns_web_returns\".\"WR_RETURNING_CUSTOMER_SK\" as \"web_returns_customer_id\"
 FROM
     \"memory\".\"web_returns\" as \"web_returns_web_returns\"
-GROUP BY 
-    \"web_returns_web_returns\".\"WR_RETURNING_ADDR_SK\",
-    \"web_returns_web_returns\".\"WR_RETURNING_CUSTOMER_SK\"),
+GROUP BY
+    1,
+    2),
 vacuous as (
 SELECT
     \"abundant\".\"web_returns_return_address_state\" as \"web_returns_return_address_state\",
     avg(\"abundant\".\"customer_state_returns_2002\") as \"_virt_agg_avg_3885168128306444\"
 FROM
     \"abundant\"
-GROUP BY 
-    \"abundant\".\"web_returns_return_address_state\"),
+GROUP BY
+    1),
 cooperative as (
 SELECT
     \"web_returns_customer_customer_address\".\"CA_STATE\" as \"web_returns_customer_state\",
@@ -67,22 +67,22 @@ FROM
 WHERE
     \"web_returns_customer_customer_address\".\"CA_STATE\" = 'GA' and \"web_returns_return_address_customer_address\".\"CA_STATE\" is not null
 
-GROUP BY 
-    \"web_returns_customer_customer_address\".\"CA_STATE\",
-    \"web_returns_customer_customers\".\"C_BIRTH_COUNTRY\",
-    \"web_returns_customer_customers\".\"C_BIRTH_DAY\",
-    \"web_returns_customer_customers\".\"C_BIRTH_MONTH\",
-    \"web_returns_customer_customers\".\"C_BIRTH_YEAR\",
-    \"web_returns_customer_customers\".\"C_CUSTOMER_ID\",
-    \"web_returns_customer_customers\".\"C_CUSTOMER_SK\",
-    \"web_returns_customer_customers\".\"C_EMAIL_ADDRESS\",
-    \"web_returns_customer_customers\".\"C_FIRST_NAME\",
-    \"web_returns_customer_customers\".\"C_LAST_NAME\",
-    \"web_returns_customer_customers\".\"C_LAST_REVIEW_DATE_SK\",
-    \"web_returns_customer_customers\".\"C_LOGIN\",
-    \"web_returns_customer_customers\".\"C_PREFERRED_CUST_FLAG\",
-    \"web_returns_customer_customers\".\"C_SALUTATION\",
-    \"web_returns_return_address_customer_address\".\"CA_STATE\"),
+GROUP BY
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15),
 juicy as (
 SELECT
     \"abundant\".\"customer_state_returns_2002\" as \"customer_state_returns_2002\",
@@ -127,21 +127,21 @@ FROM
 WHERE
     \"juicy\".\"customer_state_returns_2002\" > 1.2 * \"vacuous\".\"_virt_agg_avg_3885168128306444\" and \"juicy\".\"web_returns_customer_state\" = 'GA' and \"juicy\".\"web_returns_return_address_state\" is not null
 
-GROUP BY 
-    \"juicy\".\"customer_state_returns_2002\",
-    \"juicy\".\"web_returns_customer_birth_country\",
-    \"juicy\".\"web_returns_customer_birth_day\",
-    \"juicy\".\"web_returns_customer_birth_month\",
-    \"juicy\".\"web_returns_customer_birth_year\",
-    \"juicy\".\"web_returns_customer_email_address\",
-    \"juicy\".\"web_returns_customer_first_name\",
-    \"juicy\".\"web_returns_customer_id\",
-    \"juicy\".\"web_returns_customer_last_name\",
-    \"juicy\".\"web_returns_customer_last_review_date\",
-    \"juicy\".\"web_returns_customer_login\",
-    \"juicy\".\"web_returns_customer_preferred_cust_flag\",
-    \"juicy\".\"web_returns_customer_salutation\",
-    \"juicy\".\"web_returns_customer_text_id\"
+GROUP BY
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    \"juicy\".\"web_returns_customer_id\"
 ORDER BY 
     \"juicy\".\"web_returns_customer_text_id\" asc nulls first,
     \"juicy\".\"web_returns_customer_salutation\" asc nulls first,
@@ -172,26 +172,26 @@ FROM
 WHERE
     \"web_returns_return_address_customer_address\".\"CA_STATE\" is not null
 
-GROUP BY 
-    \"web_returns_return_address_customer_address\".\"CA_STATE\",
-    \"web_returns_web_returns\".\"WR_RETURNING_CUSTOMER_SK\"),
+GROUP BY
+    1,
+    2),
 thoughtful as (
 SELECT
     \"web_returns_web_returns\".\"WR_RETURNING_ADDR_SK\" as \"web_returns_return_address_id\",
     \"web_returns_web_returns\".\"WR_RETURNING_CUSTOMER_SK\" as \"web_returns_customer_id\"
 FROM
     \"memory\".\"web_returns\" as \"web_returns_web_returns\"
-GROUP BY 
-    \"web_returns_web_returns\".\"WR_RETURNING_ADDR_SK\",
-    \"web_returns_web_returns\".\"WR_RETURNING_CUSTOMER_SK\"),
+GROUP BY
+    1,
+    2),
 vacuous as (
 SELECT
     \"abundant\".\"web_returns_return_address_state\" as \"web_returns_return_address_state\",
     avg(\"abundant\".\"customer_state_returns_2002\") as \"_virt_agg_avg_3885168128306444\"
 FROM
     \"abundant\"
-GROUP BY 
-    \"abundant\".\"web_returns_return_address_state\"),
+GROUP BY
+    1),
 cooperative as (
 SELECT
     \"web_returns_customer_customer_address\".\"CA_STATE\" as \"web_returns_customer_state\",
@@ -217,22 +217,22 @@ FROM
 WHERE
     \"web_returns_customer_customer_address\".\"CA_STATE\" = 'GA' and \"web_returns_return_address_customer_address\".\"CA_STATE\" is not null
 
-GROUP BY 
-    \"web_returns_customer_customer_address\".\"CA_STATE\",
-    \"web_returns_customer_customers\".\"C_BIRTH_COUNTRY\",
-    \"web_returns_customer_customers\".\"C_BIRTH_DAY\",
-    \"web_returns_customer_customers\".\"C_BIRTH_MONTH\",
-    \"web_returns_customer_customers\".\"C_BIRTH_YEAR\",
-    \"web_returns_customer_customers\".\"C_CUSTOMER_ID\",
-    \"web_returns_customer_customers\".\"C_CUSTOMER_SK\",
-    \"web_returns_customer_customers\".\"C_EMAIL_ADDRESS\",
-    \"web_returns_customer_customers\".\"C_FIRST_NAME\",
-    \"web_returns_customer_customers\".\"C_LAST_NAME\",
-    \"web_returns_customer_customers\".\"C_LAST_REVIEW_DATE_SK\",
-    \"web_returns_customer_customers\".\"C_LOGIN\",
-    \"web_returns_customer_customers\".\"C_PREFERRED_CUST_FLAG\",
-    \"web_returns_customer_customers\".\"C_SALUTATION\",
-    \"web_returns_return_address_customer_address\".\"CA_STATE\"),
+GROUP BY
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15),
 juicy as (
 SELECT
     \"abundant\".\"customer_state_returns_2002\" as \"customer_state_returns_2002\",
@@ -277,21 +277,21 @@ FROM
 WHERE
     \"juicy\".\"customer_state_returns_2002\" > 1.2 * \"vacuous\".\"_virt_agg_avg_3885168128306444\" and \"juicy\".\"web_returns_customer_state\" = 'GA' and \"juicy\".\"web_returns_return_address_state\" is not null
 
-GROUP BY 
-    \"juicy\".\"customer_state_returns_2002\",
-    \"juicy\".\"web_returns_customer_birth_country\",
-    \"juicy\".\"web_returns_customer_birth_day\",
-    \"juicy\".\"web_returns_customer_birth_month\",
-    \"juicy\".\"web_returns_customer_birth_year\",
-    \"juicy\".\"web_returns_customer_email_address\",
-    \"juicy\".\"web_returns_customer_first_name\",
-    \"juicy\".\"web_returns_customer_id\",
-    \"juicy\".\"web_returns_customer_last_name\",
-    \"juicy\".\"web_returns_customer_last_review_date\",
-    \"juicy\".\"web_returns_customer_login\",
-    \"juicy\".\"web_returns_customer_preferred_cust_flag\",
-    \"juicy\".\"web_returns_customer_salutation\",
-    \"juicy\".\"web_returns_customer_text_id\"
+GROUP BY
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    \"juicy\".\"web_returns_customer_id\"
 ORDER BY 
     \"juicy\".\"web_returns_customer_text_id\" asc nulls first,
     \"juicy\".\"web_returns_customer_salutation\" asc nulls first,
@@ -308,5 +308,5 @@ ORDER BY
     \"juicy\".\"customer_state_returns_2002\" asc nulls first
 LIMIT (100)"""
 query_id = 30
-sql_comp_time = 0.022721
-total_time = 2.156707
+sql_comp_time = 0.015773
+total_time = 0.543343

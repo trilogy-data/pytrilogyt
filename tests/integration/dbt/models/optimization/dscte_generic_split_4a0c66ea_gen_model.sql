@@ -1,4 +1,4 @@
--- Generated from preql source: _opt_generic_87073dc2_build
+-- Generated from preql source: _opt_generic_a36e85ce_build
 -- Do not edit manually
 {{ config(materialized='table') }}
 
@@ -22,5 +22,5 @@ FROM
 WHERE
     "highfalutin"."generic_split" in (1,2,3)
 
-GROUP BY 
-    "highfalutin"."generic_split"
+GROUP BY
+    1

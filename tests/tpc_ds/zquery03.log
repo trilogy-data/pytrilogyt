@@ -1,11 +1,11 @@
-base_prep_time = 0.0
-base_parse_time = 0.206118
-base_generation_time = 0.001781
-base_exec_time = 0.011711
-optimized_prep_time = 0.0
-optimized_parse_time = 0.16183
-optimized_generation_time = 0.0
-optimized_exec_time = 0.002028
+base_prep_time = 0.000322
+base_parse_time = 0.093179
+base_generation_time = 0.001949
+base_exec_time = 0.012601
+optimized_prep_time = 0.000185
+optimized_parse_time = 0.06448
+optimized_generation_time = 0.000903
+optimized_exec_time = 0.005536
 was_optimized = true
 base_generated_sql = """
 SELECT
@@ -20,10 +20,10 @@ FROM
 WHERE
     \"store_sales_date_date\".\"D_MOY\" = 11 and \"store_sales_item_items\".\"I_MANUFACT_ID\" = 128
 
-GROUP BY 
-    \"store_sales_item_items\".\"I_BRAND\",
-    \"store_sales_item_items\".\"I_BRAND_ID\",
-    cast(\"store_sales_date_date\".\"D_YEAR\" as int)
+GROUP BY
+    1,
+    2,
+    3
 ORDER BY 
     cast(\"store_sales_date_date\".\"D_YEAR\" as int) asc,
     \"sum_agg\" desc,
@@ -43,5 +43,5 @@ ORDER BY
     \"dsstore_sales_date_year_store_sales_item_brand_id_store_sales_item_brand_name_a595e281_filtered_on_month_of_year_manufacturer_id\".\"store_sales_item_brand_id\" asc
 LIMIT (100)"""
 query_id = 3
-sql_comp_time = 0.010103
-total_time = 0.394975
+sql_comp_time = 0.018997
+total_time = 0.201213

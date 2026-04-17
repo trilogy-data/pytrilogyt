@@ -1,0 +1,11 @@
+key id int;
+property id.category string;
+property id.price int;
+
+datasource items (
+    id: id,
+    category: category,
+    price: price
+)
+grain (id)
+address items_tbl;

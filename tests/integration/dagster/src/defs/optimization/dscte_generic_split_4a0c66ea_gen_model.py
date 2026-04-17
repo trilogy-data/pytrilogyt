@@ -31,6 +31,6 @@ FROM
 WHERE
     "highfalutin"."generic_split" in (1,2,3)
 
-GROUP BY 
-    "highfalutin"."generic_split" """
+GROUP BY
+    1 """
         )

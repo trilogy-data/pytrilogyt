@@ -1,11 +1,11 @@
-base_prep_time = 0.0
-base_parse_time = 0.196885
-base_generation_time = 0.003334
-base_exec_time = 0.019769
-optimized_prep_time = 0.0
-optimized_parse_time = 0.193234
-optimized_generation_time = 0.001262
-optimized_exec_time = 0.014647
+base_prep_time = 0.000112
+base_parse_time = 0.120168
+base_generation_time = 0.003086
+base_exec_time = 0.00911
+optimized_prep_time = 0.000106
+optimized_parse_time = 0.119421
+optimized_generation_time = 0.003302
+optimized_exec_time = 0.006511
 was_optimized = true
 base_generated_sql = """
 
@@ -25,20 +25,20 @@ FROM
 WHERE
     cast(\"web_sales_date_date\".\"D_DATE\" as date) >= date '1999-02-22' and cast(\"web_sales_date_date\".\"D_DATE\" as date) <= date '1999-03-24' and \"web_sales_item_items\".\"I_CATEGORY\" in ('Sports','Books','Home')
 
-GROUP BY 
-    \"web_sales_item_items\".\"I_CATEGORY\",
-    \"web_sales_item_items\".\"I_CLASS\",
-    \"web_sales_item_items\".\"I_CURRENT_PRICE\",
-    \"web_sales_item_items\".\"I_ITEM_DESC\",
-    \"web_sales_item_items\".\"I_ITEM_ID\"),
+GROUP BY
+    1,
+    2,
+    3,
+    4,
+    5),
 cooperative as (
 SELECT
     \"cheerful\".\"web_sales_item_class\" as \"web_sales_item_class\",
     sum(\"cheerful\".\"itemrevenue\") as \"itemclassrevenue\"
 FROM
     \"cheerful\"
-GROUP BY 
-    \"cheerful\".\"web_sales_item_class\")
+GROUP BY
+    1)
 SELECT
     \"cheerful\".\"web_sales_item_name\" as \"web_sales_item_name\",
     \"cheerful\".\"web_sales_item_desc\" as \"web_sales_item_desc\",
@@ -66,35 +66,35 @@ SELECT
     \"dsweb_sales_item_category_web_sales_item_class_web_sales_item_current_price_web_sales_item_desc_web_sales_item_name_93d6159c_filtered_on_date_date_category\".\"web_sales_item_class\" as \"web_sales_item_class\"
 FROM
     \"dsweb_sales_item_category_web_sales_item_class_web_sales_item_current_price_web_sales_item_desc_web_sales_item_name_93d6159c_filtered_on_date_date_category\"
-GROUP BY 
-    \"dsweb_sales_item_category_web_sales_item_class_web_sales_item_current_price_web_sales_item_desc_web_sales_item_name_93d6159c_filtered_on_date_date_category\".\"itemrevenue\",
-    \"dsweb_sales_item_category_web_sales_item_class_web_sales_item_current_price_web_sales_item_desc_web_sales_item_name_93d6159c_filtered_on_date_date_category\".\"web_sales_item_class\"),
+GROUP BY
+    1,
+    2),
 wakeful as (
 SELECT
     \"highfalutin\".\"web_sales_item_class\" as \"web_sales_item_class\",
     sum(\"highfalutin\".\"itemrevenue\") as \"itemclassrevenue\"
 FROM
     \"highfalutin\"
-GROUP BY 
-    \"highfalutin\".\"web_sales_item_class\")
+GROUP BY
+    1)
 SELECT
     \"dsweb_sales_item_category_web_sales_item_class_web_sales_item_current_price_web_sales_item_desc_web_sales_item_name_93d6159c_filtered_on_date_date_category\".\"web_sales_item_name\" as \"web_sales_item_name\",
     \"dsweb_sales_item_category_web_sales_item_class_web_sales_item_current_price_web_sales_item_desc_web_sales_item_name_93d6159c_filtered_on_date_date_category\".\"web_sales_item_desc\" as \"web_sales_item_desc\",
     \"dsweb_sales_item_category_web_sales_item_class_web_sales_item_current_price_web_sales_item_desc_web_sales_item_name_93d6159c_filtered_on_date_date_category\".\"web_sales_item_category\" as \"web_sales_item_category\",
-    \"wakeful\".\"web_sales_item_class\" as \"web_sales_item_class\",
+    coalesce(\"dsweb_sales_item_category_web_sales_item_class_web_sales_item_current_price_web_sales_item_desc_web_sales_item_name_93d6159c_filtered_on_date_date_category\".\"web_sales_item_class\",\"wakeful\".\"web_sales_item_class\") as \"web_sales_item_class\",
     \"dsweb_sales_item_category_web_sales_item_class_web_sales_item_current_price_web_sales_item_desc_web_sales_item_name_93d6159c_filtered_on_date_date_category\".\"web_sales_item_current_price\" as \"web_sales_item_current_price\",
     \"dsweb_sales_item_category_web_sales_item_class_web_sales_item_current_price_web_sales_item_desc_web_sales_item_name_93d6159c_filtered_on_date_date_category\".\"itemrevenue\" as \"itemrevenue\",
     (\"dsweb_sales_item_category_web_sales_item_class_web_sales_item_current_price_web_sales_item_desc_web_sales_item_name_93d6159c_filtered_on_date_date_category\".\"itemrevenue\" * 100.0) / \"wakeful\".\"itemclassrevenue\" as \"revenueratio\"
 FROM
     \"wakeful\"
-    LEFT OUTER JOIN \"dsweb_sales_item_category_web_sales_item_class_web_sales_item_current_price_web_sales_item_desc_web_sales_item_name_93d6159c_filtered_on_date_date_category\" as \"dsweb_sales_item_category_web_sales_item_class_web_sales_item_current_price_web_sales_item_desc_web_sales_item_name_93d6159c_filtered_on_date_date_category\" on \"wakeful\".\"web_sales_item_class\" is not distinct from \"dsweb_sales_item_category_web_sales_item_class_web_sales_item_current_price_web_sales_item_desc_web_sales_item_name_93d6159c_filtered_on_date_date_category\".\"web_sales_item_class\"
+    FULL JOIN \"dsweb_sales_item_category_web_sales_item_class_web_sales_item_current_price_web_sales_item_desc_web_sales_item_name_93d6159c_filtered_on_date_date_category\" as \"dsweb_sales_item_category_web_sales_item_class_web_sales_item_current_price_web_sales_item_desc_web_sales_item_name_93d6159c_filtered_on_date_date_category\" on \"wakeful\".\"web_sales_item_class\" is not distinct from \"dsweb_sales_item_category_web_sales_item_class_web_sales_item_current_price_web_sales_item_desc_web_sales_item_name_93d6159c_filtered_on_date_date_category\".\"web_sales_item_class\"
 ORDER BY 
     \"dsweb_sales_item_category_web_sales_item_class_web_sales_item_current_price_web_sales_item_desc_web_sales_item_name_93d6159c_filtered_on_date_date_category\".\"web_sales_item_category\" asc,
-    \"wakeful\".\"web_sales_item_class\" asc,
+    coalesce(\"dsweb_sales_item_category_web_sales_item_class_web_sales_item_current_price_web_sales_item_desc_web_sales_item_name_93d6159c_filtered_on_date_date_category\".\"web_sales_item_class\",\"wakeful\".\"web_sales_item_class\") asc,
     \"dsweb_sales_item_category_web_sales_item_class_web_sales_item_current_price_web_sales_item_desc_web_sales_item_name_93d6159c_filtered_on_date_date_category\".\"web_sales_item_name\" asc,
     \"dsweb_sales_item_category_web_sales_item_class_web_sales_item_current_price_web_sales_item_desc_web_sales_item_name_93d6159c_filtered_on_date_date_category\".\"web_sales_item_desc\" asc,
     \"revenueratio\" asc
 LIMIT (100)"""
 query_id = 12
-sql_comp_time = 0.035038
-total_time = 0.466614
+sql_comp_time = 0.024024
+total_time = 0.292508

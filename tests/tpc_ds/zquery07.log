@@ -1,11 +1,11 @@
-base_prep_time = 0.0
-base_parse_time = 0.755189
-base_generation_time = 0.003538
-base_exec_time = 0.036312
-optimized_prep_time = 0.0
-optimized_parse_time = 0.242626
-optimized_generation_time = 0.002525
-optimized_exec_time = 0.030598
+base_prep_time = 0.000762
+base_parse_time = 0.128234
+base_generation_time = 0.003845
+base_exec_time = 0.039066
+optimized_prep_time = 0.00011
+optimized_parse_time = 0.140056
+optimized_generation_time = 0.003485
+optimized_exec_time = 0.051426
 was_optimized = false
 base_generated_sql = """
 
@@ -26,13 +26,13 @@ FROM
 WHERE
     \"store_sales_customer_demographic_customer_demographics\".\"CD_GENDER\" = 'M' and \"store_sales_customer_demographic_customer_demographics\".\"CD_MARITAL_STATUS\" = 'S' and \"store_sales_customer_demographic_customer_demographics\".\"CD_EDUCATION_STATUS\" = 'College' and ( \"store_sales_promotion_promotion\".\"P_CHANNEL_EMAIL\" = 'N' or \"store_sales_promotion_promotion\".\"P_CHANNEL_EVENT\" = 'N' ) and cast(\"store_sales_date_date\".\"D_YEAR\" as int) = 2000
 
-GROUP BY 
-    \"store_sales_item_items\".\"I_ITEM_ID\",
+GROUP BY
+    1,
+    2,
+    3,
+    4,
+    5,
     \"store_sales_item_items\".\"I_ITEM_SK\",
-    \"store_sales_store_sales\".\"SS_COUPON_AMT\",
-    \"store_sales_store_sales\".\"SS_LIST_PRICE\",
-    \"store_sales_store_sales\".\"SS_QUANTITY\",
-    \"store_sales_store_sales\".\"SS_SALES_PRICE\",
     \"store_sales_store_sales\".\"SS_TICKET_NUMBER\")
 SELECT
     \"cooperative\".\"filtered_sales_store_sales_item_name\" as \"filtered_sales_store_sales_item_name\",
@@ -42,8 +42,8 @@ SELECT
     avg(\"cooperative\".\"filtered_sales_store_sales_sales_price\") as \"avg_sales_price\"
 FROM
     \"cooperative\"
-GROUP BY 
-    \"cooperative\".\"filtered_sales_store_sales_item_name\"
+GROUP BY
+    1
 ORDER BY 
     \"cooperative\".\"filtered_sales_store_sales_item_name\" asc
 LIMIT (100)"""
@@ -66,13 +66,13 @@ FROM
 WHERE
     \"store_sales_customer_demographic_customer_demographics\".\"CD_GENDER\" = 'M' and \"store_sales_customer_demographic_customer_demographics\".\"CD_MARITAL_STATUS\" = 'S' and \"store_sales_customer_demographic_customer_demographics\".\"CD_EDUCATION_STATUS\" = 'College' and ( \"store_sales_promotion_promotion\".\"P_CHANNEL_EMAIL\" = 'N' or \"store_sales_promotion_promotion\".\"P_CHANNEL_EVENT\" = 'N' ) and cast(\"store_sales_date_date\".\"D_YEAR\" as int) = 2000
 
-GROUP BY 
-    \"store_sales_item_items\".\"I_ITEM_ID\",
+GROUP BY
+    1,
+    2,
+    3,
+    4,
+    5,
     \"store_sales_item_items\".\"I_ITEM_SK\",
-    \"store_sales_store_sales\".\"SS_COUPON_AMT\",
-    \"store_sales_store_sales\".\"SS_LIST_PRICE\",
-    \"store_sales_store_sales\".\"SS_QUANTITY\",
-    \"store_sales_store_sales\".\"SS_SALES_PRICE\",
     \"store_sales_store_sales\".\"SS_TICKET_NUMBER\")
 SELECT
     \"cooperative\".\"filtered_sales_store_sales_item_name\" as \"filtered_sales_store_sales_item_name\",
@@ -82,11 +82,11 @@ SELECT
     avg(\"cooperative\".\"filtered_sales_store_sales_sales_price\") as \"avg_sales_price\"
 FROM
     \"cooperative\"
-GROUP BY 
-    \"cooperative\".\"filtered_sales_store_sales_item_name\"
+GROUP BY
+    1
 ORDER BY 
     \"cooperative\".\"filtered_sales_store_sales_item_name\" asc
 LIMIT (100)"""
 query_id = 7
-sql_comp_time = 0.027751
-total_time = 1.105106
+sql_comp_time = 0.028545
+total_time = 0.400853

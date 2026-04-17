@@ -1,59 +1,59 @@
-base_prep_time = 0.0
-base_parse_time = 1.252743
-base_generation_time = 0.007622
-base_exec_time = 0.054238
-optimized_prep_time = 0.000361
-optimized_parse_time = 1.270964
-optimized_generation_time = 0.008449
-optimized_exec_time = 0.045779
+base_prep_time = 0.000109
+base_parse_time = 0.455434
+base_generation_time = 0.009532
+base_exec_time = 0.084511
+optimized_prep_time = 0.00013
+optimized_parse_time = 0.98223
+optimized_generation_time = 0.006389
+optimized_exec_time = 0.071188
 was_optimized = false
 base_generated_sql = """
 
 WITH 
-thoughtful as (
-SELECT
-    \"store_sales_store_sales\".\"SS_CUSTOMER_SK\" as \"customer_id\",
-    \"store_sales_store_sales\".\"SS_SOLD_DATE_SK\" as \"store_sales_date_id\"
-FROM
-    \"memory\".\"store_sales\" as \"store_sales_store_sales\"
-GROUP BY 
-    \"store_sales_store_sales\".\"SS_CUSTOMER_SK\",
-    \"store_sales_store_sales\".\"SS_SOLD_DATE_SK\"),
-abundant as (
-SELECT
-    \"web_sales_web_sales\".\"WS_BILL_CUSTOMER_SK\" as \"customer_id\",
-    \"web_sales_web_sales\".\"WS_SOLD_DATE_SK\" as \"web_sales_date_id\"
-FROM
-    \"memory\".\"web_sales\" as \"web_sales_web_sales\"
-GROUP BY 
-    \"web_sales_web_sales\".\"WS_BILL_CUSTOMER_SK\",
-    \"web_sales_web_sales\".\"WS_SOLD_DATE_SK\"),
-juicy as (
+quizzical as (
 SELECT
     \"catalog_sales_catalog_sales\".\"CS_SHIP_CUSTOMER_SK\" as \"customer_id\",
     \"catalog_sales_catalog_sales\".\"CS_SOLD_DATE_SK\" as \"catalog_sales_date_id\"
 FROM
     \"memory\".\"catalog_sales\" as \"catalog_sales_catalog_sales\"
-GROUP BY 
-    \"catalog_sales_catalog_sales\".\"CS_SHIP_CUSTOMER_SK\",
-    \"catalog_sales_catalog_sales\".\"CS_SOLD_DATE_SK\"),
-concerned as (
+GROUP BY
+    1,
+    2),
+questionable as (
 SELECT
-    \"customer_customers\".\"C_CUSTOMER_SK\" as \"relevant_customers\"
+    \"store_sales_store_sales\".\"SS_CUSTOMER_SK\" as \"customer_id\",
+    \"store_sales_store_sales\".\"SS_SOLD_DATE_SK\" as \"store_sales_date_id\"
 FROM
-    \"abundant\"
-    INNER JOIN \"memory\".\"date_dim\" as \"web_sales_date_date\" on \"abundant\".\"web_sales_date_id\" = \"web_sales_date_date\".\"D_DATE_SK\"
-    RIGHT OUTER JOIN \"memory\".\"customer\" as \"customer_customers\" on \"abundant\".\"customer_id\" = \"customer_customers\".\"C_CUSTOMER_SK\"
-    LEFT OUTER JOIN \"juicy\" on \"customer_customers\".\"C_CUSTOMER_SK\" = \"juicy\".\"customer_id\"
-    LEFT OUTER JOIN \"thoughtful\" on \"customer_customers\".\"C_CUSTOMER_SK\" = \"thoughtful\".\"customer_id\"
-    INNER JOIN \"memory\".\"customer_address\" as \"customer_customer_address\" on \"customer_customers\".\"C_CURRENT_ADDR_SK\" = \"customer_customer_address\".\"CA_ADDRESS_SK\"
-    LEFT OUTER JOIN \"memory\".\"date_dim\" as \"store_sales_date_date\" on \"thoughtful\".\"store_sales_date_id\" = \"store_sales_date_date\".\"D_DATE_SK\"
-    LEFT OUTER JOIN \"memory\".\"date_dim\" as \"catalog_sales_date_date\" on \"juicy\".\"catalog_sales_date_id\" = \"catalog_sales_date_date\".\"D_DATE_SK\"
+    \"memory\".\"store_sales\" as \"store_sales_store_sales\"
+GROUP BY
+    1,
+    2),
+yummy as (
+SELECT
+    \"web_sales_web_sales\".\"WS_BILL_CUSTOMER_SK\" as \"customer_id\",
+    \"web_sales_web_sales\".\"WS_SOLD_DATE_SK\" as \"web_sales_date_id\"
+FROM
+    \"memory\".\"web_sales\" as \"web_sales_web_sales\"
+GROUP BY
+    1,
+    2),
+vacuous as (
+SELECT
+    coalesce(\"customer_customers\".\"C_CUSTOMER_SK\",\"questionable\".\"customer_id\",\"quizzical\".\"customer_id\",\"yummy\".\"customer_id\") as \"relevant_customers\"
+FROM
+    \"yummy\"
+    INNER JOIN \"memory\".\"date_dim\" as \"web_sales_date_date\" on \"yummy\".\"web_sales_date_id\" = \"web_sales_date_date\".\"D_DATE_SK\"
+    FULL JOIN \"quizzical\" on \"yummy\".\"customer_id\" = \"quizzical\".\"customer_id\"
+    FULL JOIN \"questionable\" on coalesce(\"quizzical\".\"customer_id\", \"yummy\".\"customer_id\") = \"questionable\".\"customer_id\"
+    FULL JOIN \"memory\".\"customer\" as \"customer_customers\" on coalesce(\"quizzical\".\"customer_id\", \"questionable\".\"customer_id\", \"yummy\".\"customer_id\") = \"customer_customers\".\"C_CUSTOMER_SK\"
+    LEFT OUTER JOIN \"memory\".\"customer_address\" as \"customer_customer_address\" on \"customer_customers\".\"C_CURRENT_ADDR_SK\" = \"customer_customer_address\".\"CA_ADDRESS_SK\"
+    FULL JOIN \"memory\".\"date_dim\" as \"store_sales_date_date\" on \"questionable\".\"store_sales_date_id\" = \"store_sales_date_date\".\"D_DATE_SK\"
+    FULL JOIN \"memory\".\"date_dim\" as \"catalog_sales_date_date\" on \"quizzical\".\"catalog_sales_date_id\" = \"catalog_sales_date_date\".\"D_DATE_SK\"
 WHERE
     cast(\"store_sales_date_date\".\"D_YEAR\" as int) = 2002 and \"store_sales_date_date\".\"D_MOY\" in (1,2,3,4) and ( ( cast(\"web_sales_date_date\".\"D_YEAR\" as int) = 2002 and \"web_sales_date_date\".\"D_MOY\" in (1,2,3,4) ) or ( cast(\"catalog_sales_date_date\".\"D_YEAR\" as int) = 2002 and \"catalog_sales_date_date\".\"D_MOY\" in (1,2,3,4) ) ) and \"customer_customer_address\".\"CA_COUNTY\" in ('Rush County','Toole County','Jefferson County','Dona Ana County','La Porte County')
 
-GROUP BY 
-    \"customer_customers\".\"C_CUSTOMER_SK\"),
+GROUP BY
+    1),
 young as (
 SELECT
     \"customer_customers\".\"C_CUSTOMER_SK\" as \"base_customer_id\",
@@ -69,18 +69,19 @@ FROM
     \"memory\".\"customer_demographics\" as \"customer_demographics_customer_demographics\"
     INNER JOIN \"memory\".\"customer\" as \"customer_customers\" on \"customer_demographics_customer_demographics\".\"CD_DEMO_SK\" = \"customer_customers\".\"C_CURRENT_CDEMO_SK\"
 WHERE
-    \"customer_customers\".\"C_CUSTOMER_SK\" in (select concerned.\"relevant_customers\" from concerned where concerned.\"relevant_customers\" is not null) and \"customer_demographics_customer_demographics\".\"CD_GENDER\" is not null
+    \"customer_customers\".\"C_CUSTOMER_SK\" in (select vacuous.\"relevant_customers\" from vacuous where vacuous.\"relevant_customers\" is not null) and \"customer_demographics_customer_demographics\".\"CD_GENDER\" is not null
 
-GROUP BY 
-    \"customer_customers\".\"C_CUSTOMER_SK\",
-    \"customer_demographics_customer_demographics\".\"CD_CREDIT_RATING\",
-    \"customer_demographics_customer_demographics\".\"CD_DEP_COLLEGE_COUNT\",
-    \"customer_demographics_customer_demographics\".\"CD_DEP_COUNT\",
-    \"customer_demographics_customer_demographics\".\"CD_DEP_EMPLOYED_COUNT\",
-    \"customer_demographics_customer_demographics\".\"CD_EDUCATION_STATUS\",
-    \"customer_demographics_customer_demographics\".\"CD_GENDER\",
-    \"customer_demographics_customer_demographics\".\"CD_MARITAL_STATUS\",
-    \"customer_demographics_customer_demographics\".\"CD_PURCHASE_ESTIMATE\")
+GROUP BY
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    \"customer_customers\".\"C_CURRENT_CDEMO_SK\")
 SELECT
     \"young\".\"base_customer_demographics_gender\" as \"base_customer_demographics_gender\",
     \"young\".\"base_customer_demographics_marital_status\" as \"base_customer_demographics_marital_status\",
@@ -98,15 +99,15 @@ SELECT
     count(\"young\".\"base_customer_id\") as \"cnt6\"
 FROM
     \"young\"
-GROUP BY 
-    \"young\".\"base_customer_demographics_college_dependent_count\",
-    \"young\".\"base_customer_demographics_credit_rating\",
-    \"young\".\"base_customer_demographics_dependent_count\",
-    \"young\".\"base_customer_demographics_education_status\",
-    \"young\".\"base_customer_demographics_employed_dependent_count\",
-    \"young\".\"base_customer_demographics_gender\",
-    \"young\".\"base_customer_demographics_marital_status\",
-    \"young\".\"base_customer_demographics_purchase_estimate\"
+GROUP BY
+    1,
+    2,
+    3,
+    5,
+    7,
+    9,
+    11,
+    13
 ORDER BY 
     \"young\".\"base_customer_demographics_gender\" asc,
     \"young\".\"base_customer_demographics_marital_status\" asc,
@@ -119,50 +120,50 @@ ORDER BY
 optimized_generated_sql = """
 
 WITH 
-thoughtful as (
-SELECT
-    \"store_sales_store_sales\".\"SS_CUSTOMER_SK\" as \"customer_id\",
-    \"store_sales_store_sales\".\"SS_SOLD_DATE_SK\" as \"store_sales_date_id\"
-FROM
-    \"memory\".\"store_sales\" as \"store_sales_store_sales\"
-GROUP BY 
-    \"store_sales_store_sales\".\"SS_CUSTOMER_SK\",
-    \"store_sales_store_sales\".\"SS_SOLD_DATE_SK\"),
-abundant as (
-SELECT
-    \"web_sales_web_sales\".\"WS_BILL_CUSTOMER_SK\" as \"customer_id\",
-    \"web_sales_web_sales\".\"WS_SOLD_DATE_SK\" as \"web_sales_date_id\"
-FROM
-    \"memory\".\"web_sales\" as \"web_sales_web_sales\"
-GROUP BY 
-    \"web_sales_web_sales\".\"WS_BILL_CUSTOMER_SK\",
-    \"web_sales_web_sales\".\"WS_SOLD_DATE_SK\"),
-juicy as (
+quizzical as (
 SELECT
     \"catalog_sales_catalog_sales\".\"CS_SHIP_CUSTOMER_SK\" as \"customer_id\",
     \"catalog_sales_catalog_sales\".\"CS_SOLD_DATE_SK\" as \"catalog_sales_date_id\"
 FROM
     \"memory\".\"catalog_sales\" as \"catalog_sales_catalog_sales\"
-GROUP BY 
-    \"catalog_sales_catalog_sales\".\"CS_SHIP_CUSTOMER_SK\",
-    \"catalog_sales_catalog_sales\".\"CS_SOLD_DATE_SK\"),
-concerned as (
+GROUP BY
+    1,
+    2),
+questionable as (
 SELECT
-    \"customer_customers\".\"C_CUSTOMER_SK\" as \"relevant_customers\"
+    \"store_sales_store_sales\".\"SS_CUSTOMER_SK\" as \"customer_id\",
+    \"store_sales_store_sales\".\"SS_SOLD_DATE_SK\" as \"store_sales_date_id\"
 FROM
-    \"abundant\"
-    INNER JOIN \"memory\".\"date_dim\" as \"web_sales_date_date\" on \"abundant\".\"web_sales_date_id\" = \"web_sales_date_date\".\"D_DATE_SK\"
-    RIGHT OUTER JOIN \"memory\".\"customer\" as \"customer_customers\" on \"abundant\".\"customer_id\" = \"customer_customers\".\"C_CUSTOMER_SK\"
-    LEFT OUTER JOIN \"juicy\" on \"customer_customers\".\"C_CUSTOMER_SK\" = \"juicy\".\"customer_id\"
-    LEFT OUTER JOIN \"thoughtful\" on \"customer_customers\".\"C_CUSTOMER_SK\" = \"thoughtful\".\"customer_id\"
-    INNER JOIN \"memory\".\"customer_address\" as \"customer_customer_address\" on \"customer_customers\".\"C_CURRENT_ADDR_SK\" = \"customer_customer_address\".\"CA_ADDRESS_SK\"
-    LEFT OUTER JOIN \"memory\".\"date_dim\" as \"store_sales_date_date\" on \"thoughtful\".\"store_sales_date_id\" = \"store_sales_date_date\".\"D_DATE_SK\"
-    LEFT OUTER JOIN \"memory\".\"date_dim\" as \"catalog_sales_date_date\" on \"juicy\".\"catalog_sales_date_id\" = \"catalog_sales_date_date\".\"D_DATE_SK\"
+    \"memory\".\"store_sales\" as \"store_sales_store_sales\"
+GROUP BY
+    1,
+    2),
+yummy as (
+SELECT
+    \"web_sales_web_sales\".\"WS_BILL_CUSTOMER_SK\" as \"customer_id\",
+    \"web_sales_web_sales\".\"WS_SOLD_DATE_SK\" as \"web_sales_date_id\"
+FROM
+    \"memory\".\"web_sales\" as \"web_sales_web_sales\"
+GROUP BY
+    1,
+    2),
+vacuous as (
+SELECT
+    coalesce(\"customer_customers\".\"C_CUSTOMER_SK\",\"questionable\".\"customer_id\",\"quizzical\".\"customer_id\",\"yummy\".\"customer_id\") as \"relevant_customers\"
+FROM
+    \"yummy\"
+    INNER JOIN \"memory\".\"date_dim\" as \"web_sales_date_date\" on \"yummy\".\"web_sales_date_id\" = \"web_sales_date_date\".\"D_DATE_SK\"
+    FULL JOIN \"quizzical\" on \"yummy\".\"customer_id\" = \"quizzical\".\"customer_id\"
+    FULL JOIN \"questionable\" on coalesce(\"quizzical\".\"customer_id\", \"yummy\".\"customer_id\") = \"questionable\".\"customer_id\"
+    FULL JOIN \"memory\".\"customer\" as \"customer_customers\" on coalesce(\"quizzical\".\"customer_id\", \"questionable\".\"customer_id\", \"yummy\".\"customer_id\") = \"customer_customers\".\"C_CUSTOMER_SK\"
+    LEFT OUTER JOIN \"memory\".\"customer_address\" as \"customer_customer_address\" on \"customer_customers\".\"C_CURRENT_ADDR_SK\" = \"customer_customer_address\".\"CA_ADDRESS_SK\"
+    FULL JOIN \"memory\".\"date_dim\" as \"store_sales_date_date\" on \"questionable\".\"store_sales_date_id\" = \"store_sales_date_date\".\"D_DATE_SK\"
+    FULL JOIN \"memory\".\"date_dim\" as \"catalog_sales_date_date\" on \"quizzical\".\"catalog_sales_date_id\" = \"catalog_sales_date_date\".\"D_DATE_SK\"
 WHERE
     cast(\"store_sales_date_date\".\"D_YEAR\" as int) = 2002 and \"store_sales_date_date\".\"D_MOY\" in (1,2,3,4) and ( ( cast(\"web_sales_date_date\".\"D_YEAR\" as int) = 2002 and \"web_sales_date_date\".\"D_MOY\" in (1,2,3,4) ) or ( cast(\"catalog_sales_date_date\".\"D_YEAR\" as int) = 2002 and \"catalog_sales_date_date\".\"D_MOY\" in (1,2,3,4) ) ) and \"customer_customer_address\".\"CA_COUNTY\" in ('Rush County','Toole County','Jefferson County','Dona Ana County','La Porte County')
 
-GROUP BY 
-    \"customer_customers\".\"C_CUSTOMER_SK\"),
+GROUP BY
+    1),
 young as (
 SELECT
     \"customer_customers\".\"C_CUSTOMER_SK\" as \"base_customer_id\",
@@ -178,18 +179,19 @@ FROM
     \"memory\".\"customer_demographics\" as \"customer_demographics_customer_demographics\"
     INNER JOIN \"memory\".\"customer\" as \"customer_customers\" on \"customer_demographics_customer_demographics\".\"CD_DEMO_SK\" = \"customer_customers\".\"C_CURRENT_CDEMO_SK\"
 WHERE
-    \"customer_customers\".\"C_CUSTOMER_SK\" in (select concerned.\"relevant_customers\" from concerned where concerned.\"relevant_customers\" is not null) and \"customer_demographics_customer_demographics\".\"CD_GENDER\" is not null
+    \"customer_customers\".\"C_CUSTOMER_SK\" in (select vacuous.\"relevant_customers\" from vacuous where vacuous.\"relevant_customers\" is not null) and \"customer_demographics_customer_demographics\".\"CD_GENDER\" is not null
 
-GROUP BY 
-    \"customer_customers\".\"C_CUSTOMER_SK\",
-    \"customer_demographics_customer_demographics\".\"CD_CREDIT_RATING\",
-    \"customer_demographics_customer_demographics\".\"CD_DEP_COLLEGE_COUNT\",
-    \"customer_demographics_customer_demographics\".\"CD_DEP_COUNT\",
-    \"customer_demographics_customer_demographics\".\"CD_DEP_EMPLOYED_COUNT\",
-    \"customer_demographics_customer_demographics\".\"CD_EDUCATION_STATUS\",
-    \"customer_demographics_customer_demographics\".\"CD_GENDER\",
-    \"customer_demographics_customer_demographics\".\"CD_MARITAL_STATUS\",
-    \"customer_demographics_customer_demographics\".\"CD_PURCHASE_ESTIMATE\")
+GROUP BY
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    \"customer_customers\".\"C_CURRENT_CDEMO_SK\")
 SELECT
     \"young\".\"base_customer_demographics_gender\" as \"base_customer_demographics_gender\",
     \"young\".\"base_customer_demographics_marital_status\" as \"base_customer_demographics_marital_status\",
@@ -207,15 +209,15 @@ SELECT
     count(\"young\".\"base_customer_id\") as \"cnt6\"
 FROM
     \"young\"
-GROUP BY 
-    \"young\".\"base_customer_demographics_college_dependent_count\",
-    \"young\".\"base_customer_demographics_credit_rating\",
-    \"young\".\"base_customer_demographics_dependent_count\",
-    \"young\".\"base_customer_demographics_education_status\",
-    \"young\".\"base_customer_demographics_employed_dependent_count\",
-    \"young\".\"base_customer_demographics_gender\",
-    \"young\".\"base_customer_demographics_marital_status\",
-    \"young\".\"base_customer_demographics_purchase_estimate\"
+GROUP BY
+    1,
+    2,
+    3,
+    5,
+    7,
+    9,
+    11,
+    13
 ORDER BY 
     \"young\".\"base_customer_demographics_gender\" asc,
     \"young\".\"base_customer_demographics_marital_status\" asc,
@@ -226,5 +228,5 @@ ORDER BY
     \"young\".\"base_customer_demographics_employed_dependent_count\" asc,
     \"young\".\"base_customer_demographics_college_dependent_count\" asc"""
 query_id = 10
-sql_comp_time = 0.060524
-total_time = 2.705022
+sql_comp_time = 0.07549
+total_time = 1.69723

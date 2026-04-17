@@ -1,4 +1,4 @@
--- Generated from preql source: _opt_generic_87073dc2_build
+-- Generated from preql source: _opt_generic_dda88852_build
 -- Do not edit manually
 {{ config(materialized='table') }}
 SELECT
