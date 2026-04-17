@@ -8,7 +8,7 @@ from trilogy.authoring import (
 )
 from trilogy.core.models.author import HasUUID
 from trilogy.core.statements.author import CopyStatement
-from trilogy.parsing.parse_engine import parse_text
+from trilogy.parsing.parse_engine_v2 import parse_text
 
 from trilogyt.core import fingerprint_environment
 from trilogyt.io import BaseWorkspace

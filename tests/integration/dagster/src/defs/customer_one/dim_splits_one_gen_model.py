@@ -1,16 +1,14 @@
-from dagster import asset
 from dagster_duckdb import DuckDBResource
+from dagster import asset
 
-from src.defs.optimization.dsgeneric_scalar_445831a9_gen_model import (
-    dsgeneric_scalar_445831a9,
-)
+from src.defs.optimization.dsgeneric_scalar_445831a9_gen_model import dsgeneric_scalar_445831a9
 
 
 @asset(deps=[dsgeneric_scalar_445831a9])
 def dim_splits_one(duck_db: DuckDBResource) -> None:
     with duck_db.get_connection() as conn:
         conn.execute(
-            """ 
+           ''' 
 CREATE OR REPLACE TABLE "dim_splits_one" (
     generic_split int
 ); INSERT INTO "dim_splits_one" 
@@ -33,5 +31,6 @@ SELECT
 FROM
     "wakeful"
 GROUP BY
-    1 """
+    1 '''
         )
+    
